@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('eslons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignIdFor(Jabatan::class);
+            $table->string('jabatan_id');
             $table->timestamps();
         });
     }

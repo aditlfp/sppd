@@ -15,6 +15,10 @@ class Eslon extends Model
         'jabatan_id'
     ];
 
+    protected $casts = [
+        'jabatan_id' => 'array'
+    ];
+
     public function Jabatan()
     {
         return $this->belongsTo(Jabatan::class);
