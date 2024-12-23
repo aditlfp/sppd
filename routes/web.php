@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EslonController;
 use App\Http\Controllers\MainSPPDController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['admin'])->group(function () {
     Route::resource('main_sppds', MainSPPDController::class);
+    Route::resource('eslons', EslonController::class);
 });
 
 require __DIR__.'/auth.php';

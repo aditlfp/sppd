@@ -54,11 +54,8 @@
                             <select name="eslon_id" @readonly(true) disabled id="eslon_id" @readonly(true) required>
                                 <option selected disabled>Pilih Eslon</option>
                             @forelse ($eslon as $s)
-                            <?php
-                                $jabatanIds = json_decode($s->jabatan_id, true);
-                            ?>
-                                @if (is_array($jabatanIds))
-                                    @foreach ($jabatanIds as $item)
+                                @if ($s->jabatan_id != null)
+                                    @foreach ($s->jabatan_id as $item)
                                         @php
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp
@@ -138,11 +135,8 @@
                             <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut" @readonly(true) required>
                                 <option selected disabled>Pilih Eslon</option>
                             @forelse ($eslon as $s)
-                            <?php
-                                $jabatanIds = json_decode($s->jabatan_id, true);
-                            ?>
-                                @if (is_array($jabatanIds))
-                                    @foreach ($jabatanIds as $item)
+                                @if ($s->jabatan_id != null)
+                                    @foreach ($s->jabatan_id as $item)
                                         @php
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp

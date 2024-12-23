@@ -20,7 +20,7 @@ class MainSPPDController extends Controller
     {
         $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
         $budget = Budget::all();
-        $eslon = Eslon::with('jabatan')->get();
+        $eslon = Eslon::get();
         // foreach ($eslon as $key => $value) {
         //     $jabatanIds = json_decode($value->jabatan_id, true); // Decode JSON array
         //     if (is_array($jabatanIds)) {
