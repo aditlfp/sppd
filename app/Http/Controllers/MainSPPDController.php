@@ -12,7 +12,7 @@ class MainSPPDController extends Controller
 {
     public function index()
     {
-        $mainSppds = MainSPPD::all();
+        $mainSppds = MainSPPD::paginate(15);
         return view('main_sppds.index', compact('mainSppds'));
     }
 
@@ -48,7 +48,10 @@ class MainSPPDController extends Controller
 
     public function edit(MainSPPD $mainSppd)
     {
-        return view('main_sppds.edit', compact('mainSppd'));
+        $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
+        $budget = Budget::all();
+        $eslon = Eslon::get();
+        return view('main_sppds.edit', compact('mainSppd', 'user', 'budget', 'eslon'));
     }
 
     public function update(MainSppdRequest $request, MainSPPD $mainSppd)

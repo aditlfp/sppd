@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\EslonController;
 use App\Http\Controllers\MainSPPDController;
+use App\Http\Controllers\PocketMoneyController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RegionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,6 +24,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['admin'])->group(function () {
     Route::resource('main_sppds', MainSPPDController::class);
     Route::resource('eslons', EslonController::class);
+    Route::resource('regions', RegionController::class);
+    Route::resource('pocket_moneys', PocketMoneyController::class);
 });
 
 require __DIR__.'/auth.php';
