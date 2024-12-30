@@ -24,6 +24,7 @@ class EslonController extends Controller
 
     public function store(EslonRequest $request)
     {
+        // dd($request->all());
         try {
             // Attempt to create a new record
             Eslon::create($request->validated());

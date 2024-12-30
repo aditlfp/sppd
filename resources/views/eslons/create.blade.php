@@ -46,16 +46,12 @@
                                     </template>
                                 </ul>
                             </div>
+                            <!-- Hidden Inputs for Selected Options -->
+                            <template x-for="id in selectedOptions" :key="id">
+                                <input class="jbt_id" type="hidden" name="jabatan_id[]" :value="id">
+                            </template>
                         </div>
-
-                        <!-- Hidden Inputs for Selected Options -->
-                        <template x-for="id in selectedOptions" :key="id">
-                            <input type="hidden" name="jabatan_id[]" :value="id">
-                        </template>
-
-                        <!-- Debugging: Display selectedOptions -->
-                        <div x-text="JSON.stringify(selectedOptions)" class="text"></div>
-
+                        
                         <!-- Submit Button -->
                         <div class="flex items-center justify-end mt-4">
                             <x-primary-button class="ml-4">
@@ -75,6 +71,7 @@
                 isOpen: false,
                 options: @json($jabatan->map(fn($j) => ['id' => $j->id, 'name' => $j->name_jabatan])),
                 selectedOptions: [],
+                
                 toggle() {
                     this.isOpen = !this.isOpen;
                 },
@@ -82,6 +79,7 @@
                     this.isOpen = false;
                 },
                 select(id) {
+                    
                     const index = this.selectedOptions.indexOf(id);
                     if (index === -1) {
                         this.selectedOptions.push(id);
@@ -101,5 +99,6 @@
                 }
             };
         }
+        
     </script>
 </x-app-layout>
