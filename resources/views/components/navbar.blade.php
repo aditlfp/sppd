@@ -18,15 +18,16 @@
         class="flex flex-col gap-2 items-center justify-center h-full transition-all transform -translate-x-10 duration-1000 ease-in-out opacity-0">
         <a href="{{ route('dashboard') }}" class="text-white font-bold text-xl">Dashboard</a>
         <a href="{{ route('main_sppds.index') }}" class="text-white font-bold text-xl">SPPD</a>
-        <a href="{{ route('eslons.index') }}" class="text-white font-bold text-xl">Eslon</a>
+
+        @if (auth()->user()->role->name == 'admin')
+            <a href="{{ route('eslons.index') }}" class="text-white font-bold text-xl">Eslon</a>
+        @endif
         <form method="POST" action="{{ route('logout') }}" class="mt-3">
             @csrf
             <button type="submit" class="text-white font-bold text-xl">Logout</button>
         </form>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-    crossorigin="anonymous"></script>
 <script>
     $(document).ready(function() {
         $('#hamburger-button').click(function() {

@@ -12,7 +12,8 @@ class EslonController extends Controller
     public function index()
     {
         $eslons = Eslon::paginate(25);
-        return view('eslons.index', compact('eslons'));
+        $jabatan = Jabatan::all();
+        return view('eslons.index', compact('eslons', 'jabatan'));
     }
 
     public function create()
@@ -26,7 +27,6 @@ class EslonController extends Controller
         try {
             // Attempt to create a new record
             Eslon::create($request->validated());
-
             // Redirect to the index page with a success message
             return redirect()->route('eslons.index')->with('success', 'Eslon created successfully.');
         } catch (\Exception $e) {

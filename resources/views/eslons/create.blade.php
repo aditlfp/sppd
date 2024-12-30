@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('eslons.store') }}" method="POST" x-data="multiSelect()">
+                    <form action="{{ route('eslons.store') }}" method="POST">
                         @csrf
                         <!-- Name Field -->
                         <div class="mb-4">
@@ -18,17 +18,21 @@
                         </div>
 
                         <!-- Multi-Select Dropdown -->
-                        <div class="mb-4">
+                        <div x-data="multiSelect()" class="mb-4">
                             <label for="jabatan_id" class="block text-sm font-medium text-gray-700">Jabatan</label>
                             <div @click="toggle" class="select select-bordered h-auto w-full cursor-pointer mt-1">
-                                <div class="flex justify-between items-center w-auto">
-                                    <span x-text="selectedOptions.length ? selectedOptions.map(id => getOptionName(id)).join(', ') : 'Select options'"></span>
-                                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
+                                <div class="flex flex-wrap items-center w-auto">
+                                    <template x-for="id in selectedOptions" :key="id">
+                                        <span class="badge badge-primary mr-1 mb-1" x-text="getOptionName(id)"></span>
+                                    </template>
+                                    <span x-show="!selectedOptions.length" class="text-gray-500">Select options</span>
                                 </div>
                             </div>
                             <div x-show="isOpen" @click.away="close" class="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                                <div class="flex gap-x-2 p-2">
+                                    <button type="button" @click="selectAll" class="text-blue-500">Select All</button>
+                                    <button type="button" @click="deselectAll" :class="{'text-red-500': selectedOptions.length, 'text-slate-200 cursor-not-allowed': !selectedOptions.length}" :disabled="!selectedOptions.length">Deselect All</button>
+                                </div>
                                 <ul class="max-h-60 overflow-auto">
                                     <template x-for="option in options" :key="option.id">
                                         <li @click="select(option.id)" class="cursor-pointer select-none relative py-2 pl-10 pr-4 hover:bg-gray-100">
@@ -50,7 +54,7 @@
                         </template>
 
                         <!-- Debugging: Display selectedOptions -->
-                        <div x-text="JSON.stringify(selectedOptions)" class="hidden"></div>
+                        <div x-text="JSON.stringify(selectedOptions)" class="text"></div>
 
                         <!-- Submit Button -->
                         <div class="flex items-center justify-end mt-4">
@@ -84,6 +88,12 @@
                     } else {
                         this.selectedOptions.splice(index, 1);
                     }
+                },
+                selectAll() {
+                    this.selectedOptions = this.options.map(option => option.id);
+                },
+                deselectAll() {
+                    this.selectedOptions = [];
                 },
                 getOptionName(id) {
                     const option = this.options.find(opt => opt.id === id);
