@@ -10,16 +10,6 @@
             <div class="hamburger-line transition duration-300 ease-in-out transform"></div>
             <div class="hamburger-line transition duration-300 ease-in-out transform"></div>
         </button>
-        {{-- pc --}}
-        <div class="hidden lg:flex justify-end w-full gap-4">
-            <a href="{{ route('dashboard') }}" class="text-white font-semibold text-lg">Dashboard</a>
-            <a href="{{ route('dashboard') }}" class="text-white font-semibold text-lg">SPPD</a>
-            <a href="{{ route('dashboard') }}" class="text-white font-semibold text-lg">Eslon</a>
-            <form method="POST" action="{{ route('logout') }}" class="">
-                @csrf
-                <button type="submit" class="text-white font-semibold text-lg">Logout</button>
-            </form>
-        </div>
     </div>
 </nav>
 <div id="fullscreen-menu"

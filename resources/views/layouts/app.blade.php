@@ -23,22 +23,37 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100">
-            @include('layouts.navigation')
-
-            <!-- Page Heading -->
-            @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
-
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+        <div class="min-h-screen bg-gray-100 relative">
+            @include('components.navbar')
+            <div class="pt-14 gap-4 lg:flex w-full">
+                <div id="sidebar" class="p-4 hidden lg:flex flex-col gap-2 bg-white w-1/6 drop-shadow-md min-h-screen fixed left-0">
+                    <p class="text-lg font-semibold text-center pb-10">Menu - menu</p>
+                    <a href="{{ route('dashboard') }}" class="font-semibold text-lg {{ Route::is('dashboard') ? 'link' : '' }}">Dashboard</a>
+                    <a href="{{ route('main_sppds.index') }}" class=" font-semibold text-lg {{ Route::is('main_sppds.index') ? 'link' : '' }}">SPPD</a>
+                    <a href="{{ route('eslons.index') }}" class=" font-semibold text-lg {{ Route::is('eslons.index') ? 'link' : '' }}">Eslon</a>
+                    <a href="{{ route('pocket_moneys.index') }}" class=" font-semibold text-lg {{ Route::is('pocket_moneys.index') ? 'link' : '' }}">Uang Saku</a>
+                    <a href="{{ route('transportations.index') }}" class=" font-semibold text-lg {{ Route::is('transportations.index') ? 'link' : '' }}">Transportasi</a>
+                    <form method="POST" action="{{ route('logout') }}" class="">
+                        @csrf
+                        <button type="submit" class=" font-semibold text-lg">Logout</button>
+                    </form>
+                </div>
+                <div id="right-side" class="lg:w-5/6 w-full lg:ml-[16.666667svw]">
+                    <!-- Page Heading -->
+                    @isset($header)
+                        <header class="bg-white shadow">
+                            <div class="max-w-7xl text-center mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                                {{ $header }}
+                            </div>
+                        </header>
+                    @endisset
+        
+                    <!-- Page Content -->
+                    <main>
+                        {{ $slot }}
+                    </main>
+                </div>
+            </div>
         </div>
     </body>
 </html>
