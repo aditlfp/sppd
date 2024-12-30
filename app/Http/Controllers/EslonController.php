@@ -29,13 +29,15 @@ class EslonController extends Controller
             // Attempt to create a new record
             Eslon::create($request->validated());
             // Redirect to the index page with a success message
-            return redirect()->route('eslons.index')->with('success', 'Eslon created successfully.');
+            flash()->success('Data Hasbeen Saved successfully.');
+            return redirect()->route('eslons.index');
         } catch (\Exception $e) {
             // Log the error message for debugging
             \Log::error('Error creating Eslon: ' . $e->getMessage());
+            flash()->error('Data Cant Be Saved.');
 
             // Redirect back with an error message
-            return redirect()->back()->with('error', 'An error occurred while creating the Eslon.');
+            return redirect()->back();
         }
     }
 
@@ -54,13 +56,14 @@ class EslonController extends Controller
     public function update(EslonRequest $request, Eslon $eslon)
     {
         $eslon->update($request->validated());
-
+        flash()->success('Data has update. Saved !.');
         return redirect()->route('eslons.index');
     }
 
     public function destroy(Eslon $eslon)
     {
         $eslon->delete();
+        flash()->success('Data has deleted. Saved !.');
 
         return redirect()->route('eslons.index');
     }
