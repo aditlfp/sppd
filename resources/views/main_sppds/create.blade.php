@@ -68,6 +68,38 @@
                             @endforelse
                             </select>
                         </div>
+
+                        <div class="mb-4">
+                            <label for="nama_pengikut" class="block text-sm font-medium text-gray-700 label-text">Nama Pengikut</label>
+                            <select name="nama_pengikut" id="nama_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Nama Pengikut</option>
+                            @forelse ($user as $s)
+                                <option value="{{ $s->nama_lengkap }}" data-jb-peng-id="{{ $s->jabatan_id }}"> {{ $s->nama_lengkap }} </option>
+                            @empty
+                                <option selected disabled>- Kosong -</option>
+                            @endforelse
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Jabatan Pengikut</label>
+                            <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut" @readonly(true) class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Eslon</option>
+                            @forelse ($eslon as $s)
+                                @if ($s->jabatan_id != null)
+                                    @foreach ($s->jabatan_id as $item)
+                                        @php
+                                            $itemOK = App\Models\Jabatan::find($item);
+                                        @endphp
+
+                                        <option disabled value="{{ $s->id }}" data-jabatan-peng-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                    @endforeach
+                                @endif
+                            @empty
+                                <option selected disabled>- Kosong -</option>
+                            @endforelse
+                            </select>
+                        </div>
+
                         <div class="mb-4">
                             <label for="maksud_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Maksud Perjalanan Dinas</label>
                             <textarea name="maksud_perjalanan" id="maksud_perjalanan" rows="2" required placeholder="Maksud Perjalanan Dinas..." class="mt-1 block rounded-sm textarea textarea-bordered textarea-sm w-full"></textarea>
@@ -75,16 +107,14 @@
 
                         <div class="mb-4">
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
+                            @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="checkbox" name="alat_angkutan" id="alat_angkutan" class="mt-1 block checkbox rounded-sm" required>
-                                <span>Kendaraan Kantor : 60000</span>
+                                <input type="checkbox" name="alat_angkutan" id="alat_angkutan" class="mt-1 block checkbox rounded-sm" required value="{{ $item->id }}">
+                                <span class="capitalize">{{ $item->jenis }} : Rp. {{ $item->anggaran}}</span>
                             </div>
+                            @empty
 
-                            <div class="flex items-center w-full gap-x-3">
-                                <input type="checkbox" name="alat_angkutan" id="alat_angkutan2" class="mt-1 block checkbox rounded-sm" required>
-                                <span>Kendaraan Umum : 60000</span>
-                            </div>
-
+                            @endforelse
                         </div>
 
                         <div class="mb-4">
@@ -100,7 +130,14 @@
 
                         <div class="mb-4">
                             <label for="tempat_tujuan" class="block text-sm font-medium text-gray-700 required label-text">Tempat Tujuan</label>
-                            <input type="text" name="tempat_tujuan" id="tempat_tujuan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Tempat Tujuan">
+                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                    <option selected disabled>-Pilih Wilayah-</option>
+                                @forelse($regions as $reg)
+                                    <option data-reg-id="{{ $reg->id }}" value="{{ $reg->nama_daerah }}">{{ $reg->name . " - " . $reg->nama_daerah }}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
                         </div>
 
                         <div class="mb-4">
@@ -119,40 +156,11 @@
                                 <input type="date" name="date_time_kembali" id="date_time_kembali" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
                             </div>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="nama_pengikut" class="block text-sm font-medium text-gray-700 label-text">Nama Pengikut</label>
-                            <select name="nama_pengikut" id="nama_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
-                                <option selected disabled>Nama Pengikut</option>
-                            @forelse ($user as $s)
-                                <option value="{{ $s->nama_lengkap }}" data-jabatan-id="{{ $s->jabatan_id }}"> {{ $s->nama_lengkap }} </option>
-                            @empty
-                                <option selected disabled>- Kosong -</option>
-                            @endforelse
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Jabatan Pengikut</label>
-                            <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut" @readonly(true) required class="select select-bordered select-sm w-full text-xs rounded-sm">
-                                <option selected disabled>Pilih Eslon</option>
-                            @forelse ($eslon as $s)
-                                @if ($s->jabatan_id != null)
-                                    @foreach ($s->jabatan_id as $item)
-                                        @php
-                                            $itemOK = App\Models\Jabatan::find($item);
-                                        @endphp
 
-                                        <option disabled value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
-                                    @endforeach
-                                @endif
-                            @empty
-                                <option selected disabled>- Kosong -</option>
-                            @endforelse
-                            </select>
-                        </div>
+
                         <div class="mb-4">
                             <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text">Budget ID</label>
-                            <input type="number" name="budget_id" id="budget_id" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required>
+                           <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Rp. 1.000.000" readonly>
                         </div>
                         <div class="mb-4">
                             <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll</label>
@@ -221,6 +229,85 @@
         </div>
     </div>
     <script>
+
+        $('#nama_pengikut').on('change', function() {
+            var selectPengikut = this.options[this.selectedIndex];
+            var selectedJabatanId = $(selectPengikut).data('jb-peng-id');
+            var jabatanPengikut = $('#jabatan_pengikut')[0]; // Get the DOM element
+
+            for (var i = 0; i < jabatanPengikut.options.length; i++) {
+                var option = jabatanPengikut.options[i];
+                if (option.getAttribute('data-jabatan-peng-id') == selectedJabatanId) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        });
+
+        $('#tempat_tujuan').on('change', function() {
+            var selectTujuan = this.options[this.selectedIndex];
+            var selectedRegionId = $(selectTujuan).data('reg-id'); //Wilayah
+            console.log(selectedRegionId);
+            var total = 0;
+            // FIND ESLON AND REGION ID YANG DIPERINTAH
+            // eslon diperintah == eslon budget && eslon pengikut == eslon budget && region sama
+            var eslonDipe = $('#eslon_id')[0].options;
+            var eslonPeng = $('#jabatan_pengikut')[0].options;
+
+            for(var i = 0; i < eslonPeng.length; i++)
+            {
+                if(eslonPeng[i].selected)
+                {
+                    console.log(eslonPeng[i]);
+
+                    var selectedOption = eslonPeng[i];
+                    var isSelectedEslon = selectedOption.value;
+                    var budgetOptions = {!! json_encode($budget) !!};
+
+                    for(var j = 0; j < budgetOptions.length; j++)
+                    {
+                        var bud = budgetOptions[j];
+                        if(bud.eslon_id == isSelectedEslon && bud.region_id == selectedRegionId)
+                        {
+                            total += bud.anggaran;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            for (var i = 0; i < eslonDipe.length; i++) {
+                if (eslonDipe[i].selected) {
+                    var selectedOption = eslonDipe[i];
+                    var isSelectedEslon = selectedOption.value;
+                    var budgetOptions = {!! json_encode($budget) !!};
+
+                    for (var j = 0; j < budgetOptions.length; j++) {
+                        var bud = budgetOptions[j];
+                        if (bud.eslon_id == isSelectedEslon && bud.region_id == selectedRegionId) {
+                            total += bud.anggaran;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            $('#uang_saku').val(total);
+
+
+            // for (var i = 0; i < regionId.options.length; i++) {
+            //     var option = regionId.options[i];
+            //     if (option.getAttribute('value') == selectedRegionId) {
+            //         option.selected = true;
+            //         break;
+            //     }
+            // }
+        });
+
         document.getElementById('user_id').addEventListener('change', function() {
             var selectedUser = this.options[this.selectedIndex];
             var selectedJabatanId = selectedUser.getAttribute('data-jabatan-id');
@@ -257,6 +344,8 @@
                 }
             }
         });
+
+
 
         var map = L.map('map').setView([51.505, -0.09], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

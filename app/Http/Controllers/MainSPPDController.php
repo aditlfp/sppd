@@ -6,7 +6,11 @@ use App\Http\Requests\MainSppdRequest;
 use App\Models\Budget;
 use App\Models\Eslon;
 use App\Models\MainSPPD;
+use App\Models\PocketMoney;
+use App\Models\Transportation;
 use App\Models\User;
+use App\Models\Region;
+use Symfony\Component\Mailer\Transport;
 
 class MainSPPDController extends Controller
 {
@@ -19,8 +23,10 @@ class MainSPPDController extends Controller
     public function create()
     {
         $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
-        $budget = Budget::all();
+        $budget = PocketMoney::all();
         $eslon = Eslon::get();
+        $transportations = Transportation::all();
+        $regions = Region::all();
         // foreach ($eslon as $key => $value) {
         //     $jabatanIds = json_decode($value->jabatan_id, true); // Decode JSON array
         //     if (is_array($jabatanIds)) {
@@ -31,7 +37,7 @@ class MainSPPDController extends Controller
         //         }
         //     }
         // }
-        return view('main_sppds.create', compact('user', 'budget', 'eslon'));
+        return view('main_sppds.create', compact('user', 'budget', 'eslon', 'transportations', 'regions'));
     }
 
     public function store(MainSppdRequest $request)

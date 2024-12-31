@@ -35,6 +35,7 @@
                 <p class="py-4 px-5 text-center">Data Tidak Tersedia</p>
             </div>
             @endforelse
+            <x-btn-create href="{{ route('eslons.create') }}"/>
         </div>
     </div>
 </x-app-layout>
