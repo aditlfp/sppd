@@ -29,7 +29,7 @@ class EslonController extends Controller
             // Attempt to create a new record
             Eslon::create($request->validated());
             // Redirect to the index page with a success message
-            flash()->success('Data Hasbeen Saved successfully.');
+            flash()->success('Data Has been Saved successfully.');
             return redirect()->route('eslons.index');
         } catch (\Exception $e) {
             // Log the error message for debugging
