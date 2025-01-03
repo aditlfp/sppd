@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="pb-12 pt-3">
+    <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
@@ -51,7 +51,7 @@
                         {{-- eslon --}}
                         <div class="mb-4">
                             <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eslon</label>
-                            <select name="eslon_id" @readonly(true) disabled id="eslon_id" @readonly(true) required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                            <select name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Eslon</option>
                             @forelse ($eslon as $s)
                                 @if ($s->jabatan_id != null)
@@ -60,7 +60,7 @@
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp
 
-                                        <option disabled value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        <option value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
                                     @endforeach
                                 @endif
                             @empty
@@ -109,7 +109,7 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="checkbox" name="alat_angkutan" id="alat_angkutan" class="mt-1 block checkbox rounded-sm" required value="{{ $item->id }}">
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio rounded-sm" value="{{ $item->id }}">
                                 <span class="capitalize">{{ $item->jenis }} : Rp. {{ $item->anggaran}}</span>
                             </div>
                             @empty
@@ -142,14 +142,15 @@
 
                         <div class="mb-4">
                             <label for="lama_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Lama Perjalanan</label>
-                            <div class="flex w-full gap-x-3 items-center">
-                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-full" required><span>Hari</span>
+                            <div class="flex w-full items-center">
+                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-full" required>
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-12" required value="Hari">
                             </div>
                         </div>
 
 
                         <div class="mb-4">
-                            <label for="date_time_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Date Time Berangkat - Kembali</label>
+                            <label for="date_time_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Tanggal Berangkat - Kembali</label>
                             <div class="flex w-full items-center gap-x-1">
                                 <input type="date" name="date_time_berangkat" id="date_time_berangkat" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
                                 <span class="w-[5%] text-center">-</span>
@@ -159,68 +160,40 @@
 
 
                         <div class="mb-4">
-                            <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text">Budget ID</label>
-                           <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Rp. 1.000.000" readonly>
+                            <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text required">Uang Saku</label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
+                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Rp. 1.000.000" readonly>
+                            </div>
                         </div>
                         <div class="mb-4">
-                            <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll</label>
-                            <input type="checkbox" name="e_toll" id="e_toll" class="mt-1 block checkbox rounded-sm">
+                            <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll <span class="text-red-500 italic">( opsional )</span></label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
+                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="1.000.000">
+                            </div>
                         </div>
                         <div class="mb-4">
-                            <label for="makan" class="block text-sm font-medium text-gray-700 label-text">Makan</label>
-                            <input type="checkbox" name="makan" id="makan" class="mt-1 block checkbox rounded-sm">
+                            <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
+                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="1.000.000">
+                            </div>
                         </div>
                         <div class="mb-4">
-                            <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Lain-lain Desc</label>
-                            <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm"></textarea>
+                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
+                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block input-sm w-full input input-bordered rounded-sm">
+                            </div>
+
+                            <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
+                            <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
                         </div>
-                        <div class="mb-4">
-                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain</label>
-                            <input type="checkbox" name="lain_lain" id="lain_lain" class="mt-1 block checkbox rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="date_time_arrive" class="block text-sm font-medium text-gray-700 label-text">Date Time Arrive</label>
-                            <input type="datetime-local" name="date_time_arrive" id="date_time_arrive" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="arrive_at" class="block text-sm font-medium text-gray-700 label-text">Arrive At</label>
-                            <input type="text" name="arrive_at" id="arrive_at" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="foto_arrive" class="block text-sm font-medium text-gray-700 label-text">Foto Arrive</label>
-                            <input type="file" name="foto_arrive" id="foto_arrive" class="mt-1 block w-full file-input file-input-bordered">
-                        </div>
-                        <div class="mb-4">
-                            <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Continue</label>
-                            <input type="checkbox" name="continue" id="continue" class="mt-1 block checkbox rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Date Time Destination</label>
-                            <input type="datetime-local" name="date_time_destination" id="date_time_destination" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Destination</label>
-                            <input type="file" name="foto_destination" id="foto_destination" class="mt-1 block w-full file-input file-input-bordered">
-                        </div>
-                        <div class="mb-4">
-                            <label for="nama_diperintah" class="block text-sm font-medium text-gray-700 label-text">Nama Diperintah</label>
-                            <input type="text" name="nama_diperintah" id="nama_diperintah" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="date_time" class="block text-sm font-medium text-gray-700 label-text">Date Time</label>
-                            <input type="datetime-local" name="date_time" id="date_time" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="verify" class="block text-sm font-medium text-gray-700 label-text">Verify</label>
-                            <input type="checkbox" name="verify" id="verify" class="mt-1 block checkbox rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="note" class="block text-sm font-medium text-gray-700 label-text">Note</label>
-                            <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm"></textarea>
-                        </div>
-                        <div class="flex items-center justify-end mt-4">
-                            <x-primary-button class="ml-4">
-                                {{ __('Submit') }}
+
+                        <div class="flex items-center justify-end w-full mt-4">
+                            <x-primary-button class="w-full">
+                                {{ __('Request Verification') }}
                             </x-primary-button>
                         </div>
                     </form>
@@ -228,6 +201,24 @@
             </div>
         </div>
     </div>
+
+    @if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
     <script>
 
         $('#nama_pengikut').on('change', function() {
@@ -258,7 +249,7 @@
             {
                 if(eslonPeng[i].selected)
                 {
-                    console.log(eslonPeng[i]);
+                    // console.log(eslonPeng[i]);
 
                     var selectedOption = eslonPeng[i];
                     var isSelectedEslon = selectedOption.value;

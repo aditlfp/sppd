@@ -19,9 +19,12 @@ class MainSPPD extends Model
         'maps_berangkat',
         'tempat_tujuan',
         'maps_tujuan',
+        'lama_perjalanan',
+        'date_time_berangkat',
+        'date_time_kembali',
         'nama_pengikut',
         'jabatan_pengikut',
-        'budget_id',
+        'uang_saku',
         'e_toll',
         'makan',
         'lain_lain_desc',
@@ -48,8 +51,4 @@ class MainSPPD extends Model
         return $this->belongsTo(Eslon::class);
     }
 
-    public function budget()
-    {
-        return $this->belongsTo(Budget::class);
-    }
 }

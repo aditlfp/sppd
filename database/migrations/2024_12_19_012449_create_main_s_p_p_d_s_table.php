@@ -31,7 +31,7 @@ return new class extends Migration
 
             $table->string('nama_pengikut')->nullable();
             $table->string('jabatan_pengikut')->nullable();
-            $table->foreignIdFor(Budget::class);
+            $table->string('uang_saku');
             $table->integer("e_toll")->default(0);
             $table->integer("makan")->default(0);
             $table->string("lain_lain_desc")->nullable();
@@ -46,8 +46,8 @@ return new class extends Migration
             $table->string("foto_destination")->nullable();
 
             //Tiba kembali
-            $table->string("nama_diperintah");
-            $table->string("date_time");
+            $table->string("nama_diperintah")->nullable();
+            $table->string("date_time")->nullable();
 
             $table->boolean("verify")->default(0);
             $table->text("note")->nullable();

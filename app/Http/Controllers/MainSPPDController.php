@@ -42,9 +42,23 @@ class MainSPPDController extends Controller
 
     public function store(MainSppdRequest $request)
     {
-        MainSPPD::create($request->validated());
+        try {
+            MainSPPD::create($request->validated());
 
-        return redirect()->route('main_sppds.index');
+            // Redirect ke halaman sukses dengan notifikasi
+            return redirect()->route('main_sppds.index')
+                ->with('success', 'Data berhasil disimpan.');
+        } catch (\Exception $e) {
+            // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
+            dd($e);
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
+        }
+    }
+
+    public function storeBottom(MainSPPD $mainSppd)
+    {
+        return view('main_sppds.next_page', compact('mainSppd'));
     }
 
     public function show(MainSPPD $mainSppd)

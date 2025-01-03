@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['admin'])->group(function () {
     Route::resource('main_sppds', MainSPPDController::class);
+    Route::get('main_sppds/{main_sppd}/store-bottom', [MainSPPDController::class, 'storeBottom'])->name('main_sppds.store-bottom');
+
     Route::resource('eslons', EslonController::class);
     Route::resource('regions', RegionController::class);
     Route::resource('pocket_moneys', PocketMoneyController::class);
