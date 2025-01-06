@@ -7,7 +7,7 @@ use Symfony\Component\Process\Process;
 function sendMessage(string $phoneNumber, string $message, ?string $imagePath = null)
 {
     // Path to the Node.js script
-    $scriptPath = base_path('node_server\server.js');
+    $scriptPath = base_path('node_server\server.cjs');
 
     $message = base64_encode($message);
     $command = escapeshellcmd("node {$scriptPath} {$phoneNumber} " . escapeshellarg($message));

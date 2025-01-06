@@ -1,4 +1,4 @@
-const { Client, LocalAuth, MessageMedia } = require("whatsapp-web.js");
+const { Client, LocalAuth, MessageMedia, Buttons } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const process = require("process");
 const puppeteer = require("puppeteer");
@@ -83,17 +83,19 @@ const sendMessage = async () => {
     for (const numbers of phoneNumberArray) {
         const number = numbers.includes("@c.us") ? numbers : `${numbers}@c.us`;
         try {
-            const response = await client.sendMessage(number, message);
-            console.log("Message sent successfully", response);
             if (imagePath) {
                 const media = MessageMedia.fromFilePath(imagePath);
                 const mediaResponse = await client.sendMessage(number, media, {
                     caption: message,
+                    linkPreview: true,
                 });
                 console.log(
                     `Image sent successfully to ${phoneNumber}`,
                     mediaResponse
                 );
+            } else {
+                const response = await client.sendMessage(number, message);
+                console.log("Message sent successfully", response);
             }
         } catch (error) {
             console.error("Failed to send message:", error);

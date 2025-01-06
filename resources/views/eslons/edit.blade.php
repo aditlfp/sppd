@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Eslon') }}
+            {{ __('Edit ').$eslon->name }}
         </h2>
     </x-slot>
 
@@ -9,12 +9,13 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('eslons.store') }}" method="POST">
+                    <form action="{{ route('eslons.update', $eslon->id) }}" method="POST">
+                        @method("PATCH")
                         @csrf
                         <!-- Name Field -->
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                            <input type="text" name="name" id="name" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required placeholder="Masukkan nama eselon (Eselon I, Eselon II, dst)">
+                            <input type="text" name="name" id="name" value="{{ $eslon->name }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required placeholder="Masukkan nama eselon (Eselon I, Eselon II, dst)">
                         </div>
 
                         <!-- Multi-Select Dropdown -->
@@ -54,6 +55,7 @@
                         
                         <!-- Submit Button -->
                         <div class="flex items-center justify-end mt-4">
+                            <a href="{{ route('eslons.index') }}" class="btn btn-sm btn-error">Kembali</a>
                             <x-primary-button class="ml-4">
                                 {{ __('Submit') }}
                             </x-primary-button>
@@ -70,7 +72,7 @@
             return {
                 isOpen: false,
                 options: @json($jabatan->map(fn($j) => ['id' => $j->id, 'name' => $j->name_jabatan])),
-                selectedOptions: [],
+                selectedOptions: @json($eslon->jabatan_id).map(id => parseInt(id, 10)),
                 
                 toggle() {
                     this.isOpen = !this.isOpen;
@@ -95,6 +97,7 @@
                 },
                 getOptionName(id) {
                     const option = this.options.find(opt => opt.id === id);
+                    // console.log(option, this.options, parseInt(id, 10));
                     return option ? option.name : '';
                 }
             };

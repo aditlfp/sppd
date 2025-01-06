@@ -17,7 +17,7 @@
                                 <option selected disabled>Yang Memberi Perintah</option>
                                 @forelse ($user as $s)
                                     @if ($s->jabatan_id == 3 || $s->jabatan_id == 24)
-                                        <option value={{ $s->nama_lengkap }}> {{ $s->nama_lengkap }} </option>
+                                        <option value="{{ $s->nama_lengkap }}"> {{ $s->nama_lengkap }} </option>
                                     @endif
                                 @empty
                                     <option selected disabled>- Kosong -</option>

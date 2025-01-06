@@ -34,7 +34,7 @@ class EslonController extends Controller
         } catch (\Exception $e) {
             // Log the error message for debugging
             \Log::error('Error creating Eslon: ' . $e->getMessage());
-            flash()->error('Data Cant Be Saved.');
+            flash()->error("Data Can't Be Saved.");
 
             // Redirect back with an error message
             return redirect()->back();
