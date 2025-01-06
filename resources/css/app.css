@@ -10,6 +10,9 @@
 #map {
     height: 180px;
 }
+#map2 {
+    height: 180px;
+}
 
 .fl-wrapper {
     z-index: 1010 !important; /* Set the desired z-index value */

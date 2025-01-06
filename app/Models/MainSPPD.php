@@ -18,7 +18,6 @@ class MainSPPD extends Model
         'tempat_berangkat',
         'maps_berangkat',
         'tempat_tujuan',
-        'maps_tujuan',
         'lama_perjalanan',
         'date_time_berangkat',
         'date_time_kembali',
@@ -38,7 +37,9 @@ class MainSPPD extends Model
         'nama_diperintah',
         'date_time',
         'verify',
-        'note'
+        'note',
+        'maps_tiba',
+        'maps_tujuan'
     ];
 
     public function user()

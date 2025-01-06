@@ -8,6 +8,13 @@
     <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            @if ($errors->any())
+                <div class="m-4 mx-8 flex flex-col gap-y-2">
+                        @foreach ($errors->all() as $error)
+                            <span class="text-red-500 text-sm italic">{{ $error }} !</span>
+                        @endforeach
+                </div>
+            @endif
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control">
                         @csrf
@@ -17,7 +24,7 @@
                                 <option selected disabled>Yang Memberi Perintah</option>
                                 @forelse ($user as $s)
                                     @if ($s->jabatan_id == 3 || $s->jabatan_id == 24)
-                                        <option value={{ $s->nama_lengkap }}> {{ $s->nama_lengkap }} </option>
+                                        <option value="{{ $s->nama_lengkap }}"> {{ $s->nama_lengkap }} </option>
                                     @endif
                                 @empty
                                     <option selected disabled>- Kosong -</option>
@@ -201,22 +208,6 @@
             </div>
         </div>
     </div>
-
-    @if (session('error'))
-    <div class="alert alert-danger">
-        {{ session('error') }}
-    </div>
-@endif
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 
 
     <script>

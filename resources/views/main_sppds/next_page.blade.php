@@ -8,66 +8,84 @@
     <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            @if ($errors->any())
+                <div class="m-4 mx-8 flex flex-col gap-y-2">
+                        @foreach ($errors->all() as $error)
+                            <span class="text-red-500 text-sm italic">{{ $error }} !</span>
+                        @endforeach
+                </div>
+            @endif
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control" enctype="multipart/form-data">
+                    <form action="{{ route('main_sppds.update', $mainSppd->id) }}" method="POST" class="form-control" enctype="multipart/form-data">
                         @csrf
-                        <div class="mb-4">
-                            <label for="date_time_arrive" class="block text-sm font-medium text-gray-700 label-text">Date Time Arrive</label>
-                            <input type="datetime-local" name="date_time_arrive" id="date_time_arrive" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="arrive_at" class="block text-sm font-medium text-gray-700 label-text">Arrive At</label>
-                            <input type="text" name="arrive_at" id="arrive_at" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4" x-data="filePreview()">
-                            <label for="foto_arrive" class="block text-sm font-medium text-gray-700 label-text">Foto Arrive</label>
-                            <input type="file" name="foto_arrive" id="foto_arrive" class="mt-1 block w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview">
-
-                            <!-- Preview Section -->
-                            <template x-if="imageUrl">
-                                <div class="mt-2">
-                                    <img :src="imageUrl" alt="Image Preview" class="max-w-full h-auto rounded-sm">
+                        @method('PUT')
+                        <div class="border border-gray-200 p-4">
+                            <div class="flex w-full gap-x-2 sm:gap-x-4">
+                                <div class="mb-4 w-full">
+                                    <label for="arrive_at" class="block text-sm font-medium required text-gray-700 label-text">Tiba di</label>
+                                    <input type="text" name="arrive_at" id="arrive_at" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Madiun" required>
                                 </div>
-                            </template>
-                        </div>
-                        <div class="mb-4">
-                            <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Continue</label>
-                            <input type="checkbox" name="continue" id="continue" class="mt-1 block checkbox rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Date Time Destination</label>
-                            <input type="datetime-local" name="date_time_destination" id="date_time_destination" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4" x-data="filePreview2()">
-                            <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Destination</label>
-                            <input type="file" name="foto_destination" id="foto_destination" class="mt-1 block w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview2">
-
-                            <!-- Preview Section -->
-                            <template x-if="imageUrl2">
-                                <div class="mt-2">
-                                    <img :src="imageUrl2" alt="Image Preview" class="max-w-full h-auto rounded-sm">
+                                <div class="mb-4 w-full">
+                                    <label for="date_time_arrive" class="block text-sm font-medium required text-gray-700 label-text">Pada Tanggal</label>
+                                    <input type="text" readonly name="date_time_arrive" id="localDateTime" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
                                 </div>
-                            </template>
+                            </div>
+                            <div class="mb-4" x-data="filePreview()">
+                                <label for="foto_arrive" class="block text-sm font-medium text-gray-700 label-text required">Foto Kedatangan</label>
+                                <input type="file" required name="foto_arrive" id="foto_arrive" class="mt-1 block w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview">
+
+                                <!-- Preview Section -->
+                                <template x-if="imageUrl">
+                                    <div class="mt-2">
+                                        <img :src="imageUrl" alt="Image Preview" class="max-w-full h-auto rounded-sm">
+                                    </div>
+                                </template>
+                            </div>
+                            <div id="map"></div>
+                            <input type="text" name="maps_tiba" id="maps_tiba" hidden readonly>
                         </div>
-                        <div class="mb-4">
-                            <label for="nama_diperintah" class="block text-sm font-medium text-gray-700 label-text">Nama Diperintah</label>
-                            <input type="text" name="nama_diperintah" id="nama_diperintah" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="date_time" class="block text-sm font-medium text-gray-700 label-text">Date Time</label>
-                            <input type="datetime-local" name="date_time" id="date_time" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
-                        </div>
-                        <div class="mb-4">
-                            <label for="verify" class="block text-sm font-medium text-gray-700 label-text">Verify</label>
-                            <input type="checkbox" name="verify" id="verify" class="mt-1 block checkbox rounded-sm">
+                        <div class="border border-gray-200 p-4 mt-4">
+                            <div class="mb-4">
+                                <label for="berangkat_dari" class="block text-sm font-medium text-gray-700 label-text">Berangkat Dari <span class="text-red-500">(Tujuan)</span></label>
+                                <input type="text" name="berangkat_dari" id="berangkat_dari" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
+                            </div>
+                            <div class="mb-4 flex flex-col gap-y-2">
+                                <div class="flex items-center gap-x-2">
+                                    <input type="radio" name="continue" value="1" class="mt-1 block radio rounded-sm">
+                                    <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Lanjut</label>
+                                </div>
+                                <div class="flex items-center gap-x-2">
+                                    <input type="radio" name="continue" value="0" class="mt-1 block radio rounded-sm">
+                                    <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Kembali Ke Kantor</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Pada Tanggal</label>
+                                <input type="datetime-local" name="date_time_destination" id="date_time_destination" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
+                            </div>
+                            <div class="mb-4" x-data="filePreview2()">
+                                <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Tujuan</label>
+                                <input type="file" name="foto_destination" id="foto_destination" class="mt-1 block w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview2">
+
+                                <!-- Preview Section -->
+                                <template x-if="imageUrl2">
+                                    <div class="mt-2">
+                                        <img :src="imageUrl2" alt="Image Preview" class="max-w-full h-auto rounded-sm">
+                                    </div>
+                                </template>
+                            </div>
+                            <div id="map2"></div>
+                            <input type="text" name="maps_tujuan" id="maps_tujuan" hidden readonly>
+
                         </div>
                         <div class="mb-4">
                             <label for="note" class="block text-sm font-medium text-gray-700 label-text">Note</label>
-                            <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm"></textarea>
+                            <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
                         </div>
                         <div class="flex items-center justify-end w-full mt-4">
                             <x-primary-button class="w-full">
-                                {{ __('Request Verification') }}
+                                {{ __('Save') }}
                             </x-primary-button>
                         </div>
                     </form>
@@ -76,21 +94,6 @@
         </div>
     </div>
 
-    @if (session('error'))
-        <div class="alert alert-danger">
-            {{ session('error') }}
-        </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -117,5 +120,63 @@
                 },
             }));
         });
+
+
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        map.locate({setView: true, maxZoom: 16});
+
+        function onLocationFound(e) {
+            L.marker(e.latlng).addTo(map)
+                .bindPopup("You In Here !").openPopup();
+            document.getElementById('maps_tiba').value = e.latlng.lat + ',' + e.latlng.lng;
+        }
+
+        map.on('locationfound', onLocationFound);
+
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map.on('locationerror', onLocationError);
+
+        function updateDateTime() {
+            const now = new Date();
+            const formattedDateTime = now.toLocaleString(); // Adjust this for the desired format
+            document.getElementById("localDateTime").value = formattedDateTime;
+        }
+
+        // Update datetime every second
+        setInterval(updateDateTime, 1000);
+
+        // Initialize the datetime immediately
+        updateDateTime();
+    </script>
+    <script>
+        var map2 = L.map('map2').setView([51.505, -0.09], 13);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map2);
+
+        map2.locate({setView: true, maxZoom: 16});
+
+        function onLocationFound(e) {
+            L.marker(e.latlng).addTo(map2)
+                .bindPopup("You In Here !").openPopup();
+            document.getElementById('maps_tujuan').value = e.latlng.lat + ',' + e.latlng.lng;
+        }
+
+        map2.on('locationfound', onLocationFound);
+
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map2.on('locationerror', onLocationError);
     </script>
 </x-app-layout>
