@@ -30,7 +30,7 @@
                             <td>{{ $sppd->lama_perjalanan . " Hari" }}</td>
                             <td>{{ $sppd->date_time_berangkat }}</td>
                             <td>{{ $sppd->date_time_kembali }}</td>
-                            @if ($sppd->verify == "0")
+                            @if ($sppd->verify == "0" || $sppd->verify == null)
                             <td>
                                 <span class="badge badge-warning text-white font-semibold">Waiting</span>
                             </td>

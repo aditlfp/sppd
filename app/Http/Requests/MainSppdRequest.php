@@ -49,7 +49,9 @@ class MainSppdRequest extends FormRequest
             'nama_diperintah'  => 'nullable',
             'date_time'  => 'nullable',
             'verify'  => 'nullable',
-            'note' => 'nullable'
+            'note' => 'nullable',
+            'maps_tiba' => 'nullable',
+            'maps_tujuan' => 'nullable'
         ];
     }
 
@@ -57,8 +59,8 @@ class MainSppdRequest extends FormRequest
     {
         return [
             'auth_official.required' => 'Field Auth Official wajib diisi.',
-            'user_id.required' => 'Field User ID wajib diisi.',
-            'eslon_id.required' => 'Field Eslon ID wajib diisi.',
+            'user_id.required' => 'Field Diperintah wajib diisi.',
+            'eslon_id.required' => 'Field Eslon wajib diisi.',
             'maksud_perjalanan.required' => 'Field Maksud Perjalanan wajib diisi.',
             'alat_angkutan.required' => 'Field Alat Angkutan wajib diisi.',
             'tempat_berangkat.required' => 'Field Tempat Berangkat wajib diisi.',
@@ -67,7 +69,7 @@ class MainSppdRequest extends FormRequest
             'lama_perjalanan.required' => 'Field Lama Perjalanan wajib diisi.',
             'date_time_berangkat.required' => 'Field Date Time Berangkat wajib diisi.',
             'date_time_kembali.required' => 'Field Date Time Kembali wajib diisi.',
-            'uang_saku.required' => 'Field Budget ID wajib diisi.'
+            'uang_saku.required' => 'Field Uang Saku wajib diisi.'
         ];
     }
 }

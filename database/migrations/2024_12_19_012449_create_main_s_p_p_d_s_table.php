@@ -32,24 +32,27 @@ return new class extends Migration
             $table->string('nama_pengikut')->nullable();
             $table->string('jabatan_pengikut')->nullable();
             $table->string('uang_saku');
-            $table->integer("e_toll")->default(0);
-            $table->integer("makan")->default(0);
+            $table->integer("e_toll")->nullable()->default(0);
+            $table->integer("makan")->nullable()->default(0);
             $table->string("lain_lain_desc")->nullable();
-            $table->integer("lain_lain")->default(0);
+            $table->integer("lain_lain")->nullable()->default(0);
 
             $table->string("date_time_arrive")->nullable();
             $table->string("arrive_at")->nullable();
             $table->string("foto_arrive")->nullable();
+            $table->string('maps_tiba')->nullable();
 
-            $table->boolean("continue")->default(0);
+
+            $table->boolean("continue")->nullable()->default(0);
             $table->string("date_time_destination")->nullable();
             $table->string("foto_destination")->nullable();
+            $table->string('maps_tujuan')->nullable();
 
             //Tiba kembali
             $table->string("nama_diperintah")->nullable();
             $table->string("date_time")->nullable();
 
-            $table->boolean("verify")->default(0);
+            $table->boolean("verify")->nullable()->default(0);
             $table->text("note")->nullable();
             $table->timestamps();
         });

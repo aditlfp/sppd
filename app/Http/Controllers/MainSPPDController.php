@@ -10,7 +10,10 @@ use App\Models\PocketMoney;
 use App\Models\Transportation;
 use App\Models\User;
 use App\Models\Region;
+use Illuminate\Http\Request;
 use Symfony\Component\Mailer\Transport;
+
+use function App\Helpers\UploadImage;
 
 class MainSPPDController extends Controller
 {
@@ -46,13 +49,14 @@ class MainSPPDController extends Controller
             MainSPPD::create($request->validated());
 
             // Redirect ke halaman sukses dengan notifikasi
-            return redirect()->route('main_sppds.index')
-                ->with('success', 'Data berhasil disimpan.');
+            flash()->success('Data berhasil disimpan.');
+            return redirect()->route('main_sppds.index');
         } catch (\Exception $e) {
             // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
-            dd($e);
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
+            // dd($e);
+            flash()->error('Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
+
+            return redirect()->back();
         }
     }
 
@@ -74,17 +78,45 @@ class MainSPPDController extends Controller
         return view('main_sppds.edit', compact('mainSppd', 'user', 'budget', 'eslon'));
     }
 
-    public function update(MainSppdRequest $request, MainSPPD $mainSppd)
+    public function update(Request $request, MainSPPD $mainSppd)
     {
-        $mainSppd->update($request->validated());
+        try {
+            $mainSppddata = [
+                'date_time_arrive' => $request->date_time_arrive,
+                'arrive_at' => $request->arrive_at,
+                'foto_arrive' => $request->foto_arrive,
+                'continue' => $request->continue,
+                'date_time_destination' => $request->date_time_destination,
+                'foto_destination' => $request->foto_destination,
+                'date_time' => $request->date_time,
+                'verify' => $request->verify,
+                'note' => $request->note,
+                'maps_tiba' => $request->maps_tiba,
+                'maps_tujuan' => $request->maps_tujuan
+            ];
+            if ($request->hasFile('foto_arrive')) {
+                $mainSppddata['foto_arrive'] = UploadImage($request, 'foto_arrive');
+            }
 
-        return redirect()->route('main_sppds.index');
+            if ($request->hasFile('foto_destination')) {
+                $mainSppddata['foto_destination'] = UploadImage($request, 'foto_destination');
+            }
+
+            $mainSppd->update($mainSppddata);
+            // Redirect ke halaman sukses dengan notifikasi
+            flash()->success('Data berhasil diubah.');
+            return redirect()->route('main_sppds.index');
+        } catch (\Exception $e) {
+            // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
+            flash()->error('Terjadi kesalahan saat mengubah data. Mohon coba lagi.');
+            return redirect()->back();
+        }
     }
 
     public function destroy(MainSPPD $mainSppd)
     {
         $mainSppd->delete();
-
+        flash()->warning('Data berhasil dihapus.');
         return redirect()->route('main_sppds.index');
     }
 }
