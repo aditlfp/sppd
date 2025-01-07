@@ -117,7 +117,7 @@
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
                                 <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio rounded-sm" value="{{ $item->id }}">
-                                <span class="capitalize">{{ $item->jenis }} : Rp. {{ $item->anggaran}}</span>
+                                <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty
 

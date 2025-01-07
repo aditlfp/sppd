@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Helpers;
-
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
+
 
 function sendMessage(string $phoneNumber, string $message, ?string $imagePath = null)
 {
@@ -68,7 +67,11 @@ function sendMessage(string $phoneNumber, string $message, ?string $imagePath = 
         return $rename;
     }
 
-    function toRupiah($angka)
-    {
+    if (! function_exists('toRupiah')) {
+     function toRupiah($angka)
+     {
         return "Rp.". number_format($angka, 0, '.','.');
+     }
     }
+
+
