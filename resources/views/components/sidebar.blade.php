@@ -1,5 +1,6 @@
 {{-- sidebar --}}
-<div id="sidebar" class="p-4 hidden lg:flex flex-col gap-2 bg-white w-1/6 drop-shadow-md min-h-screen fixed left-0 z-10">
+<div id="sidebar"
+    class="p-4 hidden lg:flex flex-col gap-2 bg-white w-1/6 drop-shadow-md min-h-screen fixed left-0 z-10">
     <ul class="menu rounded-sm text-base">
         <li class=" font-semibold text-center pb-10">Menu SPPD </li>
         <li>
@@ -12,9 +13,9 @@
                 </svg> Dashboard</a>
         </li>
         <li>
-            <details {{ Route::is('main_sppds.index') || Route::is('main_sppds.create') ? 'open' : '' }}>
+            <details {{ Route::is('main_sppds.*') ? 'open' : '' }}>
                 <summary
-                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('main_sppds.index') || Route::is('main_sppds.create') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('main_sppds.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                             <path
@@ -35,9 +36,9 @@
             </details>
         </li>
         <li>
-            <details {{ Route::is('eslons.index') || Route::is('eslons.create') ? 'open' : '' }}>
+            <details {{ Route::is('eslons.*') ? 'open' : '' }}>
                 <summary
-                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('eslons.index') || Route::is('eslons.create') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('eslons.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                             <path
@@ -58,9 +59,9 @@
             </details>
         </li>
         <li>
-            <details {{ Route::is('pocket_moneys.index') || Route::is('pocket_moneys.create') ? 'open' : '' }}>
+            <details {{ Route::is('pocket_moneys.*') ? 'open' : '' }}>
                 <summary
-                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('pocket_moneys.index') || Route::is('pocket_moneys.create') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('pocket_moneys.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                             <path
@@ -73,17 +74,19 @@
                 <ul>
                     <li>
                         <a href="{{ route('pocket_moneys.index') }}"
-                            class=" font-medium  {{ Route::is('pocket_moneys.index') ? 'link' : '' }}">Data Uang Saku</a>
+                            class=" font-medium  {{ Route::is('pocket_moneys.index') ? 'link' : '' }}">Data Uang
+                            Saku</a>
                         <a href="{{ route('pocket_moneys.create') }}"
-                            class=" font-medium  {{ Route::is('pocket_moneys.create') ? 'link' : '' }}">Tambah Uang Saku</a>
+                            class=" font-medium  {{ Route::is('pocket_moneys.create') ? 'link' : '' }}">Tambah Uang
+                            Saku</a>
                     </li>
                 </ul>
             </details>
         </li>
         <li>
-            <details {{ Route::is('regions.index') || Route::is('regions.create') ? 'open' : '' }}>
+            <details {{ Route::is('regions.*') ? 'open' : '' }}>
                 <summary
-                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('regions.index') || Route::is('regions.create') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('regions.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                             <path
@@ -104,9 +107,9 @@
             </details>
         </li>
         <li>
-            <details {{ Route::is('transportations.index') || Route::is('transportations.create') ? 'open' : '' }}>
+            <details {{ Route::is('transportations.*') ? 'open' : '' }}>
                 <summary
-                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('transportations.index') || Route::is('transportations.create') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                    class="font-medium flex items-center justify-between gap-2 {{ Route::is('transportations.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                     <span class="flex items-center gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor">
                             <path
@@ -119,9 +122,11 @@
                 <ul>
                     <li>
                         <a href="{{ route('transportations.index') }}"
-                            class=" font-medium  {{ Route::is('transportations.index') ? 'link' : '' }}">Data Transportasi</a>
+                            class=" font-medium  {{ Route::is('transportations.index') ? 'link' : '' }}">Data
+                            Transportasi</a>
                         <a href="{{ route('transportations.create') }}"
-                            class=" font-medium  {{ Route::is('transportations.create') ? 'link' : '' }}">Tambah Transportasi</a>
+                            class=" font-medium  {{ Route::is('transportations.create') ? 'link' : '' }}">Tambah
+                            Transportasi</a>
                     </li>
                 </ul>
             </details>

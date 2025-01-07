@@ -49,23 +49,23 @@ function sendMessage(string $phoneNumber, string $message, ?string $imagePath = 
 }
 
 
-    function UploadImage($request, $NameFile)
-    {
-        $min = 1;
-        $max = 9000;
-        // Create an array of all possible numbers
-        $numbers = range($min, $max);
-        // Shuffle the array to randomize the order
-        shuffle($numbers);
-        // Pick a unique random number
-        $randomNumber = array_pop($numbers);
-        $file = $request->file($NameFile);
-        $extensions = $file->getClientOriginalExtension();
-        $rename = 'data' . $randomNumber . '.' . $extensions;
-        $file->storeAs('images', $rename, 'public');
+function UploadImage($request, $NameFile)
+{
+    $min = 1;
+    $max = 9000;
+    // Create an array of all possible numbers
+    $numbers = range($min, $max);
+    // Shuffle the array to randomize the order
+    shuffle($numbers);
+    // Pick a unique random number
+    $randomNumber = array_pop($numbers);
+    $file = $request->file($NameFile);
+    $extensions = $file->getClientOriginalExtension();
+    $rename = 'data' . $randomNumber . '.' . $extensions;
+    $file->storeAs('images', $rename, 'public');
 
-        return $rename;
-    }
+    return $rename;
+}
 
     if (! function_exists('toRupiah')) {
      function toRupiah($angka)
