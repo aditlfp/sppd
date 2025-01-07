@@ -6,6 +6,7 @@ use App\Http\Requests\TransportationRequest;
 use App\Models\Transportation;
 use Illuminate\Http\Request;
 
+
 class TransportationController extends Controller
 {
     public function index()
