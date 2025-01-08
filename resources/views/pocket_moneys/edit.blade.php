@@ -14,12 +14,12 @@
                         @csrf
                         <div class="mb-4">
                             <label for="anggaran" class="block text-sm font-medium text-gray-700 required">Anggaran Uang Saku</label>
-                            <input type="text" name="anggaran" id="anggaran" value="{{ $pocketMoney->anggaran }}" class="mt-1 block w-full input input-sm input-bordered" required placeholder="Rp. 1.000.000">
+                            <input type="text" name="anggaran" id="anggaran" value="{{ $pocketMoney->anggaran }}" class="mt-1 block w-full input input-sm input-bordered rounded-sm" required placeholder="Rp. 1.000.000">
                         </div>
                         <div class="flex justify-between items-center gap-3">
                             <div class="mb-4 w-full">
                                 <label for="eslon_id" class="block text-sm font-medium text-gray-700 required">Eselon ID</label>
-                                <select name="eslon_id" id="eslon_id" class="w-full select select-sm select-bordered text-xs">
+                                <select name="eslon_id" id="eslon_id" class="w-full select select-sm select-bordered text-xs rounded-sm">
                                     <option disabled selected>-Pilih Eselons-</option>
                                     @foreach ($eslons as $eslon)
                                         <option {{$pocketMoney->eslon_id == $eslon->id ? 'selected' : '' }} value="{{ $eslon->id }}">{{ $eslon->name }}</option>
@@ -29,7 +29,7 @@
                             <p>-</p>
                             <div class="mb-4 w-full">
                                 <label for="region_id" class="block text-sm font-medium text-gray-700 required">Region ID</label>
-                                <select name="region_id" id="region_id" class="w-full select select-sm select-bordered text-xs">
+                                <select name="region_id" id="region_id" class="w-full select select-sm select-bordered text-xs rounded-sm">
                                     <option disabled selected>-Pilih Wilayah-</option>
                                     @foreach ($regions as $region)
                                         <option {{$pocketMoney->region_id == $region->id ? 'selected' : '' }} value="{{ $region->id }}">{{ $region->name . " - " . $region->nama_daerah }}</option>

@@ -15,13 +15,13 @@
                         <!-- Name Field -->
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                            <input type="text" name="name" id="name" value="{{ $eslon->name }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required placeholder="Masukkan nama eselon (Eselon I, Eselon II, dst)">
+                            <input type="text" name="name" id="name" value="{{ $eslon->name }}" class="mt-1 block w-full border-gray-300 rounded-sm shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required placeholder="Masukkan nama eselon (Eselon I, Eselon II, dst)">
                         </div>
 
                         <!-- Multi-Select Dropdown -->
                         <div x-data="multiSelect()" class="mb-4">
                             <label for="jabatan_id" class="block text-sm font-medium text-gray-700">Jabatan</label>
-                            <div @click="toggle" class="select select-bordered h-auto w-full cursor-pointer mt-1">
+                            <div @click="toggle" class="select select-bordered rounded-sm h-auto w-full cursor-pointer mt-1">
                                 <div class="flex flex-wrap items-center w-auto">
                                     <template x-for="id in selectedOptions" :key="id">
                                         <span class="badge badge-primary mr-1 mb-1" x-text="getOptionName(id)"></span>
@@ -29,7 +29,7 @@
                                     <span x-show="!selectedOptions.length" class="text-gray-500">Pilih jabatan</span>
                                 </div>
                             </div>
-                            <div x-show="isOpen" @click.away="close" class="absolute mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                            <div x-show="isOpen" @click.away="close" class="absolute mt-1 lg:w-[75.1vw] w-[87.1vw] bg-white border border-gray-300 rounded-sm shadow-lg z-10 ">
                                 <div class="flex gap-x-2 p-2">
                                     <button type="button" @click="selectAll" class="text-blue-500">Select All</button>
                                     <button type="button" @click="deselectAll" :class="{'text-red-500': selectedOptions.length, 'text-slate-200 cursor-not-allowed': !selectedOptions.length}" :disabled="!selectedOptions.length">Deselect All</button>
