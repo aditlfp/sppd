@@ -10,6 +10,7 @@ class MainSPPD extends Model
     /** @use HasFactory<\Database\Factories\MainSPPDFactory> */
     use HasFactory;
     protected $fillable = [
+        'code_sppd',
         'auth_official',
         'user_id',
         'eslon_id',

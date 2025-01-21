@@ -27,7 +27,7 @@
                                 <td>{{ $index+1 }}.</td>
                                 <td>{{ $money->eslon->name }}</td>
                                 <td>{{ $money->region->name }}</td>
-                                <td>Rp. {{ number_format($money->anggaran, 0, '.','.') }}</td>
+                                <td>{{ toRupiah($money->anggaran) }}</td>
                                 <td class="flex gap-2">
                                     {{-- EDIT --}}
                                     <x-btn-edit href="{{ route('pocket_moneys.edit', $money->id) }}" />
@@ -36,9 +36,9 @@
                                 </td>
                             </tr>
                             @empty
-                            
+
                             @endforelse
-                            
+
                         </tbody>
                     </table>
                 </div>

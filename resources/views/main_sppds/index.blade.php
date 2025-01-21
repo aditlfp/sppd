@@ -24,7 +24,14 @@
                         <tbody>
                             <!-- row 1 -->
                         @forelse ($mainSppds as $index => $sppd)
-                        <tr class="hover" onclick="window.location='{{ route('main_sppds.store-bottom', $sppd->id) }}'">
+                        <tr class="hover" @if ($sppd->verify == "1" || $sppd->verify == "2")
+                        onclick="window.location='{{ route('main_sppds.store-bottom', $sppd->id) }}'"
+                        @else
+                        onclick="$.notify('SPPD Belum Diverifikasi!', {
+                            autoHideDelay: 2000,
+                            className: 'error',
+                        })"
+                        @endif >
                             <th>{{ $index + 1 }}</th>
                             <td>{{ $sppd->maksud_perjalanan}}</td>
                             <td>{{ $sppd->lama_perjalanan . " Hari" }}</td>

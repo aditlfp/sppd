@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
+use App\Models\Views;
+use Carbon\Carbon;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +19,16 @@ class AuthenticatedSessionController extends Controller
      */
     public function create(): View
     {
-        // $user = User::all();
-        // dd($user[0]->role->name);
+        // Mendapatkan tanggal hari ini
+        $tanggalHariIni = Carbon::today()->toDateString();
+        try {
+            Views::where('created_at', $tanggalHariIni)->firstOrFail()->increment('viewable');
+        } catch (\Throwable $th) {
+            //throw $th;
+            Views::create([
+                'viewable' => 1
+            ]);
+        }
         return view('auth.login');
     }
 

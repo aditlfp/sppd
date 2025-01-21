@@ -10,10 +10,11 @@ use App\Models\PocketMoney;
 use App\Models\Transportation;
 use App\Models\User;
 use App\Models\Region;
+use App\Models\SPPDBellow;
 use Illuminate\Http\Request;
 use Symfony\Component\Mailer\Transport;
+use Illuminate\Support\Str;
 
-use function App\Helpers\UploadImage;
 
 class MainSPPDController extends Controller
 {
@@ -45,15 +46,20 @@ class MainSPPDController extends Controller
 
     public function store(MainSppdRequest $request)
     {
+        $randomString = Str::random(10);
+        // dd($request->all(), $randomString, $randomString);
         try {
-            MainSPPD::create($request->validated());
+            $validatedData = $request->validated();
+            $validatedData['code_sppd'] = $randomString;
+            SPPDBellow::create(['code_sppd' => $randomString]);
+            MainSPPD::create($validatedData);
 
             // Redirect ke halaman sukses dengan notifikasi
             flash()->success('Data berhasil disimpan.');
             return redirect()->route('main_sppds.index');
         } catch (\Exception $e) {
             // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
-            // dd($e);
+            dd($e);
             flash()->error('Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
 
             return redirect()->back();
@@ -62,7 +68,32 @@ class MainSPPDController extends Controller
 
     public function storeBottom(MainSPPD $mainSppd)
     {
-        return view('main_sppds.next_page', compact('mainSppd'));
+        $beforeLastValue = null;
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
+        if($bellow->count() > 1)
+        {
+            foreach ($bellow as $key => $value) {
+                if ($key === count($bellow) - 2) {
+                    $beforeLastValue = $value;
+                }
+
+                if($value->arrive_at == null)
+                {
+                    if ($beforeLastValue->continue == 1) {
+                        return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
+                    }else{
+                        return redirect()->route('main_sppds.index');
+                    }
+                }
+            }
+        }else{
+            $bellow = $bellow->first();
+            if ($bellow->continue == 1) {
+                return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
+            }else{
+                return redirect()->route('main_sppds.index');
+            }
+        }
     }
 
     public function show(MainSPPD $mainSppd)
@@ -78,7 +109,7 @@ class MainSPPDController extends Controller
         return view('main_sppds.edit', compact('mainSppd', 'user', 'budget', 'eslon'));
     }
 
-    public function update(Request $request, MainSPPD $mainSppd)
+    public function update(Request $request, SPPDBellow $mainSppd)
     {
         try {
             $mainSppddata = [

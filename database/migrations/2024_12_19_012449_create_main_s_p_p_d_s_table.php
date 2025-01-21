@@ -16,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('main_s_p_p_d_s', function (Blueprint $table) {
             $table->id();
+            $table->string('code_sppd');
             $table->string('auth_official'); // Yang memerintah
             $table->foreignIdFor(User::class); // Yang diperintah
             $table->foreignIdFor(Eslon::class); // Jabatan

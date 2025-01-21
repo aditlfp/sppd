@@ -25,7 +25,7 @@
                             <tr>
                                 <td>{{ $index+1 }}.</td>
                                 <td>{{ $trans->jenis }}</td>
-                                <td>Rp. {{ number_format($trans->anggaran, 0, '.','.') }}</td>
+                                <td>{{ toRupiah($trans->anggaran) }}</td>
                                 <td class="flex gap-2">
                                     {{-- EDIT --}}
                                     <x-btn-edit href="{{ route('transportations.edit', $trans->id) }}" />
@@ -34,9 +34,9 @@
                                 </td>
                             </tr>
                             @empty
-                            
+
                             @endforelse
-                            
+
                         </tbody>
                     </table>
                 </div>
