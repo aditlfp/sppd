@@ -13,11 +13,11 @@
                         @csrf
                         <div class="mb-4">
                             <label for="name" class="block text-sm font-medium text-gray-700 required">Wilayah</label>
-                            <input type="text" name="name" id="name" class="mt-1 block w-full input input-bordered input-sm" required placeholder="Masukkan jenis wilayah (Wilayah I, Wilayah II, dst)">
+                            <input type="text" name="name" id="name" class="mt-1 block w-full input input-bordered input-sm rounded-sm" required placeholder="Masukkan jenis wilayah (Wilayah I, Wilayah II, dst)">
                         </div>
                         <div class="mb-4">
                             <label for="nama_daerah" class="block text-sm font-medium text-gray-700 required">Nama Wilayah</label>
-                            <input type="text" name="nama_daerah" id="nama_daerah" class="mt-1 block w-full input input-bordered input-sm" required placeholder="Masukkan nama wilayah yang dijangkau (Madiun dan Surabaya, dst)">
+                            <input type="text" name="nama_daerah" id="nama_daerah" class="mt-1 block w-full input input-bordered input-sm rounded-sm" required placeholder="Masukkan nama wilayah yang dijangkau (Madiun dan Surabaya, dst)">
                         </div>
                         <div class="flex items-center justify-end mt-4">
                             <x-primary-button class="ml-4">

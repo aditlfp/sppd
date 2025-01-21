@@ -14,7 +14,7 @@
                         @csrf
                         <div class="mb-4">
                             <label for="jenis" class="block text-sm font-medium text-gray-700 required">Jenis Kendaraan ( Kantor / Umum )</label>
-                            <select name="jenis" id="jenis" class="mt-1 block w-full select select-bordered select-sm text-xs" required>
+                            <select name="jenis" id="jenis" class="mt-1 block w-full select select-bordered select-sm text-xs rounded-sm" required>
                                 <option disabled selected>-Pilih Jenis Kendaraan-</option>
                                 <option {{ $transportation->jenis == 'kendaraan kantor' ? 'selected' : '' }} value="kendaraan kantor">Kendaraan Kantor</option>
                                 <option {{ $transportation->jenis == 'kendaraan umum' ? 'selected' : '' }} value="kendaraan umum">Kendaraan Umum</option>
@@ -23,14 +23,14 @@
                         {{-- Temporarily Hidden  --}}
                         <div class="mb-4 hidden">
                             <label for="anggaran_driver" class="block text-sm font-medium text-gray-700">Anggaran Driver</label>
-                            <input type="text" name="anggaran_driver" id="anggaran_driver" class="mt-1 block w-full">
+                            <input type="text" name="anggaran_driver" id="anggaran_driver" class="mt-1 block w-full rounded-sm">
                         </div>
                         {{-- Temporarily Hidden  --}}
                         <div class="mb-4">
                             <label for="anggaran" class="block text-sm font-medium text-gray-700 required">Biaya</label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="anggaran" id="anggaran" value="{{ $transportation?->anggaran }}" placeholder="Biaya transportasi..." class="mt-1 block w-full input input-sm input-bordered rounded-l-none" required>
+                                <input type="text" name="anggaran" id="anggaran" value="{{ $transportation?->anggaran }}" placeholder="Biaya transportasi..." class="mt-1 block w-full input input-sm input-bordered rounded-l-none rounded-sm" required>
                             </div>
                         </div>
                         <div class="flex items-center justify-end mt-4">
