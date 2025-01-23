@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class VerifyMiddleware
 {
     /**
      * Handle an incoming request.
@@ -20,13 +20,12 @@ class AdminMiddleware
             abort(403);
             flash('error', 'You are not authorized to access this page');
             return redirect()->route('login');
-
-        }
-        else{
-            if(auth()->user()->role_id !== 2) {
+        }else{
+            $this_auth = auth()->user();
+            if(!in_array($this_auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
                 abort(403);
                 flash('error', 'You are not authorized to access this page');
-                return redirect()->back();
+                return redirect()->route('login');
             }
             return $next($request);
         }

@@ -31,4 +31,8 @@ Route::middleware(['admin'])->group(function () {
     Route::resource('transportations', TransportationController::class);
 });
 
+Route::middleware(['grant_verify'])->group(function () {
+    Route::patch('/verify/{main_sppd}', [MainSPPDController::class, 'verify'])->name('verify.update');
+});
+
 require __DIR__.'/auth.php';

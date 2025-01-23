@@ -29,7 +29,6 @@ return new class extends Migration
             $table->string("nama_diperintah")->nullable();
             $table->string("date_time")->nullable();
 
-            $table->boolean("verify")->nullable()->default(0);
             $table->text("note")->nullable();
             $table->timestamps();
         });

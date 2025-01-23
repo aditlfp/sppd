@@ -29,18 +29,8 @@ class MainSPPD extends Model
         'makan',
         'lain_lain_desc',
         'lain_lain',
-        'date_time_arrive',
-        'arrive_at',
-        'foto_arrive',
-        'continue',
-        'date_time_destination',
-        'foto_destination',
-        'nama_diperintah',
-        'date_time',
         'verify',
         'note',
-        'maps_tiba',
-        'maps_tujuan'
     ];
 
     public function user()

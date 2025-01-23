@@ -50,6 +50,25 @@
                                     <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
                                 </td>
                             @endif
+                            {{-- VERIFY --}}
+                                <td>
+                                    @if ($sppd->verify == "0" || $sppd->verify == null)
+                                        <form action="{{ route('verify.update', $sppd->id)}}" method="post">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="text" name="name_verify" value="verify_departure" hidden>
+                                            <button type="submit" class="btn btn-sm btn-primary">Verifikasi</button>
+                                        </form>
+                                    @elseif ($sppd->verify == "2")
+                                        <form action="{{ route('verify.update', $sppd->id)}}" method="post">
+                                            @csrf
+                                            @method('PATCH')
+                                            <input type="text" name="name_verify" value="verify_arrive" hidden>
+                                            <button type="submit" class="btn btn-sm btn-secondary">Verifikasi</button>
+                                        </form>
+                                    @endif
+                                </td>
+                            {{-- VERIFY --}}
                         </tr>
                         @empty
                             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

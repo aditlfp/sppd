@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\VerifyMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -14,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->appendToGroup('admin', [
             AdminMiddleware::class,
+        ]);
+        $middleware->appendToGroup('grant_verify', [
+         VerifyMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
