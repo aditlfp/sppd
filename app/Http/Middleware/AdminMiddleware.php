@@ -23,7 +23,7 @@ class AdminMiddleware
 
         }
         else{
-            if(auth()->user()->role_id !== 2) {
+            if(Auth::user()->role_id !== 2) {
                 abort(403);
                 flash('error', 'You are not authorized to access this page');
                 return redirect()->back();

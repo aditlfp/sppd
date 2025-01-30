@@ -7,6 +7,7 @@ use App\Http\Controllers\PocketMoneyController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RegionController;
 use App\Http\Controllers\TransportationController;
+use App\Http\Controllers\VerifyController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -19,11 +20,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource('main_sppds', MainSPPDController::class);
+    Route::get('main_sppds/{main_sppd}/store-bottom', [MainSPPDController::class, 'storeBottom'])->name('main_sppds.store-bottom');
 });
 
 Route::middleware(['admin'])->group(function () {
-    Route::resource('main_sppds', MainSPPDController::class);
-    Route::get('main_sppds/{main_sppd}/store-bottom', [MainSPPDController::class, 'storeBottom'])->name('main_sppds.store-bottom');
 
     Route::resource('eslons', EslonController::class);
     Route::resource('regions', RegionController::class);
@@ -32,7 +33,8 @@ Route::middleware(['admin'])->group(function () {
 });
 
 Route::middleware(['grant_verify'])->group(function () {
-    Route::patch('/verify/{main_sppd}', [MainSPPDController::class, 'verify'])->name('verify.update');
+    Route::get('/verify/{main_sppd}', [VerifyController::class, 'viewVerify'])->name('verify_page.index');
+    Route::patch('/verify/{main_sppd}', [VerifyController::class, 'verify'])->name('verifyUpdate');
 });
 
 require __DIR__.'/auth.php';

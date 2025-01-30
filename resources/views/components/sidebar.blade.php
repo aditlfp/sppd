@@ -36,6 +36,7 @@
                     </ul>
                 </details>
             </li>
+            @if (auth()->user()->role_id == 2)
             <li>
                 <details {{ Route::is('eslons.*') ? 'open' : '' }}>
                     <summary
@@ -132,6 +133,8 @@
                     </ul>
                 </details>
             </li>
+            @endif
+
         </div>
         <li class="">
             <form method="POST" action="{{ route('logout') }}" class="bg-red-500 hover:bg-red-600 text-white rounded-sm">

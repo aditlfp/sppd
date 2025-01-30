@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Data SPPD') }} {{ Carbon\Carbon::now()->year }}
+            {{ __('Verifikasi SPPD') }} {{ Carbon\Carbon::now()->year }}
         </h2>
     </x-slot>
 
     <div class="pb-12 pt-3">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white mx-2 sm:mx-0 overflow-hidden shadow-sm rounded-sm">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 overflow-x-auto">
+            <div class="bg-white mx-2 sm:mx-0 overflow-hidden shadow-sm rounded-sm overflow-x-auto">
                 <div class="overflow-x-auto">
-                    <table class="table table-zebra">
+                    <table class="table table-zebra overflow-x-auto">
                         <!-- head -->
                         <thead>
                             <tr>
@@ -24,14 +24,7 @@
                         <tbody>
                             <!-- row 1 -->
                         @forelse ($mainSppds as $index => $sppd)
-                        <tr class="hover" @if ($sppd->verify == "1" || $sppd->verify == "2")
-                        onclick="window.location='{{ route('main_sppds.store-bottom', $sppd->id) }}'"
-                        @else
-                        onclick="$.notify('SPPD Belum Diverifikasi!', {
-                            autoHideDelay: 2000,
-                            className: 'error',
-                        })"
-                        @endif >
+                        <tr>
                             <th>{{ $index + 1 }}</th>
                             <td>{{ $sppd->maksud_perjalanan}}</td>
                             <td>{{ $sppd->lama_perjalanan . " Hari" }}</td>
@@ -42,32 +35,38 @@
                                 <span class="badge badge-warning text-white font-semibold">Waiting</span>
                             </td>
                             @elseif ($sppd->verify == "1")
-                            <td>
-                                <span class="badge badge-success text-white font-semibold">Diverifikasi</span>
-                            </td>
+                                <td>
+                                    @php
+                                        $latestB = $latestBellow[$sppd->code_sppd] ?? null;
+                                    @endphp
+
+                                    @if ($latestB)
+                                        @if ($latestB->continue == 0)
+                                            <span class="badge badge-success text-white font-semibold">Diverifikasi & Selesai</span>
+                                        @elseif ($latestB->continue == 1)
+                                            <span class="badge badge-success text-white font-semibold">Diverifikasi & Dalam Perjalanan</span>
+                                        @endif
+                                    @else
+                                        <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
+                                    @endif
+                                </td>
                             @else
                                 <td>
                                     <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
                                 </td>
                             @endif
                             {{-- VERIFY --}}
-                                {{-- <td>
+                                <td>
                                     @if ($sppd->verify == "0" || $sppd->verify == null)
-                                        <form action="{{ route('verify.update', $sppd->id)}}" method="post">
+                                        <form action="{{ route('verifyUpdate', $sppd->id)}}" method="post">
                                             @csrf
                                             @method('PATCH')
                                             <input type="text" name="name_verify" value="verify_departure" hidden>
-                                            <button type="submit" class="btn btn-sm btn-primary">Verifikasi</button>
+                                            <button type="submit" class="btn sm:btn-sm btn-md btn-primary rounded-sm"><svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM17.4571 9.45711L11 15.9142L6.79289 11.7071L8.20711 10.2929L11 13.0858L16.0429 8.04289L17.4571 9.45711Z"></path></svg>Verifikasi</button>
                                         </form>
-                                    @elseif ($sppd->verify == "2")
-                                        <form action="{{ route('verify.update', $sppd->id)}}" method="post">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="text" name="name_verify" value="verify_arrive" hidden>
-                                            <button type="submit" class="btn btn-sm btn-secondary">Verifikasi</button>
-                                        </form>
+
                                     @endif
-                                </td> --}}
+                                </td>
                             {{-- VERIFY --}}
                         </tr>
                         @empty
