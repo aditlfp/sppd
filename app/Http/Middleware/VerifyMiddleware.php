@@ -21,7 +21,7 @@ class VerifyMiddleware
             flash('error', 'You are not authorized to access this page');
             return redirect()->route('login');
         }else{
-            $this_auth = auth()->user();
+            $this_auth = Auth::user();
             if(!in_array($this_auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
                 abort(403);
                 flash('error', 'You are not authorized to access this page');

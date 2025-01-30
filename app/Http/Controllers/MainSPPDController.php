@@ -20,8 +20,19 @@ class MainSPPDController extends Controller
 {
     public function index()
     {
-        $mainSppds = MainSPPD::paginate(15);
-        return view('main_sppds.index', compact('mainSppds'));
+        $auth = auth()->user();
+        if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
+            $mainSppds = MainSPPD::latest()->paginate(15);
+            $bellow = SPPDBellow::all();
+            $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
+                return $items->sortByDesc('updated_at')->first();
+            });
+            // dd($latestBellow);
+            return view('verify_page.index', compact('mainSppds', 'latestBellow'));
+        }else{
+            $mainSppds = MainSPPD::where('user_id', $auth->id)->latest()->paginate(15);
+            return view('main_sppds.index', compact('mainSppds'));
+        }
     }
 
     public function create()
@@ -109,24 +120,7 @@ class MainSPPDController extends Controller
         return view('main_sppds.edit', compact('mainSppd', 'user', 'budget', 'eslon'));
     }
 
-    // VERIFY SPPD
-    public function verify(Request $request, MainSPPD $mainSppd)
-    {
-        try {
-            if($request->name_verify == 'verify_departure'){
-                $mainSppd->update(['verify' => 2]);
-                flash()->success('Data Telah Di Update Ke Perjalanan.');
-            }elseif($request->name_verify == 'verify_arrive'){
-                $mainSppd->update(['verify' => 1]);
-                flash()->success('Data berhasil diverifikasi.');
-            }
-            return redirect()->route('main_sppds.index');
-        } catch (\Throwable $th) {
-            dd($th);
-            // abort(403);
-            return redirect()->back();
-        }
-    }
+
 
     public function update(Request $request, SPPDBellow $mainSppd)
     {
