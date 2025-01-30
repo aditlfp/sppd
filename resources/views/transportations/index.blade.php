@@ -21,24 +21,37 @@
                         </thead>
                         {{-- body --}}
                         <tbody>
-                            @forelse ($transportations as $index => $trans)
                             <tr>
-                                <td>{{ $index+1 }}.</td>
-                                <td>{{ $trans->jenis }}</td>
-                                <td>{{ toRupiah($trans->anggaran) }}</td>
-                                <td class="flex gap-2">
-                                    {{-- EDIT --}}
-                                    <x-btn-edit href="{{ route('transportations.edit', $trans->id) }}" />
-                                    {{-- DELETE --}}
-                                    <x-btn-delete action="{{ route('transportations.destroy', $trans->id) }}" />
+                                <td colspan="4">
+                                    <!-- Wrap the tbody content in a scrollable div -->
+                                    <div class="max-h-[50svh] overflow-y-auto">
+                                        <table class="table table-sm table-zebra">
+                                            @forelse ($transportations as $index => $trans)
+                                            <tr>
+                                                <td>{{ $index+1 }}.</td>
+                                                <td>{{ $trans->jenis }}</td>
+                                                <td>{{ toRupiah($trans->anggaran) }}</td>
+                                                <td class="flex gap-2">
+                                                    {{-- EDIT --}}
+                                                    <x-btn-edit href="{{ route('transportations.edit', $trans->id) }}" />
+                                                    {{-- DELETE --}}
+                                                    <x-btn-delete action="{{ route('transportations.destroy', $trans->id) }}" />
+                                                </td>
+                                            </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="4" class="text-center">No data available</td>
+                                                </tr>
+                                            @endforelse
+                                        </table>
+                                    </div>
                                 </td>
                             </tr>
-                            @empty
-
-                            @endforelse
-
                         </tbody>
                     </table>
+                </div>
+                <div class="px-4 py-1">
+                    {{ $transportations->links() }}
                 </div>
             </div>
         </div>

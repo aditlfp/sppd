@@ -11,7 +11,7 @@ class TransportationController extends Controller
 {
     public function index()
     {
-        $transportations = Transportation::paginate(15);
+        $transportations = Transportation::paginate(5);
         return view('transportations.index', compact('transportations'));
     }
 

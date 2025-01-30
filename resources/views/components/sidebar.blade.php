@@ -1,9 +1,9 @@
 {{-- sidebar --}}
 <div id="sidebar"
     class="p-4 hidden lg:flex flex-col gap-2 bg-white w-1/6 drop-shadow-md min-h-screen fixed left-0 z-10 ">
-    <ul class="menu rounded-sm text-base flex flex-col justify-between min-h-[82.5svh]">
-        <div class="flex flex-col gap-2 max-h-[70svh] overflow-y-auto">
-            <li class=" font-semibold text-center pb-10">Menu SPPD </li>
+    <ul class="menu rounded-sm text-base flex flex-col min-h-[82.5svh]">
+        <li class=" font-semibold text-center pb-10">Menu SPPD </li>
+        <div class="flex flex-col gap-2 max-h-[64svh] overflow-y-auto pr-1">
             <li>
                 <a href="{{ route('dashboard') }}"
                     class="font-medium rounded-sm flex items-center gap-2 {{ Route::is('dashboard') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}"><svg
@@ -133,7 +133,7 @@
                 </details>
             </li>
         </div>
-        <li class="">
+        <li class="fixed z-10 bottom-[12svh] w-[78%]">
             <form method="POST" action="{{ route('logout') }}" class="bg-red-500 hover:bg-red-600 text-white rounded-sm">
                 @csrf
                 <button type="submit" class=" font-medium flex items-center gap-2"><svg
