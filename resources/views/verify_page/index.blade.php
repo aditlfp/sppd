@@ -24,6 +24,9 @@
                         <tbody>
                             <!-- row 1 -->
                         @forelse ($mainSppds as $index => $sppd)
+                        @php
+                            $latestB = $latestBellow[$sppd->code_sppd] ?? null;
+                        @endphp
                         <tr>
                             <th>{{ $index + 1 }}</th>
                             <td>{{ $sppd->maksud_perjalanan}}</td>
@@ -36,10 +39,6 @@
                             </td>
                             @elseif ($sppd->verify == "1")
                                 <td>
-                                    @php
-                                        $latestB = $latestBellow[$sppd->code_sppd] ?? null;
-                                    @endphp
-
                                     @if ($latestB)
                                         @if ($latestB->continue == 0)
                                             <span class="badge badge-success text-white font-semibold">Diverifikasi & Selesai</span>
@@ -50,22 +49,22 @@
                                         <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
                                     @endif
                                 </td>
-                            @else
+                            @elseif($sppd->verify == "2")
                                 <td>
-                                    <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
+                                    @if ($latestB)
+                                        @if ($latestB->continue == 0)
+                                            <span class="badge badge-success text-white font-semibold">Diverifikasi & Selesai</span>
+                                        @elseif ($latestB->continue == 1)
+                                            <span class="badge badge-error text-white font-semibold">Diverifikasi & Dalam Perjalanan</span>
+                                        @endif
+                                    @else
+                                        <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
+                                    @endif
                                 </td>
                             @endif
                             {{-- VERIFY --}}
                                 <td>
-                                    @if ($sppd->verify == "0" || $sppd->verify == null)
-                                        <form action="{{ route('verifyUpdate', $sppd->id)}}" method="post">
-                                            @csrf
-                                            @method('PATCH')
-                                            <input type="text" name="name_verify" value="verify_departure" hidden>
-                                            <button type="submit" class="btn sm:btn-sm btn-md btn-primary rounded-sm"><svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM17.4571 9.45711L11 15.9142L6.79289 11.7071L8.20711 10.2929L11 13.0858L16.0429 8.04289L17.4571 9.45711Z"></path></svg>Verifikasi</button>
-                                        </form>
-
-                                    @endif
+                                    <a href="{{ route('verify_page.index', $sppd->id)}}" class="btn btn-sm btn-primary rounded-sm">See Details</a>
                                 </td>
                             {{-- VERIFY --}}
                         </tr>
