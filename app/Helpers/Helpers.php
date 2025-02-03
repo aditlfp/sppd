@@ -48,7 +48,7 @@ function sendMessage(string $phoneNumber, string $message, ?string $imagePath = 
     }
 }
 
-if (! function_exists('toRupiah')) {
+if (! function_exists('UploadImage')) {
     function UploadImage($request, $NameFile)
     {
         $min = 1;
@@ -73,6 +73,12 @@ if (! function_exists('toRupiah')) {
      {
         return "Rp.". number_format($angka, 0, '.','.');
      }
+    }
+
+    if (! function_exists('normalizeString')) {
+        function normalizeString($string) {
+            return strtolower(preg_replace('/[^a-zA-Z0-9]/', '', $string));
+        }
     }
 
 

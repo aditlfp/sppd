@@ -2,7 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Eslon;
 use App\Models\MainSPPD;
+use App\Models\PocketMoney;
+use App\Models\Region;
+use App\Models\Transportation;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class VerifyController extends Controller
@@ -10,7 +15,13 @@ class VerifyController extends Controller
     // VIEW VERIFY SPPD
     public function viewVerify(MainSPPD $mainSppd)
     {
-        return view('verify_page.index', compact('mainSppd'));
+        $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
+        $budget = PocketMoney::all();
+        $eslon = Eslon::get();
+        $transportations = Transportation::all();
+        $regions = Region::all();
+        // dd($mainSppd);
+        return view('verify_page.show', compact('mainSppd', 'user', 'eslon', 'budget', 'transportations', 'regions'));
     }
     // VERIFY SPPD
     public function verify(Request $request, MainSPPD $mainSppd)
