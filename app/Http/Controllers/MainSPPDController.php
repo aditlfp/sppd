@@ -21,16 +21,16 @@ class MainSPPDController extends Controller
     public function index()
     {
         $auth = auth()->user();
+        $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
+        $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
+            return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
+        });
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            $mainSppds = MainSPPD::latest()->paginate(15);
-            $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
-            $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
-                return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
-            });
+            $mainSppds = MainSPPD::latest()->with('User')->get();
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
         }else{
             $mainSppds = MainSPPD::where('user_id', $auth->id)->latest()->paginate(15);
-            return view('main_sppds.index', compact('mainSppds'));
+            return view('main_sppds.index', compact('mainSppds', 'latestBellow'));
         }
     }
 

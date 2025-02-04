@@ -11,9 +11,18 @@ class EslonController extends Controller
 {
     public function index()
     {
-        $eslons = Eslon::paginate(25);
-        $jabatan = Jabatan::all();
-        return view('eslons.index', compact('eslons', 'jabatan'));
+        $eslons = Eslon::all();
+        // Pastikan setiap `jabatan_id` didecode dengan aman
+        $jabatanIds = collect($eslons)->flatMap(function ($eslon) {
+            return is_string($eslon->jabatan_id) 
+                ? json_decode($eslon->jabatan_id, true) 
+                : $eslon->jabatan_id; // Jika sudah array, langsung pakai
+        })->unique()->filter();
+
+        // Ambil semua jabatan terkait
+        $jabatans = Jabatan::whereIn('id', $jabatanIds)->get()->keyBy('id');
+
+        return view('eslons.index', compact('eslons', 'jabatans'));
     }
 
     public function create()

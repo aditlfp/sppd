@@ -12,7 +12,7 @@ class PocketMoneyController extends Controller
 {
     public function index()
     {
-        $pocketMoneys = PocketMoney::paginate(25);
+        $pocketMoneys = PocketMoney::with(['Eslon', 'Region'])->get();
         return view('pocket_moneys.index', compact('pocketMoneys'));
     }
 
