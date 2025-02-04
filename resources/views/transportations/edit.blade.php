@@ -34,6 +34,7 @@
                             </div>
                         </div>
                         <div class="flex items-center justify-end mt-4">
+                            <a href="{{ URL::route('transportations.index') }}" class="btn btn-sm btn-warning">BACK</a>
                             <x-primary-button class="ml-4">
                                 {{ __('Submit') }}
                             </x-primary-button>

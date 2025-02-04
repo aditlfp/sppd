@@ -20,6 +20,7 @@
                             <input type="text" name="nama_daerah" id="nama_daerah" class="mt-1 block w-full input input-bordered input-sm rounded-sm" required placeholder="Masukkan nama wilayah yang dijangkau (Madiun dan Surabaya, dst)">
                         </div>
                         <div class="flex items-center justify-end mt-4">
+                            <a href="{{ URL::route('regions.index') }}" class="btn btn-sm btn-warning">BACK</a>
                             <x-primary-button class="ml-4">
                                 {{ __('Submit') }}
                             </x-primary-button>

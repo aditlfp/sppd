@@ -10,7 +10,7 @@ class RegionController extends Controller
 {
     public function index()
     {
-        $regions = Region::paginate(15);
+        $regions = Region::all();
         return view('regions.index', compact('regions'));
     }
 

@@ -1,7 +1,9 @@
 @import "tailwindcss";
 @source "../views";
+@plugin "@tailwindcss/forms";
 @plugin "daisyui" {
-    themes: "light";
+    themes: light --default;
+    root: ":root";
 }
 
 .required::after {
@@ -46,4 +48,5 @@
     scrollbar-color: unset !important;
     scrollbar-width: auto !important;
     scroll-behavior: smooth;
+    font-family: "Figtree", sans-serif;
 }
