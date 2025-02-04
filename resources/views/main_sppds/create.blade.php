@@ -8,13 +8,6 @@
     <div class="py-3">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            @if ($errors->any())
-                <div class="m-4 mx-8 flex flex-col gap-y-2">
-                        @foreach ($errors->all() as $error)
-                            <span class="text-red-500 text-sm italic">{{ $error }} !</span>
-                        @endforeach
-                </div>
-            @endif
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control">
                         @csrf
@@ -30,6 +23,7 @@
                                     <option selected disabled>- Kosong -</option>
                                 @endforelse
                             </select>
+                            <x-input-error :messages="$errors->get('auth_official')" class="mt-2" />
 
 
                         </div>
@@ -43,10 +37,11 @@
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
                             </select>
+                            <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
                         </div>
                         <div class="mb-4">
                             <label for="jabatan" class="block text-sm font-medium text-gray-700 required label-text">Jabatan</label>
-                            <select id="jabatan" @readonly(true) required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                            <select @readonly(true) id="jabatan"  required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Jabatan</option>
                             @forelse ($user as $s)
                                 <option disabled value="{{ $s->id }}" data-jabatan-real="{{ $s->jabatan_id }}"> {{ $s->jabatan?->name_jabatan }} </option>
@@ -54,12 +49,14 @@
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
                             </select>
+                            <x-input-error :messages="$errors->get('jabatan')" class="mt-2" />
+
                         </div>
                         {{-- eslon --}}
                         <div class="mb-4">
-                            <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eslon</label>
-                            <select name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
-                                <option selected disabled>Pilih Eslon</option>
+                            <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eselon</label>
+                            <select @readonly(true) name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Eselon</option>
                             @forelse ($eslon as $s)
                                 @if ($s->jabatan_id != null)
                                     @foreach ($s->jabatan_id as $item)
@@ -74,6 +71,7 @@
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
                             </select>
+                            <x-input-error :messages="$errors->get('eslon_id')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
@@ -89,8 +87,8 @@
                         </div>
                         <div class="mb-4">
                             <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Jabatan Pengikut</label>
-                            <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut" @readonly(true) class="select select-bordered select-sm w-full text-xs rounded-sm">
-                                <option selected disabled>Pilih Eslon</option>
+                            <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut"  class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Eselon</option>
                             @forelse ($eslon as $s)
                                 @if ($s->jabatan_id != null)
                                     @foreach ($s->jabatan_id as $item)
@@ -110,23 +108,26 @@
                         <div class="mb-4">
                             <label for="maksud_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Maksud Perjalanan Dinas</label>
                             <textarea name="maksud_perjalanan" id="maksud_perjalanan" rows="2" required placeholder="Maksud Perjalanan Dinas..." class="mt-1 block rounded-sm textarea textarea-bordered textarea-sm w-full"></textarea>
+                            <x-input-error :messages="$errors->get('maksud_perjalanan')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio rounded-sm" value="{{ $item->id }}">
-                                <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" value="{{ $item->id }}" />
+                                <span class="capitalize mt-2">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty
-
+                                <span>~Data Kendaraan Masih Kosong~</span>
                             @endforelse
+                            <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
                             <label for="tempat_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Tempat Berangkat</label>
                             <input type="text" name="tempat_berangkat" id="tempat_berangkat" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Tempat Berangkat">
+                            <x-input-error :messages="$errors->get('tempat_berangkat')" class="mt-2" />
                         </div>
                         <div id="map"></div>
                         <div class="mb-4 hidden">
@@ -135,9 +136,9 @@
                         </div>
 
 
-                        <div class="mb-4">
+                        <div class="my-4">
                             <label for="tempat_tujuan" class="block text-sm font-medium text-gray-700 required label-text">Tempat Tujuan</label>
-                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm">
+                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
                                     <option selected disabled>-Pilih Wilayah-</option>
                                 @forelse($regions as $reg)
                                     <option data-reg-id="{{ $reg->id }}" value="{{ $reg->nama_daerah }}">{{ $reg->name . " - " . $reg->nama_daerah }}</option>
@@ -145,13 +146,15 @@
 
                                 @endforelse
                             </select>
+                            <x-input-error :messages="$errors->get('tempat_tujuan')" class="mt-2" />
                         </div>
 
                         <div class="mb-4">
                             <label for="lama_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Lama Perjalanan</label>
                             <div class="flex w-full items-center">
-                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-full" required>
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-12" required value="Hari">
+                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm rounded-r-none border-r-0 w-full" required>
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-l-none rounded-sm w-12 border-l-0 disabled:border-[#D4D4D4]" required value="Hari">
+                                <x-input-error :messages="$errors->get('lama_perjalanan')" class="mt-2" />
                             </div>
                         </div>
 
@@ -163,35 +166,39 @@
                                 <span class="w-[5%] text-center">-</span>
                                 <input type="date" name="date_time_kembali" id="date_time_kembali" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
                             </div>
+                            <x-input-error :messages="$errors->get('date_time_berangkat')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('date_time_kembali')" class="mt-2" />
                         </div>
 
 
                         <div class="mb-4">
                             <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text required">Uang Saku</label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Rp. 1.000.000" readonly>
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" readonly>
+                                <x-input-error :messages="$errors->get('uang_saku')" class="mt-2" />
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll <span class="text-red-500 italic">( opsional )</span></label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="1.000.000">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" placeholder="1.000.000">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="1.000.000">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
+                                <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block input-sm w-full input input-bordered rounded-sm">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0">
                             </div>
 
                             <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
@@ -312,7 +319,7 @@
 
             if(foundEslon == false)
             {
-                option.value = 'Pilih Eslon'
+                option.value = 'Pilih Eselon'
                 eslonSelect.selectedIndex = 0;
             }
 

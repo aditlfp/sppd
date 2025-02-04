@@ -17,7 +17,8 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Perjalanan Dinas</th>
+                                <th>Yang Diperintah</th>
+                                <th>Maksud Perjalanan Dinas</th>
                                 <th>Lamanya Perjalanan</th>
                                 <th>Tgl Berangkat</th>
                                 <th>Tgl Kembali</th>
@@ -38,7 +39,8 @@
                             className: 'error',
                         })"
                         @endif >
-                            <th>{{ $index + 1 }}</th>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $sppd->user->nama_lengkap }}</td>
                             <td>{{ $sppd->maksud_perjalanan}}</td>
                             <td>{{ $sppd->lama_perjalanan . " Hari" }}</td>
                             <td>{{ $sppd->date_time_berangkat }}</td>
