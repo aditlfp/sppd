@@ -58,9 +58,9 @@ class MainSppdRequest extends FormRequest
     public function messages()
     {
         return [
-            'auth_official.required' => 'Field Auth Official wajib diisi.',
+            'auth_official.required' => 'Field Yang Memberi Perintah wajib diisi.',
             'user_id.required' => 'Field Diperintah wajib diisi.',
-            'eslon_id.required' => 'Field Eslon wajib diisi.',
+            'eslon_id.required' => 'Field Eselon wajib diisi.',
             'maksud_perjalanan.required' => 'Field Maksud Perjalanan wajib diisi.',
             'alat_angkutan.required' => 'Field Alat Angkutan wajib diisi.',
             'tempat_berangkat.required' => 'Field Tempat Berangkat wajib diisi.',
