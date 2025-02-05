@@ -5,7 +5,10 @@
         </h2>
     </x-slot>
 
-    <div class="pb-16 pt-3" x-data="{ searchQuery: '', hasResults: true, transport: {{ $transportations->toJson() ?: '[]' }} }" @search-updated.window="searchQuery = $event.detail; hasResults = transport.some(trans => trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase()));">
+    <div class="pb-16 pt-3" x-data="{ 
+        searchQuery: '', 
+        hasResults: true, 
+        transport: {{ $transportations->toJson() ?: '[]' }} }" @search-updated.window="searchQuery = $event.detail; hasResults = transport.some(trans => trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase()));">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white mx-2 sm:mx-0 overflow-hidden shadow-sm rounded-sm">
                 <div class="w-full flex justify-end p-2 {{ $transportations->count() > 0 ? '' : 'hidden' }}">
