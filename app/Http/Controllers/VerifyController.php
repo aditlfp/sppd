@@ -33,8 +33,12 @@ class VerifyController extends Controller
             }elseif($request->name_verify == 'verify_arrive'){
                 $mainSppd->update(['verify' => 1]);
                 flash()->success('Data berhasil diverifikasi.');
+            }elseif($request->name_verify == 'reject'){
+                $mainSppd->update(['verify' => 3]);
+                flash()->success('Data berhasil direject.');
+
             }
-            return redirect()->back();
+            return to_route('main_sppds.index');
         } catch (\Throwable $th) {
             dd($th);
             // abort(403);

@@ -78,32 +78,40 @@
                             <label for="nama_pengikut" class="block text-sm font-medium text-gray-700 label-text">Nama Pengikut</label>
                             <select name="nama_pengikut" id="nama_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Nama Pengikut</option>
-                            @forelse ($user as $s)
-                                <option value="{{ $s->nama_lengkap }}" data-jb-peng-id="{{ $s->jabatan_id }}"> {{ $s->nama_lengkap }} </option>
-                            @empty
-                                <option selected disabled>- Kosong -</option>
-                            @endforelse
+                                @forelse ($user as $s)
+                                    <option value="{{ $s->nama_lengkap }}" data-jb-peng-id="{{ $s->jabatan_id }}">
+                                        {{ $s->nama_lengkap }}
+                                    </option>
+                                @empty
+                                    <option selected disabled>- Kosong -</option>
+                                @endforelse
                             </select>
                         </div>
+
                         <div class="mb-4">
-                            <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Jabatan Pengikut</label>
-                            <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut"  class="select select-bordered select-sm w-full text-xs rounded-sm">
+                            <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Eselon Pengikut</label>
+                            <select name="jabatan_pengikut" id="jabatan_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Eselon</option>
-                            @forelse ($eslon as $s)
-                                @if ($s->jabatan_id != null)
+                                @foreach ($eslon as $s)
+
+                                @if (!empty($s->jabatan_id))
                                     @foreach ($s->jabatan_id as $item)
                                         @php
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp
 
-                                        <option disabled value="{{ $s->id }}" data-jabatan-peng-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @if ($itemOK)
+                                            <option value="{{ $s->id }}" data-jabatan-peng-id="{{ $itemOK->id }}">
+                                                {{ $s->name }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 @endif
-                            @empty
-                                <option selected disabled>- Kosong -</option>
-                            @endforelse
+                            @endforeach
+
                             </select>
                         </div>
+
 
                         <div class="mb-4">
                             <label for="maksud_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Maksud Perjalanan Dinas</label>
@@ -152,7 +160,7 @@
                         <div class="mb-4">
                             <label for="lama_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Lama Perjalanan</label>
                             <div class="flex w-full items-center">
-                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm rounded-r-none border-r-0 w-full" required>
+                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm rounded-r-none border-r-0 w-full" placeholder="10" required>
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-l-none rounded-sm w-12 border-l-0 disabled:border-[#D4D4D4]" required value="Hari">
                                 <x-input-error :messages="$errors->get('lama_perjalanan')" class="mt-2" />
                             </div>
@@ -218,8 +226,7 @@
 
 
     <script>
-
-        $('#nama_pengikut').on('change', function() {
+           $('#nama_pengikut').on('change', function() {
             var selectPengikut = this.options[this.selectedIndex];
             var selectedJabatanId = $(selectPengikut).data('jb-peng-id');
             var jabatanPengikut = $('#jabatan_pengikut')[0]; // Get the DOM element
@@ -319,7 +326,7 @@
 
             if(foundEslon == false)
             {
-                option.value = 'Pilih Eselon'
+                option.value = 'Pilih Eslon'
                 eslonSelect.selectedIndex = 0;
             }
 

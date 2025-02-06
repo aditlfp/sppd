@@ -3,7 +3,7 @@
     @csrf
     @method('PATCH')
     <input type="text" name="name_verify" value="verify_departure" hidden>
-   
+
 </form>
 
 @endif --}}
@@ -26,7 +26,7 @@
                 </div>
             @endif
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('verifyUpdate', $mainSppd->id)}}" method="post">
+                    <form id="sppdForm" action="{{ route('verifyUpdate', $mainSppd->id)}}" method="post">
                         @csrf
                         @method('PATCH')
                         <div class="mb-4">
@@ -61,7 +61,7 @@
                             <select id="jabatan" @readonly(true) required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Jabatan</option>
                             @forelse ($user as $s)
-                                <option disabled value="{{ $s->id }}" data-jabatan-real="{{ $s->jabatan_id }}"> {{ $s->jabatan?->name_jabatan }} </option>
+                                <option {{ $s->id == $mainSppd->user_id ? 'selected' : '' }} disabled value="{{ $s->id }}" data-jabatan-real="{{ $s->jabatan_id }}"> {{ $s->jabatan?->name_jabatan }} </option>
                             @empty
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
@@ -128,7 +128,7 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio rounded-sm" {{ $item->id == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio radio-primary" {{ $item->id == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
                                 <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty
@@ -171,9 +171,9 @@
                         <div class="mb-4">
                             <label for="date_time_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Tanggal Berangkat - Kembali</label>
                             <div class="flex w-full items-center gap-x-1">
-                                <input type="date" name="date_time_berangkat" id="date_time_berangkat" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
+                                <input type="date" name="date_time_berangkat" id="date_time_berangkat" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required value="{{ $mainSppd->date_time_berangkat }}">
                                 <span class="w-[5%] text-center">-</span>
-                                <input type="date" name="date_time_kembali" id="date_time_kembali" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
+                                <input type="date" name="date_time_kembali" id="date_time_kembali" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required value="{{ $mainSppd->date_time_kembali }}">
                             </div>
                         </div>
 
@@ -210,9 +210,23 @@
                             <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $mainSppd->lain_lain_desc}}</textarea>
                         </div>
 
-                        <div class="flex items-center justify-end w-full mt-4">
-                            <button type="submit" class="btn w-full btn-sm btn-primary rounded-sm flex justify-start"><svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM17.4571 9.45711L11 15.9142L6.79289 11.7071L8.20711 10.2929L11 13.0858L16.0429 8.04289L17.4571 9.45711Z"></path></svg>Verify SPPD</button>
-                        </div>
+                        <input type="hidden" name="name_verify" id="name_verify" value="">
+
+                        @if ($mainSppd->verify == "0" || $mainSppd->verify == null)
+                            <div class="flex items-center justify-end mt-4 gap-x-4">
+                                <button type="button" onclick="submitForm('verify_departure')" class="btn btn-sm btn-primary rounded-sm sm:px-10">
+                                    <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM17.4571 9.45711L11 15.9142L6.79289 11.7071L8.20711 10.2929L11 13.0858L16.0429 8.04289L17.4571 9.45711Z"></path>
+                                    </svg>
+                                    Verify SPPD
+                                </button>
+
+                                <button type="button" onclick="submitForm('reject')" class="btn btn-sm btn-error text-white rounded-sm">
+                                <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 10.5858L9.17157 7.75736L7.75736 9.17157L10.5858 12L7.75736 14.8284L9.17157 16.2426L12 13.4142L14.8284 16.2426L16.2426 14.8284L13.4142 12L16.2426 9.17157L14.8284 7.75736L12 10.5858Z"></path></svg>
+                                    Reject SPPD
+                                </button>
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
@@ -221,6 +235,11 @@
 
 
     <script>
+
+        function submitForm(action) {
+            document.getElementById('name_verify').value = action;
+            document.getElementById('sppdForm').submit();
+        }
 
         $('#nama_pengikut').on('change', function() {
             var selectPengikut = this.options[this.selectedIndex];
