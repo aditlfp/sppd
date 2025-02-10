@@ -26,7 +26,7 @@ class MainSPPDController extends Controller
             return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
         });
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            $mainSppds = MainSPPD::latest()->with('User')->get();
+            $mainSppds = MainSPPD::latest()->with(['User', 'transportation'])->get();
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
         }else{
             $mainSppds = MainSPPD::where('user_id', $auth->id)->latest()->paginate(15);
@@ -123,6 +123,7 @@ class MainSPPDController extends Controller
 
     public function update(Request $request, SPPDBellow $mainSppd)
     {
+        // dd($request->all());
         try {
             $mainSppddata = [
                 'date_time_arrive' => $request->date_time_arrive,

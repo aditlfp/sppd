@@ -9,7 +9,25 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control">
+                    <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control"
+                        x-data="{
+                            uangSaku: 0,
+                            tol: 0,
+                            makan: 0,
+                            lainLain: 0,
+                            transport: 0,
+                            total: 0,
+                            dataT: {{$transportations->toJson()}},
+                            calculateTotal() {
+                                this.total = (this.uangSaku = parseFloat(document.getElementById('uang_saku').value) || 0) + 
+                                            (parseFloat(this.tol) || 0) + 
+                                            (parseFloat(this.makan) || 0) + 
+                                            (parseFloat(this.lainLain) || 0) + 
+                                            (parseFloat(this.transport) || 0);
+                            }
+                        }"
+                        @input="calculateTotal()"
+                        @change="calculateTotal()">
                         @csrf
                         <div class="mb-4">
                             <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah</label>
@@ -121,14 +139,13 @@
 
                         <div class="mb-4">
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
-                            @forelse ($transportations as $item)
-                            <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" value="{{ $item->id }}" />
-                                <span class="capitalize mt-2">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
-                            </div>
-                            @empty
-                                <span>~Data Kendaraan Masih Kosong~</span>
-                            @endforelse
+                            <template x-for="item in dataT">
+                                <div class="flex items-center w-full gap-x-3">
+                                    <input type="radio" name="alat_angkutan" x-model.number="transport" 
+                                        :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <span class="capitalize mt-2" x-text="item.jenis + ' : ' + item.anggaran"></span>
+                                </div>
+                            </template>
                             <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />
                         </div>
 
@@ -183,7 +200,7 @@
                             <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text required">Uang Saku</label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" readonly>
+                                <input type="text" name="uang_saku" id="uang_saku" x-model.lazy="uangSaku" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" readonly>
                                 <x-input-error :messages="$errors->get('uang_saku')" class="mt-2" />
                             </div>
                         </div>
@@ -191,14 +208,14 @@
                             <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll <span class="text-red-500 italic">( opsional )</span></label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" placeholder="1.000.000">
+                                <input type="text" name="e_toll" id="e_toll" x-model.lazy="tol" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" placeholder="1.000.000">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
+                                <input type="text" name="makan" id="makan" x-model.lazy="makan" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
                                 <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
@@ -206,11 +223,15 @@
                             <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0">
+                                <input type="text" name="lain_lain" id="lain_lain" x-model.lazy="lainLain" @input="calculateTotal()" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0">
                             </div>
 
                             <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
                             <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
+                            <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>
                         </div>
 
                         <div class="flex items-center justify-end w-full mt-4">
@@ -243,7 +264,7 @@
         $('#tempat_tujuan').on('change', function() {
             var selectTujuan = this.options[this.selectedIndex];
             var selectedRegionId = $(selectTujuan).data('reg-id'); //Wilayah
-            console.log(selectedRegionId);
+            // console.log(selectedRegionId);
             var total = 0;
             // FIND ESLON AND REGION ID YANG DIPERINTAH
             // eslon diperintah == eslon budget && eslon pengikut == eslon budget && region sama

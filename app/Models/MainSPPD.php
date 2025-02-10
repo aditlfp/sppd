@@ -43,4 +43,9 @@ class MainSPPD extends Model
         return $this->belongsTo(Eslon::class);
     }
 
+    public function transportation()
+    {
+        return $this->belongsTo(Transportation::class, 'alat_angkutan', 'id');
+    }
+
 }

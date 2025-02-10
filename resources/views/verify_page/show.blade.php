@@ -1,13 +1,3 @@
-{{-- @if ($sppd->verify == "0" || $sppd->verify == null)
-<form action="{{ route('verifyUpdate', $sppd->id)}}" method="post">
-    @csrf
-    @method('PATCH')
-    <input type="text" name="name_verify" value="verify_departure" hidden>
-
-</form>
-
-@endif --}}
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -128,7 +118,7 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-1 block radio radio-primary" {{ $item->id == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" {{ $item->id == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
                                 <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty
@@ -162,8 +152,8 @@
                         <div class="mb-4">
                             <label for="lama_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Lama Perjalanan</label>
                             <div class="flex w-full items-center">
-                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-full" required value="{{ $mainSppd->lama_perjalanan}}">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-sm w-12" required value="Hari">
+                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm rounded-r-none border-r-0 w-full" required value="{{ $mainSppd->lama_perjalanan}}">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-l-none rounded-sm w-12 border-l-0 disabled:border-[#D4D4D4]" required value="Hari">
                             </div>
                         </div>
 
@@ -181,29 +171,29 @@
                         <div class="mb-4">
                             <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text required">Uang Saku</label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Rp. 1.000.000" readonly value="{{ $mainSppd->uang_saku }}">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="uang_saku" id="uang_saku" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" readonly value="{{ $mainSppd->uang_saku }}">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll <span class="text-red-500 italic">( opsional )</span></label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $mainSppd->e_toll }}" placeholder="1.000.000">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="e_toll" id="e_toll" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" value="{{ $mainSppd->e_toll }}" placeholder="1.000.000">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required value={{ $mainSppd->makan }} placeholder="1.000.000">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required value={{ $mainSppd->makan }} placeholder="1.000.000">
                             </div>
                         </div>
                         <div class="mb-4">
                             <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
                             <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm" value="Rp.">
-                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block input-sm w-full input input-bordered rounded-sm" value="{{ $mainSppd->lain_lain}}">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" value="{{ $mainSppd->lain_lain}}">
                             </div>
 
                             <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>

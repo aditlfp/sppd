@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="pb-12 pt-3" x-data="{ searchQuery: '', hasResults: true, sppds: {{ $mainSppds->toJson() ?: '[]' }} }" @search-updated.window="searchQuery = $event.detail; hasResults = sppds.some(sppd => sppd.maksud_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) || sppd.lama_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) || || sppd.date_time_berangkat.toLowerCase().includes(searchQuery.toLowerCase()) || sppd.date_time_kembali.toLowerCase().includes(searchQuery.toLowerCase()) || (sppd.verify == 0 ? 'waiting' : 'diverifikasi').toLowerCase().includes(searchQuery.toLowerCase()));">
+    <div class="pb-12 pt-3" x-data="{ searchQuery: '', hasResults: true, sppds: {{ $mainSppds->toJson() ?: '[]' }} }" @search-updated.window="searchQuery = $event.detail; hasResults = sppds.some(sppd => sppd.maksud_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) || sppd.lama_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) || sppd.date_time_berangkat.toLowerCase().includes(searchQuery.toLowerCase()) || sppd.date_time_kembali.toLowerCase().includes(searchQuery.toLowerCase()) || (sppd.verify == 0 ? 'waiting' : 'diverifikasi').toLowerCase().includes(searchQuery.toLowerCase()));">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white mx-2 sm:mx-0 overflow-hidden shadow-sm rounded-sm">
                 <div class="w-full flex justify-end p-2 {{ $mainSppds->count() > 0 ? '' : 'hidden' }}">

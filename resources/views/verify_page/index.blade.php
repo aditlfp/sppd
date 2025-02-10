@@ -53,6 +53,7 @@
                                 <th class="w-[14%]">Maksud Perjalanan Dinas</th>
                                 <th class="w-[14%]">Lamanya Perjalanan</th>
                                 <th>Tgl Berangkat - Kembali</th>
+                                <th>Total</th>
                                 <th>Status</th>
                                 <th class="w-[12%]"></th>
                             </tr>
@@ -61,7 +62,7 @@
                             <template x-for="(sppd, i) in sppds" :key="sppd.id">
                                 <tr
                                     x-cloak
-                                    x-data="{ latestB: latestBelow[sppd.code_sppd] }"
+                                    x-data="{ latestB: latestBelow[sppd.code_sppd], total: parseInt(sppd.uang_saku || 0) + parseInt(sppd.e_toll || 0) + parseInt(sppd.makan || 0) + parseInt(sppd.lain_lain || 0) + parseInt(sppd.transportation.anggaran || 0) }"
                                     x-show="searchQuery == '' || sppd.user.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                             sppd.maksud_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                             sppd.lama_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,6 +81,7 @@
                                     <td x-text="sppd.maksud_perjalanan" class="w-[14%]"></td>
                                     <td x-text="sppd.lama_perjalanan + ' Hari'" class="w-[14%]"></td>
                                     <td x-text="sppd.date_time_berangkat + ' - ' + sppd.date_time_kembali"></td>
+                                    <td x-text="toRupiah(total)"></td>
                                     <td>
                                         <span :class="{
                                             'badge badge-warning text-white font-semibold': sppd.verify == '0' || sppd.verify == null,
@@ -108,4 +110,9 @@
         </div>
     </div>
     <x-btn-create href="{{ route('main_sppds.create') }}"/>
+    <script>
+        function toRupiah(value) {
+            return 'Rp ' + Number(value).toLocaleString('id-ID');
+        }
+    </script>
 </x-app-layout>
