@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
 
 class MainSPPDController extends Controller
 {
+
     public function index()
     {
         $auth = auth()->user();
@@ -76,7 +77,7 @@ class MainSPPDController extends Controller
         }
     }
 
-    public function storeBottom(MainSPPD $mainSppd)
+    public function storeBottom(Request $request, MainSPPD $mainSppd)
     {
         $beforeLastValue = null;
         $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
@@ -87,18 +88,18 @@ class MainSPPDController extends Controller
                     $beforeLastValue = $value;
                 }
 
-                if($value->arrive_at == null)
-                {
-                    if ($beforeLastValue->continue == 1) {
-                        return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
-                    }else{
-                        return redirect()->route('main_sppds.index');
-                    }
+
+                if ($beforeLastValue->continue == 1) {
+                    $request->session()->put('key', $mainSppd->code_sppd);
+                    return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
+                }else{
+                    return redirect()->route('main_sppds.index');
                 }
             }
         }else{
             $bellow = $bellow->first();
             if ($bellow->continue == 1) {
+                $request->session()->put('key', $bellow->code_sppd);
                 return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
             }else{
                 return redirect()->route('main_sppds.index');
@@ -121,9 +122,9 @@ class MainSPPDController extends Controller
 
 
 
-    public function update(Request $request, SPPDBellow $mainSppd)
+    public function update(Request $request)
     {
-        // dd($request->all());
+        $code_sppd = $request->session()->get('key', 'Default Value');
         try {
             $mainSppddata = [
                 'date_time_arrive' => $request->date_time_arrive,
@@ -146,11 +147,13 @@ class MainSPPDController extends Controller
                 $mainSppddata['foto_destination'] = UploadImage($request, 'foto_destination');
             }
 
-            $mainSppd->update($mainSppddata);
+            $sPPDBellow = SPPDBellow::where('code_sppd', $code_sppd);
+            $sPPDBellow->update($mainSppddata);
             // Redirect ke halaman sukses dengan notifikasi
             flash()->success('Data berhasil diubah.');
             return redirect()->route('main_sppds.index');
         } catch (\Exception $e) {
+            dd($e);
             // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
             flash()->error('Terjadi kesalahan saat mengubah data. Mohon coba lagi.');
             return redirect()->back();

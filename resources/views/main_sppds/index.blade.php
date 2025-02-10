@@ -73,6 +73,10 @@
                                         <span class="badge badge-error text-white font-semibold">Dalam Perjalanan</span>
                                     @endif
                                 </td>
+                            @else
+                                <td>
+                                    <span class="badge badge-error text-white font-semibold">Ditolak</span>
+                                </td>
                             @endif
                         </tr>
                         @empty
