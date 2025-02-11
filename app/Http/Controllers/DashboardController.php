@@ -27,20 +27,33 @@ class DashboardController extends Controller
             ->orderBy('date', 'asc')
             ->get();
 
-        // Fetch SPPD data for the current month (daily)
-        $sppdData = MainSPPD::selectRaw('DATE(created_at) as date, COUNT(id) as total')
-            ->whereYear('created_at', $currentYear)
-            ->whereMonth('created_at', $currentMonth)
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
-
-        $sppds = MainSPPD::with('user')->whereMonth('created_at', $currentMonth)->get();
+            
+        if(Auth::user()->role_id == 2 || in_array(Auth::user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
+            // Fetch SPPD data for the current month (daily)
+            $sppdData = MainSPPD::selectRaw('DATE(created_at) as date, COUNT(id) as total')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->groupBy('date')
+                ->orderBy('date', 'asc')
+                ->get();
+            $sppds = MainSPPD::with('user')->whereMonth('created_at', $currentMonth)->get();
+        } else {
+            // Fetch SPPD data for the current month (daily)
+            $sppdData = MainSPPD::selectRaw('DATE(created_at) as date, COUNT(id) as total')
+                ->where('user_id', Auth::id())
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->groupBy('date')
+                ->orderBy('date', 'asc')
+                ->get();
+            $sppds = MainSPPD::with('user')->where('user_id', Auth::id())->whereMonth('created_at', $currentMonth)->get();
+        }
 
         $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
         $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
             return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
         });
+
 
         // Prepare data for the chart
         $dates = []; // X-axis labels (dates of the current month)

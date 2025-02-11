@@ -9,6 +9,7 @@
     x-data="{
         searchQuery: '',
         hasResults: true,
+        latestB: '',
         latestBelow: {{ $latestBellow->toJson() ?: '[]' }},
         sppds: {{ $sppds->toJson() ?: '[]' }},
         get filteredSppds() {
@@ -61,12 +62,13 @@
                         <tr>
                             <td colspan="6" style="padding: 0;">
                                 <!-- Wrap the tbody content in a scrollable div -->
-                                <div class="max-h-[50svh] min-h-[50svh] overflow-y-auto">
+                                <div class="max-h-[50svh] min-h-[50svh] overflow-auto">
                                     <table class="table table-sm table-zebra">
                                         <template x-for="(sppd, i) in sppds" :key="sppd.id">
                                             <tr 
                                                 x-cloak
                                                 x-data="{ latestB: latestBelow[sppd.code_sppd] }"
+                                                x-init="console.log(latestB)"
                                                 x-transition:enter="transition-opacity duration-300 ease-in-out"
                                                 x-transition:enter-start="opacity-0"
                                                 x-transition:enter-end="opacity-100"
