@@ -11,7 +11,13 @@
             searchQuery: '',
             hasResults: true,
             latestBelow: {{ $latestBellow->toJson() ?: '[]' }},
-            sppds: {{ $mainSppds->toJson() ?: '[]' }},
+            sppds: {{ json_encode($mainSppds->items()) }},
+            pagination: {
+                current_page: {{ $mainSppds->currentPage() }},
+                last_page: {{ $mainSppds->lastPage() }},
+                per_page: {{ $mainSppds->perPage() }},
+                total: {{ $mainSppds->total() }}
+            },
             get filteredSppds() {
                 let query = this.searchQuery.toLowerCase();
                 return this.sppds.filter(sppd =>
@@ -100,6 +106,11 @@
                             </tr>
                         </tbody>
                     </table>
+
+                    <!-- Pagination -->
+                    <div class="mt-4 px-4">
+                        {{ $mainSppds->links() }}
+                    </div>
                     <!-- No Results Message -->
                     <div x-cloak x-show="!hasResults && searchQuery !== ''"
                         class="min-h-[50svh] inset-0 flex items-center justify-center bg-white text-gray-500 text-lg font-semibold">

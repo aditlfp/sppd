@@ -27,10 +27,10 @@ class MainSPPDController extends Controller
             return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
         });
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            $mainSppds = MainSPPD::latest()->with(['User', 'transportation'])->get();
+            $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
         }else{
-            $mainSppds = MainSPPD::where('user_id', $auth->id)->latest()->paginate(15);
+            $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'desc')->paginate(15);
             return view('main_sppds.index', compact('mainSppds', 'latestBellow'));
         }
     }

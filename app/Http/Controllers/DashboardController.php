@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
@@ -20,69 +20,52 @@ class DashboardController extends Controller
         $today = Carbon::now(); // Current date
 
         // Fetch daily viewable data for the current month
-        $dailyViews = Views::selectRaw('DATE(created_at) as date, SUM(viewable) as total')
-            ->whereYear('created_at', $currentYear)
+            $dailyViews = Views::selectRaw('DATE(created_at) as date, SUM(viewable) as total')
+                ->whereYear('created_at', $currentYear)
+                ->whereMonth('created_at', $currentMonth)
+                ->groupBy('date')
+                ->orderBy('date', 'asc')
+                ->get();
+
+        // Determine user access
+        $isAdmin = Auth::user()->role_id == 2 || in_array(Auth::user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']);
+
+        // Fetch only necessary SPPD details
+        $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'date_time_arrive', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
+            ->when(!$isAdmin, function ($query) {
+                return $query->where('user_id', Auth::id());
+            })
+            ->orderByDesc('created_at', 'desc')
             ->whereMonth('created_at', $currentMonth)
-            ->groupBy('date')
-            ->orderBy('date', 'asc')
-            ->get();
-
-            
-        if(Auth::user()->role_id == 2 || in_array(Auth::user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            // Fetch SPPD data for the current month (daily)
-            $sppdData = MainSPPD::selectRaw('DATE(created_at) as date, COUNT(id) as total')
-                ->whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $currentMonth)
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
-                ->get();
-            $sppds = MainSPPD::with('user')->whereMonth('created_at', $currentMonth)->get();
-        } else {
-            // Fetch SPPD data for the current month (daily)
-            $sppdData = MainSPPD::selectRaw('DATE(created_at) as date, COUNT(id) as total')
-                ->where('user_id', Auth::id())
-                ->whereYear('created_at', $currentYear)
-                ->whereMonth('created_at', $currentMonth)
-                ->groupBy('date')
-                ->orderBy('date', 'asc')
-                ->get();
-            $sppds = MainSPPD::with('user')->where('user_id', Auth::id())->whereMonth('created_at', $currentMonth)->get();
-        }
-
-        $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
-        $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
-            return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
-        });
-
+            ->paginate(5);
+        // dd($sppds);
+        // Get latest SPPDBellow data (only necessary fields)
+        $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at')
+            ->orderByDesc('updated_at')
+            ->get()
+            ->groupBy('code_sppd')
+            ->map(fn($items) => $items->first());
 
         // Prepare data for the chart
         $dates = []; // X-axis labels (dates of the current month)
         $dataViews = []; // Viewable counts per day
         $dataSppd = []; // SPPD counts per day
 
-        // Create a map for dailyViews and sppdData by date for easier lookup
+        // Create maps for quick lookup
         $dailyViewsMap = $dailyViews->keyBy('date');
-        $sppdDataMap = $sppdData->keyBy('date');
 
         while ($startOfMonth->lte($today)) {
-            // Add the date in 'd M' format
+            $dateString = $startOfMonth->format('Y-m-d');
+
             $dates[] = $startOfMonth->format('d M');
+            $dataViews[] = $dailyViewsMap[$dateString]->total ?? 0;
+            $dataSppd[] = $sppdDataMap[$dateString]->total ?? 0;
 
-            // Check if there's viewable data for this date, if not, add 0
-            $dataViews[] = isset($dailyViewsMap[$startOfMonth->format('Y-m-d')])
-                ? $dailyViewsMap[$startOfMonth->format('Y-m-d')]->total
-                : 0;
-
-            // Check if there's SPPD data for this date, if not, add 0
-            $dataSppd[] = isset($sppdDataMap[$startOfMonth->format('Y-m-d')])
-                ? $sppdDataMap[$startOfMonth->format('Y-m-d')]->total
-                : 0;
-
-            $startOfMonth->addDay(); // Move to the next day
+            $startOfMonth->addDay();
         }
+        // Render partial HTML for Blade
+        $htmlContent = view('partials.sppd_partials', compact('dates', 'dataViews', 'dataSppd', 'sppds', 'latestBellow'))->render();
 
-        // dd($dates);
-
-        return view('dashboard', compact('dates', 'dataViews', 'dataSppd', 'sppds', 'latestBellow'));
+        return view('dashboard', compact('dates', 'dataViews', 'dataSppd', 'htmlContent'));
     }
 }

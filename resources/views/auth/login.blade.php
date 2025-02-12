@@ -5,12 +5,12 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
         <div class="pb-4 hidden md:block">
-            <p class="text-center font-semibold text-lg">Login Form</p>
+            <p class="text-center font-semibold text-lg">Login</p>
         </div>
         <!-- Email Address -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full px-1" type="text" name="name" :value="old('name')" required autofocus autocomplete="username" />
+            <x-text-input id="name" class="block mt-1 w-full px-1" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 

@@ -1,4 +1,3 @@
-<!-- filepath: /d:/PROJECT/LARAVEL/sppd/resources/views/layouts/app.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -30,9 +29,9 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 relative">
         @include('components.navbar')
-        <div class="pt-14 gap-4 lg:flex w-full">
+        <div class="pt-14 gap-4 lg:flex w-auto">
             <x-sidebar/>
-            <div id="right-side" class="lg:w-5/6 w-full lg:ml-[16.666667svw]">
+            <div id="right-side" class="lg:w-5/6 w-auto lg:ml-[16.666667svw]">
                 <!-- Page Heading -->
                 @isset($header)
                     <header class="bg-white shadow">
