@@ -28,4 +28,4 @@ jobs:
           echo "Adding GitLab remote: $REMOTE_URL"
           git remote add gitlab "$REMOTE_URL" || git remote set-url gitlab "$REMOTE_URL"
           # Push branch main ke GitLab
-          git push gitlab main --force
+          git push gitlab main
