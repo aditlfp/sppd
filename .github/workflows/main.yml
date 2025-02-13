@@ -12,6 +12,7 @@ jobs:
     env:
       # Semua variabel yang dibutuhkan oleh action
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
+      GITLAB_HOSTNAME: ${{ secrets.GITLAB_HOSTNAME }}
       GITLAB_REPO: ${{ secrets.GITLAB_REPO }}
       GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
       GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }}
@@ -19,6 +20,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Add GitLab remote as 'mirror'
+        run: git remote add mirror ${{ secrets.GITLAB_REPO }}
 
       - name: Mirror to GitLab and run GitLab CI
         uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
