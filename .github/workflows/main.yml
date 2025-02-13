@@ -16,5 +16,4 @@ jobs:
       - name: Mirror to GitLab and run GitLab CI
         uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
         with:
-          entryPoint: "mirror-and-ci"
           args: "--gitlab-token ${{ secrets.GITLAB_TOKEN }} --gitlab-repo ${{ secrets.GITLAB_REPO }} --gitlab-username ${{ secrets.GITLAB_USERNAME }} --branch main"
