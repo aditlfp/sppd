@@ -18,4 +18,5 @@ jobs:
         with:
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
           gitlab_repo: ${{ secrets.GITLAB_REPO }}
+          gitlab_username: ${{ secrets.GITLAB_USERNAME }}
           branch: main
