@@ -10,13 +10,11 @@ jobs:
   mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout GitHub Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Mirror to GitLab and run GitLab CI
         uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
         with:
-          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
-          gitlab_repo: ${{ secrets.GITLAB_REPO }}
-          gitlab_username: ${{ secrets.GITLAB_USERNAME }}
-          branch: ${{ secrets.BRANCH }}
+          entryPoint: "mirror-and-ci"
+          args: "--gitlab-token ${{ secrets.GITLAB_TOKEN }} --gitlab-repo ${{ secrets.GITLAB_REPO }} --gitlab-username ${{ secrets.GITLAB_USERNAME }} --branch main"
