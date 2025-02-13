@@ -22,13 +22,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - name: Add GitLab remote as 'mirror'
+      - name: Setup GitLab remote and update branch
         run: |
-          # Jika GITLAB_REPO bernilai "https://gitlab.com/aditlfp/e_sppd.git",
-          # perintah berikut akan menambahkan remote "mirror" dengan kredensial.
-          REMOTE_URL="https://${{ secrets.GITLAB_USERNAME }}:${{ secrets.GITLAB_TOKEN }}@$(echo '${{ secrets.GITLAB_REPO }}' | sed 's#https://##')"
+          # Susun URL remote dengan kredensial
+          REMOTE_URL="https://${GITLAB_USERNAME}:${GITLAB_TOKEN}@$(echo "$GITLAB_REPO" | sed 's#https://##')"
           echo "Adding remote mirror: $REMOTE_URL"
-          git remote add mirror "$REMOTE_URL"
+          git remote add mirror "$REMOTE_URL" || git remote set-url mirror "$REMOTE_URL"
+          # Ambil data dari remote dan integrasikan ke branch lokal
+          git fetch mirror
+          echo "Pulling latest changes from remote 'mirror' on branch $BRANCH..."
+          git pull mirror $BRANCH --rebase
+
+      - name: Push to GitLab without force push
+        run: |
+          echo "Pushing local branch '$BRANCH' to remote 'mirror'..."
+          git push mirror $BRANCH
 
       - name: Mirror to GitLab and run GitLab CI
         uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
