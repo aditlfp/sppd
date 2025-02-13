@@ -47,6 +47,3 @@ jobs:
           BRANCH=${BRANCH:-main}
           echo "Pushing local branch '$BRANCH' to remote 'mirror'..."
           git push mirror "$BRANCH"
-
-      - name: Mirror to GitLab and run GitLab CI
-        uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
