@@ -17,26 +17,28 @@ jobs:
       GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
       GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }}
       GITLAB_PROJECT_ID: ${{ secrets.GITLAB_PROJECT_ID }}
-      BRANCH: ${{ secrets.GITLAB_BRANCH }}
+      BRANCH: main
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         
       - name: Setup GitLab remote and update branch
         run: |
+          echo "BRANCH is set to: '$BRANCH'"
           # Susun URL remote dengan kredensial
           REMOTE_URL="https://${GITLAB_USERNAME}:${GITLAB_TOKEN}@$(echo "$GITLAB_REPO" | sed 's#https://##')"
           echo "Adding remote mirror: $REMOTE_URL"
           git remote add mirror "$REMOTE_URL" || git remote set-url mirror "$REMOTE_URL"
-          # Ambil data dari remote dan integrasikan ke branch lokal
           git fetch mirror
-          echo "Pulling latest changes from remote 'mirror' on branch $BRANCH..."
-          git pull mirror $BRANCH --rebase
+          # Pastikan variabel BRANCH tidak kosong, gunakan default 'main' jika perlu
+          BRANCH=${BRANCH:-main}
+          echo "Pulling latest changes from remote 'mirror' on branch '$BRANCH'..."
+          git pull mirror "$BRANCH" --rebase
 
       - name: Push to GitLab without force push
         run: |
           echo "Pushing local branch '$BRANCH' to remote 'mirror'..."
-          git push mirror $BRANCH
+          git push mirror "$BRANCH"
 
       - name: Mirror to GitLab and run GitLab CI
         uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
