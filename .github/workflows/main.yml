@@ -15,7 +15,7 @@ jobs:
       GITLAB_REPO: ${{ secrets.GITLAB_REPO }}
       GITLAB_USERNAME: ${{ secrets.GITLAB_USERNAME }}
       GITLAB_PASSWORD: ${{ secrets.GITLAB_PASSWORD }}
-      BRANCH: main
+      BRANCH: ${{ secrets.GITLAB_BRANCH }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
