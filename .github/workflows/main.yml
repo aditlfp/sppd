@@ -22,18 +22,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         
-      - name: Setup GitLab remote and update branch
+      - name: Setup GitLab remote and merge changes
         run: |
           echo "BRANCH is set to: '$BRANCH'"
-          # Susun URL remote dengan kredensial
+          # Susun URL remote dengan kredensial, misalnya:
+          # https://<GITLAB_USERNAME>:<GITLAB_TOKEN>@gitlab.com/aditlfp/e_sppd.git
           REMOTE_URL="https://${GITLAB_USERNAME}:${GITLAB_TOKEN}@$(echo "$GITLAB_REPO" | sed 's#https://##')"
           echo "Adding remote mirror: $REMOTE_URL"
           git remote add mirror "$REMOTE_URL" || git remote set-url mirror "$REMOTE_URL"
           git fetch mirror
-          # Pastikan variabel BRANCH tidak kosong, gunakan default 'main' jika perlu
           BRANCH=${BRANCH:-main}
-          echo "Pulling latest changes from remote 'mirror' on branch '$BRANCH'..."
-          git pull mirror "$BRANCH" --rebase
+          echo "Merging remote 'mirror/$BRANCH' into local branch '$BRANCH' with 'ours' strategy..."
+          # Lakukan merge menggunakan strategi "ours" untuk menerima perubahan lokal (GitHub) bila terjadi konflik.
+          git merge mirror/"$BRANCH" -X ours --no-edit || true
 
       - name: Push to GitLab without force push
         run: |
