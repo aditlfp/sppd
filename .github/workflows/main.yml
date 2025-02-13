@@ -1,4 +1,4 @@
-name: Mirror to GitLab
+name: Mirror to GitLab and Run GitLab CI
 
 on:
   push:
@@ -7,25 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  push-to-gitlab:
+  mirror:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout GitHub repository
+      - name: Checkout GitHub Repository
         uses: actions/checkout@v3
 
-      - name: Configure Git for GitLab push
-        run: |
-          git config --global user.name "aditlfp"
-          git config --global user.email "aditya.budilfp11@gmail.com"
-
-      - name: Add GitLab remote and push changes
-        env:
-          GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
-          GITLAB_REPO_URL: ${{ secrets.GITLAB_REPO }}
-        run: |
-          # Susun URL remote dengan token (pastikan URL di secret GITLAB_REPO misalnya dalam format "gitlab.com/username/repo.git")
-          REMOTE_URL="https://oauth2:${GITLAB_TOKEN}@${GITLAB_REPO_URL}"
-          echo "Adding GitLab remote: $REMOTE_URL"
-          git remote add gitlab "$REMOTE_URL" || git remote set-url gitlab "$REMOTE_URL"
-          # Push branch main ke GitLab
-          git push gitlab main
+      - name: Mirror to GitLab and run GitLab CI
+        uses: SvanBoxel/gitlab-mirror-and-ci-action@0.2
+        with:
+          gitlab_token: ${{ secrets.GITLAB_TOKEN }}
+          gitlab_repo: ${{ secrets.GITLAB_REPO }}
+          branch: main
