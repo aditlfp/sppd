@@ -9,9 +9,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # 1) Check out code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2) Set up Node.js, install & build (if you have front-end assets)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -20,15 +22,11 @@ jobs:
 
       - name: Install dependencies and build
         run: |
-          echo "Menginstal paket zip..."
           sudo apt-get update && sudo apt-get install -y zip
-          echo "Install dependency Node.js..."
           npm install
-          echo "Menjalankan build..."
           npm run build
-          echo "Mengompres folder node_modules..."
-          zip -r node_modules.zip node_modules
 
+      # 3) Set up PHP & Composer (if you're using PHP/Laravel/etc.)
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
@@ -37,75 +35,55 @@ jobs:
 
       - name: Install PHP dependencies
         run: |
-          echo "Menginstal paket zip..."
           sudo apt-get install -y zip unzip
-          echo "Install dependency PHP..."
           composer install --no-dev --prefer-dist
-          echo "Mengompres folder vendor..."
-          zip -r vendor.zip vendor
 
+      # 4) Upload build artifacts (you can limit this to only necessary folders)
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: |
-            node_modules.zip
-            vendor.zip
-            public/
+            ./
+          # Optionally just:
+          # public/
+          # vendor/
+          # etc.
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      # 1) Check out again (not strictly necessary if you only need artifacts)
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2) Download the artifact from the build job
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-files
           path: ./
 
+      # 3) Install LFTP
       - name: Install LFTP
-        run: sudo apt-get update && sudo apt-get install -y lftp unzip zip
+        run: sudo apt-get update && sudo apt-get install -y lftp
 
+      # 4) Mirror (upload) your local files to the FTP server
       - name: Deploy files via FTP
         run: |
-          echo "Mulai deploy via FTP..."
-
-          # 1) Mirror semua file kecuali folder public (juga exclude node_modules, vendor, dll.)
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
+          echo "Starting FTP deploy..."
+          lftp -c "set ssl:verify-certificate no; \
+                   open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; \
                    mirror -R --verbose=4 \
                      --exclude node_modules \
                      --exclude .git \
                      --exclude .github \
-                     --exclude vendor \
-                     --exclude node_modules.zip \
-                     --exclude vendor.zip \
-                     --exclude public \
+                     --exclude tests \
+                     --exclude .env.example \
                      ./ ../../"
-
-          # 2) Upload khusus favicon ke folder public
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   put public/favicon.ico -o ../../public/favicon.ico"
-
-          # 3) Upload file node_modules.zip dan vendor.zip
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   put node_modules.zip -o ../../node_modules.zip"
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   put vendor.zip -o ../../vendor.zip"
-
-          # 4) Ekstrak node_modules.zip di server
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   lcd ../../; 
-                   !unzip -o node_modules.zip -d node_modules; 
-                   !rm node_modules.zip"
-
-          # 5) Ekstrak vendor.zip di server
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   lcd ../../; 
-                   !unzip -o vendor.zip -d vendor; 
-                   !rm vendor.zip"
+          # Change `../../` to the correct remote path (e.g. /public_html)
+          # Adjust excludes as needed.
 
     env:
       FTP_USER: ${{ secrets.FTP_USER }}
