@@ -9,11 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1) Check out code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2) Set up Node.js, install & build (if you have front-end assets)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,7 +24,6 @@ jobs:
           npm install
           npm run build
 
-      # 3) Set up PHP & Composer (if you're using PHP/Laravel/etc.)
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
@@ -38,53 +35,32 @@ jobs:
           sudo apt-get install -y zip unzip
           composer install --no-dev --prefer-dist
 
-      # 4) Upload build artifacts (you can limit this to only necessary folders)
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: build-files
           path: |
-            ./
-          # Optionally just:
-          # public/
-          # vendor/
-          # etc.
+            public/
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # 1) Check out again (not strictly necessary if you only need artifacts)
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # 2) Download the artifact from the build job
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
           name: build-files
           path: ./
 
-      # 3) Install LFTP
       - name: Install LFTP
         run: sudo apt-get update && sudo apt-get install -y lftp
 
-      # 4) Mirror (upload) your local files to the FTP server
       - name: Deploy files via FTP
         run: |
           echo "Starting FTP deploy..."
           lftp -c "set ssl:verify-certificate no; \
                    open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; \
-                   mirror -R --verbose=4 \
-                     --exclude node_modules \
-                     --exclude .git \
-                     --exclude .github \
-                     --exclude tests \
-                     --exclude .env.example \
-                     ./ ../../"
-          # Change `../../` to the correct remote path (e.g. /public_html)
-          # Adjust excludes as needed.
-
+                   mirror -R --verbose=4 --exclude node_modules --exclude .git --exclude .github --exclude tests ./ public_html; bye"
     env:
       FTP_USER: ${{ secrets.FTP_USER }}
       FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
