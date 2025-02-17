@@ -26,14 +26,12 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+      - name: Fast FTP
+        uses: anvil-solutions/Fast-FTP-Action@2.1.3
         with:
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # Atur direktori lokal sesuai kebutuhan. Pada contoh ini menggunakan root repository.
-          local-dir: ./
           # Daftar file/folder yang tidak perlu diupload
           exclude: |
             node_modules/**
