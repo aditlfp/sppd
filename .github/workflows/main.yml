@@ -73,7 +73,7 @@ jobs:
         run: |
           echo "Mulai deploy via FTP..."
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   mirror -R --verbose --exclude node_modules --exclude vendor --exclude node_modules.zip --exclude vendor.zip ./ ../../"
+                   mirror -R --verbose=4 --exclude node_modules --exclude .git --exclude .github --exclude vendor --exclude node_modules.zip --exclude vendor.zip ./ ../../"
 
           echo "Upload file node_modules.zip dan vendor.zip..."
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
