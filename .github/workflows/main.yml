@@ -72,22 +72,36 @@ jobs:
       - name: Deploy files via FTP
         run: |
           echo "Mulai deploy via FTP..."
-          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
-                   mirror -R --verbose=4 --exclude node_modules --exclude .git --exclude .github --exclude vendor --exclude node_modules.zip --exclude vendor.zip ./ ../../"
 
-          echo "Upload file node_modules.zip dan vendor.zip..."
+          # 1) Mirror semua file kecuali folder public (juga exclude node_modules, vendor, dll.)
+          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
+                   mirror -R --verbose=4 \
+                     --exclude node_modules \
+                     --exclude .git \
+                     --exclude .github \
+                     --exclude vendor \
+                     --exclude node_modules.zip \
+                     --exclude vendor.zip \
+                     --exclude public \
+                     ./ ../../"
+
+          # 2) Upload khusus favicon ke folder public
+          lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
+                   put public/favicon.ico -o ../../public/favicon.ico"
+
+          # 3) Upload file node_modules.zip dan vendor.zip
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
                    put node_modules.zip -o ../../node_modules.zip"
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
                    put vendor.zip -o ../../vendor.zip"
 
-          echo "Menjalankan unzip node_modules di server..."
+          # 4) Ekstrak node_modules.zip di server
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
                    lcd ../../; 
                    !unzip -o node_modules.zip -d node_modules; 
                    !rm node_modules.zip"
 
-          echo "Menjalankan unzip vendor di server..."
+          # 5) Ekstrak vendor.zip di server
           lftp -c "set ssl:verify-certificate no; open -u $FTP_USER,$FTP_PASSWORD $FTP_HOST; 
                    lcd ../../; 
                    !unzip -o vendor.zip -d vendor; 
