@@ -19,10 +19,10 @@
                             total: 0,
                             dataT: {{$transportations->toJson()}},
                             calculateTotal() {
-                                this.total = (this.uangSaku = parseFloat(document.getElementById('uang_saku').value) || 0) + 
-                                            (parseFloat(this.tol) || 0) + 
-                                            (parseFloat(this.makan) || 0) + 
-                                            (parseFloat(this.lainLain) || 0) + 
+                                this.total = (this.uangSaku = parseFloat(document.getElementById('uang_saku').value) || 0) +
+                                            (parseFloat(this.tol) || 0) +
+                                            (parseFloat(this.makan) || 0) +
+                                            (parseFloat(this.lainLain) || 0) +
                                             (parseFloat(this.transport) || 0);
                             }
                         }"
@@ -141,7 +141,7 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             <template x-for="item in dataT">
                                 <div class="flex items-center w-full gap-x-3">
-                                    <input type="radio" name="alat_angkutan" x-model.number="transport" 
+                                    <input type="radio" name="alat_angkutan" x-model.number="transport"
                                         :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
                                     <span class="capitalize mt-2" x-text="item.jenis + ' : ' + item.anggaran"></span>
                                 </div>
@@ -375,16 +375,9 @@
         function onLocationFound(e) {
             L.marker(e.latlng).addTo(map)
                 .bindPopup("You In Here !").openPopup();
-            console.log(e.latlng);
             document.getElementById('maps_berangkat').value = e.latlng.lat + ',' + e.latlng.lng;
         }
 
         map.on('locationfound', onLocationFound);
-
-        function onLocationError(e) {
-            alert(e.message);
-        }
-
-        map.on('locationerror', onLocationError);
     </script>
 </x-app-layout>

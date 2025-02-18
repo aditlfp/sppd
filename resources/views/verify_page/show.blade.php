@@ -118,7 +118,7 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" {{ $item->id == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" {{ $item->anggaran == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
                                 <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty

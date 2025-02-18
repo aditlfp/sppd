@@ -31,7 +31,7 @@ class DashboardController extends Controller
         $isAdmin = Auth::user()->role_id == 2 || in_array(Auth::user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']);
 
         // Fetch only necessary SPPD details
-        $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'date_time_arrive', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
+        $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
             ->when(!$isAdmin, function ($query) {
                 return $query->where('user_id', Auth::id());
             })
