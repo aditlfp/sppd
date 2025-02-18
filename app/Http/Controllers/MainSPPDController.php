@@ -91,7 +91,8 @@ class MainSPPDController extends Controller
 
                 if ($beforeLastValue->continue == 1) {
                     $request->session()->put('key', $mainSppd->code_sppd);
-                    return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
+                    $sppd_bellow = view('partials.below_partials', compact('mainSppd','bellow'))->render();
+                    return view('main_sppds.next_page', compact('sppd_bellow'));
                 }else{
                     return redirect()->route('main_sppds.index');
                 }
@@ -100,7 +101,8 @@ class MainSPPDController extends Controller
             $bellow = $bellow->first();
             if ($bellow->continue == 1) {
                 $request->session()->put('key', $bellow->code_sppd);
-                return view('main_sppds.next_page', compact('mainSppd', 'bellow'));
+                $sppd_bellow = view('partials.below_partials', compact('mainSppd','bellow'))->render();
+                return view('main_sppds.next_page', compact('sppd_bellow'));
             }else{
                 return redirect()->route('main_sppds.index');
             }
@@ -129,6 +131,7 @@ class MainSPPDController extends Controller
             $mainSppddata = [
                 'date_time_arrive' => $request->date_time_arrive,
                 'arrive_at' => $request->arrive_at,
+                'departed_at' => $request->departed_at,
                 'foto_arrive' => $request->foto_arrive,
                 'continue' => $request->continue,
                 'date_time_destination' => $request->date_time_destination,

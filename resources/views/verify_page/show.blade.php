@@ -20,7 +20,7 @@
                         @csrf
                         @method('PATCH')
                         <div class="mb-4">
-                            <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah {{ $mainSppd->auth_official}}</label>
+                            <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah</label>
                             <select name="auth_official" id="auth_official" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Yang Memberi Perintah </option>
                                 @forelse ($user as $s)
@@ -216,6 +216,10 @@
                                     Reject SPPD
                                 </button>
                             </div>
+                        @elseif ($mainSppd->verify != "3")
+                           @if ($nextSppd)
+                               {!! $nextSppd !!}
+                           @endif
                         @endif
                     </form>
                 </div>

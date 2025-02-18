@@ -14,6 +14,7 @@ class SPPDBellow extends Model
         'code_sppd',
         'date_time_arrive',
         'arrive_at',
+        'departed_at',
         'foto_arrive',
         'maps_tiba',
         'continue',
