@@ -34,8 +34,12 @@
             </label>
         </div>
 
-        <div class="flex items-center justify-center mt-4">
-            <x-primary-button class="ms-3 px-10">
+        <div x-data="{ loading: false }" class="flex items-center justify-center mt-4">
+            <x-primary-button 
+                x-on:click="if (!loading) { loading = true; $refs.btn.innerText = 'Tunggu...'; $el.form.submit(); }"
+                x-bind:disabled="loading"
+                x-ref="btn"
+                class="ms-3 px-10">
                 {{ __('Log in') }}
             </x-primary-button>
         </div>

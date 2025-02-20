@@ -40,7 +40,7 @@ class DashboardController extends Controller
             ->paginate(5);
         // dd($sppds);
         // Get latest SPPDBellow data (only necessary fields)
-        $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at')
+        $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at', 'continue')
             ->orderByDesc('updated_at')
             ->get()
             ->groupBy('code_sppd')
@@ -65,7 +65,8 @@ class DashboardController extends Controller
         }
         // Render partial HTML for Blade
         $htmlContent = view('partials.sppd_partials', compact('dates', 'dataViews', 'dataSppd', 'sppds', 'latestBellow'))->render();
+        // dd($latestBellow, $sppds);
 
-        return view('dashboard', compact('dates', 'dataViews', 'dataSppd', 'htmlContent'));
+        return view('dashboard', compact('dates', 'dataViews', 'sppds', 'dataSppd', 'htmlContent', 'latestBellow'));
     }
 }

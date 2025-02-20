@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string("date_time_arrive")->nullable();
             $table->string("arrive_at")->nullable();
             $table->string("departed_at")->nullable();
-            $table->string("arrive_at")->nullable();
             $table->string("foto_arrive")->nullable();
             $table->string('maps_tiba')->nullable();
 
@@ -31,6 +30,7 @@ return new class extends Migration
             $table->string("nama_diperintah")->nullable();
             $table->string("date_time")->nullable();
 
+            $table->boolean("verify")->nullable()->default(0);
             $table->text("note")->nullable();
             $table->timestamps();
         });

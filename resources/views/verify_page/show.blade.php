@@ -133,7 +133,7 @@
                         <div id="map"></div>
                         <div class="mb-4 hidden">
                             <label for="maps_berangkat" class="block text-sm font-medium text-gray-700 ">Maps Berangkat</label>
-                            <input type="text" readonly name="maps_berangkat" id="maps_berangkat" class="mt-1 block w-full" required>
+                            <input type="text" readonly name="maps_berangkat" id="maps_berangkat" class="mt-1 block w-full" value="{{ $mainSppd->maps_berangkat }}" required>
                         </div>
 
 
@@ -352,22 +352,16 @@
 
 
 
-        var map = L.map('map').setView([51.505, -0.09], 13);
+        let coordinates = document.getElementById('maps_berangkat').value;
+        let [lat, lng] = coordinates.split(",").map(parseFloat);
+        var map = L.map('map').setView([lat, lng], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        map.locate({setView: true, maxZoom: 16});
-
-        function onLocationFound(e) {
-            L.marker(e.latlng).addTo(map)
+        L.marker([lat, lng]).addTo(map)
                 .bindPopup("You In Here !").openPopup();
-            console.log(e.latlng);
-            document.getElementById('maps_berangkat').value = e.latlng.lat + ',' + e.latlng.lng;
-        }
-
-        map.on('locationfound', onLocationFound);
 
         function onLocationError(e) {
             alert(e.message);

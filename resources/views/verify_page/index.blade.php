@@ -65,10 +65,10 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <template x-for="(sppd, i) in sppds" :key="sppd.id">
+                            <template x-for="(sppd, i) in sppds" :key="i">
                                 <tr
                                     x-cloak
-                                    x-data="{ latestB: latestBelow[sppd.code_sppd], total: parseInt(sppd.uang_saku || 0) + parseInt(sppd.e_toll || 0) + parseInt(sppd.makan || 0) + parseInt(sppd.lain_lain || 0) + parseInt(sppd.transportation.anggaran || 0) }"
+                                    x-data="{ latestB: latestBelow[sppd.code_sppd], total: parseInt(sppd.uang_saku || 0) + parseInt(sppd.e_toll || 0) + parseInt(sppd.makan || 0) + parseInt(sppd.lain_lain || 0) + parseInt(sppd.alat_angkutan || 0) }"
                                     x-show="searchQuery == '' || sppd.user.nama_lengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                             sppd.maksud_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) ||
                                             sppd.lama_perjalanan.toLowerCase().includes(searchQuery.toLowerCase()) ||

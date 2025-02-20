@@ -45,6 +45,7 @@
 
 
                         </div>
+                        {{-- nama yang diperintah --}}
                         <div class="mb-4">
                             <label for="user_id" class="block text-sm font-medium text-gray-700 required label-text">Nama Yang Diperintah</label>
                             <select name="user_id" id="user_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
@@ -57,6 +58,7 @@
                             </select>
                             <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
                         </div>
+                        {{-- jabatan --}}
                         <div class="mb-4">
                             <label for="jabatan" class="block text-sm font-medium text-gray-700 required label-text">Jabatan</label>
                             <select @readonly(true) id="jabatan"  required class="select select-bordered select-sm w-full text-xs rounded-sm">
@@ -314,15 +316,6 @@
             }
 
             $('#uang_saku').val(total);
-
-
-            // for (var i = 0; i < regionId.options.length; i++) {
-            //     var option = regionId.options[i];
-            //     if (option.getAttribute('value') == selectedRegionId) {
-            //         option.selected = true;
-            //         break;
-            //     }
-            // }
         });
 
         document.getElementById('user_id').addEventListener('change', function() {
@@ -365,19 +358,73 @@
 
 
         var map = L.map('map').setView([51.505, -0.09], 13);
+
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         }).addTo(map);
 
-        map.locate({setView: true, maxZoom: 16});
+        var userMarker = null;
+        var lastLatLng = null;
+        var minDistance = 5; // Minimum movement in meters before updating
+        var firstLocationUpdate = true; // Flag to prevent zoom resetting on updates
 
-        function onLocationFound(e) {
-            L.marker(e.latlng).addTo(map)
-                .bindPopup("You In Here !").openPopup();
-            document.getElementById('maps_berangkat').value = e.latlng.lat + ',' + e.latlng.lng;
+        function updateLocation(e) {
+            var latlng = e.latlng;
+
+            // Ignore small movements to reduce unnecessary updates
+            if (lastLatLng) {
+                var distance = map.distance(lastLatLng, latlng);
+                if (distance < minDistance) {
+                    return;
+                }
+            }
+
+            lastLatLng = latlng; // Update last position
+
+            if (!userMarker) {
+                // Create marker if it doesn't exist
+                userMarker = L.marker(latlng, { draggable: false }).addTo(map)
+                    .bindPopup("You are here!").openPopup();
+            } else {
+                // Update marker position without changing map center
+                userMarker.setLatLng(latlng);
+            }
+
+            // Set the map view only on the first location update to avoid zoom bouncing
+            if (firstLocationUpdate) {
+                map.setView(latlng, 13); // Initial zoom when the location is first found
+                firstLocationUpdate = false;
+            } else {
+                map.panTo(latlng); // Smoothly move the map to the marker without resetting zoom
+            }
+
+            // Update the input field with the latest coordinates
+            document.getElementById('maps_berangkat').value = latlng.lat + ',' + latlng.lng;
+
+            // **Get location name using reverse geocoding**
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.address) {
+                        let locationName = data.address.road || data.address.city || data.address.town || data.address.village || "Unknown Location";
+                        console.log(locationName, data.address);
+                        
+                        document.getElementById('tempat_berangkat').value = data.address.village + ', ' + data.address.county + ', ' + data.address.state;
+                        // userMarker.bindPopup(locationName).openPopup();
+                    }
+                })
+                .catch(error => console.error("Error getting location name:", error));
         }
 
-        map.on('locationfound', onLocationFound);
+        function trackLocation() {
+            map.locate({
+                watch: true,
+                enableHighAccuracy: true
+            });
+        }
+
+        map.on('locationfound', updateLocation);
+        trackLocation(); // Start real-time tracking
     </script>
 </x-app-layout>

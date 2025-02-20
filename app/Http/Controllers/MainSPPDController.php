@@ -23,9 +23,7 @@ class MainSPPDController extends Controller
     {
         $auth = auth()->user();
         $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
-        $latestBellow = $bellow->groupBy('code_sppd')->map(function ($items) {
-            return $items->first(); // Karena sudah diurutkan di query, cukup ambil yang pertama
-        });
+        $latestBellow = $bellow->whereNotNull('arrive_at')->groupBy('code_sppd');
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
             $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
@@ -80,7 +78,7 @@ class MainSPPDController extends Controller
     public function storeBottom(Request $request, MainSPPD $mainSppd)
     {
         $beforeLastValue = null;
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->whereNull('date_time_arrive')->get();
         if($bellow->count() > 1)
         {
             foreach ($bellow as $key => $value) {
@@ -88,10 +86,10 @@ class MainSPPDController extends Controller
                     $beforeLastValue = $value;
                 }
 
-
+                // dd($beforeLastValue, $key, count($bellow));
                 if ($beforeLastValue->continue == 1) {
                     $request->session()->put('key', $mainSppd->code_sppd);
-                    $sppd_bellow = view('partials.below_partials', compact('mainSppd','bellow'))->render();
+                    $sppd_bellow = view('partials.bellow_part_2_partials', compact('mainSppd','bellow'))->render();
                     return view('main_sppds.next_page', compact('sppd_bellow'));
                 }else{
                     return redirect()->route('main_sppds.index');
@@ -151,10 +149,25 @@ class MainSPPDController extends Controller
             }
 
             $sPPDBellow = SPPDBellow::where('code_sppd', $code_sppd);
-            $sPPDBellow->update($mainSppddata);
-            // Redirect ke halaman sukses dengan notifikasi
-            flash()->success('Data berhasil diubah.');
-            return redirect()->route('main_sppds.index');
+            if($sPPDBellow->count() == 1 && $request->continue == 1)
+            {
+                $sPPDBellow->latest()->update($mainSppddata);
+                SPPDBellow::create(['code_sppd' => $code_sppd]);
+                // Redirect ke halaman sukses dengan notifikasi
+                flash()->success('Data berhasil diubah.');
+                return redirect()->route('main_sppds.index');
+            } else if ($sPPDBellow->count() > 1 && $request->continue == 1) {
+                $sPPDBellow->latest()->first()->update($mainSppddata);
+                SPPDBellow::create(['code_sppd' => $code_sppd]);
+                // Redirect ke halaman sukses dengan notifikasi
+                flash()->success('Data berhasil diubah.');
+                return redirect()->route('main_sppds.index');
+            }else if ($request->continue == 0) {
+                $sPPDBellow->latest()->first()->update($mainSppddata);
+                // Redirect ke halaman sukses dengan notifikasi
+                flash()->success('Data berhasil diubah.');
+                return redirect()->route('main_sppds.index');
+            }
         } catch (\Exception $e) {
             dd($e);
             // Redirect ke halaman sebelumnya jika terjadi kesalahan lain

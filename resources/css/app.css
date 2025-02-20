@@ -5,6 +5,10 @@
     themes: light --default;
     root: ":root";
 }
+.menu {
+    --menu-active-bg: oklch(0.623 0.214 259.815) !important;
+    --menu-active-fg: #fff !important;
+}
 
 .required::after {
     content: "*";

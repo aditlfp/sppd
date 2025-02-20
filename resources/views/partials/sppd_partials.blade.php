@@ -62,7 +62,7 @@
         </div>
         @endif
 
-        <div class="bg-white overflow-hidden shadow-sm rounded-sm mx-1 md:w-3/5 p-2 w-screen sm:w-auto">
+        <div class="bg-white overflow-hidden shadow-sm rounded-sm mx-1 {{ Auth::user()->role_id == 1 ? 'md:w-full' : 'md:w-3/5 ' }} p-2 w-screen sm:w-auto">
             <p class="text-center font-semibold p-2">SPPD Bulan Ini</p>
             <div class="overflow-x-auto">
                 <table class="table table-sm table-zebra">

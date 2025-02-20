@@ -39,7 +39,7 @@
                                 <input type="text" readonly name="date_time_arrive" id="localDateTime" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_arrive }}">
                             </div>
                         </div>
-                        <div class="mb-4" x-data="filePreview('{{ asset('storage/images/' . $datas->foto_arrive) }}')">
+                        <div class="mb-4" x-data="filePreview('{{ asset($datas->foto_arrive ? 'storage/images/' . $datas->foto_arrive : 'img/no-image.jpg') }}')">
                             <label for="foto_arrive" class="block text-sm font-medium text-gray-700 label-text required">Foto Kedatangan</label>
 
                             <!-- Preview Section -->
@@ -58,7 +58,7 @@
                     <div class="border border-gray-200 p-4 mt-4">
                         <div class="mb-4">
                             <label for="berangkat_dari" class="block text-sm font-medium text-gray-700 label-text">Berangkat Dari <span class="text-red-500">(Tujuan)</span></label>
-                            <input type="text" name="berangkat_dari" id="berangkat_dari" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Berangkat dari..." value="{{ $datas->berangkat_dari }}">
+                            <input type="text" name="berangkat_dari" id="berangkat_dari" value="{{ $datas->departed_at }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Berangkat dari..." value="{{ $datas->berangkat_dari }}">
                         </div>
                         <div class="mb-4 flex flex-col gap-y-2">
                             <div class="flex items-center gap-x-2">
@@ -73,9 +73,9 @@
 
                         <div class="mb-4">
                             <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Pada Tanggal</label>
-                            <input type="datetime-local" name="date_time_destination" id="date_time_destination" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_destination }}">
+                            <input type="datetime-local" name="date_time_destination" id="date_time_destination" value="{{ $datas->date_time_destination }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_destination }}">
                         </div>
-                        <div class="mb-4" x-data="filePreview2('{{ asset('storage/images/' . $datas->foto_destination) }}')">
+                        <div class="mb-4" x-data="filePreview2('{{ asset($datas->foto_destination ? 'storage/images/' . $datas->foto_destination : 'img/no-image.jpg') }}')">
                             <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Tujuan</label>
                             <!-- Preview Section -->
                             <template x-if="imageUrl2">
@@ -113,6 +113,8 @@
                 imageUrl: initialImageUrl,  // Initialize with the existing image URL or null if none
                 handleFilePreview(event) {
                     const file = event.target.files[0];
+                    console.log(file, imageUrl);
+                    
                     if (file) {
                         this.imageUrl = URL.createObjectURL(file);  // Update image preview with selected file
                     } else {
@@ -125,6 +127,7 @@
                 imageUrl2: initialImageUrl2,
                 handleFilePreview2(event) {
                     const file = event.target.files[0];
+                    console.log(file, imageUrl);
                     if (file) {
                         this.imageUrl2 = URL.createObjectURL(file);
                     } else {
@@ -144,8 +147,8 @@
 
 
     @foreach ($bellow as $index => $dataItem)
-        initializeMap('map1_{{ $index }}', 'maps_tiba_{{ $index }}', '{{ $dataItem->maps_tiba }}');
-        initializeMap('map2_{{ $index }}', 'maps_tujuan_{{ $index }}', '{{ $dataItem->maps_tujuan }}');
+        initializeMap('map1_{{ $index }}', 'maps_tiba_{{ $index }}', '{{ $dataItem->maps_tiba ?: '0,0'  }}');
+        initializeMap('map2_{{ $index }}', 'maps_tujuan_{{ $index }}', '{{ $dataItem->maps_tujuan ?: '0,0' }}');
     @endforeach
 
     function initializeMap(mapId, inputId, coordinates) {
@@ -154,7 +157,7 @@
         var latitude = parseFloat(coordsArray[0]);
         var longitude = parseFloat(coordsArray[1]);
 
-        console.log(inputId, latitude, longitude);
+        // console.log(inputId, latitude, longitude);
 
 
         // Initialize the map centered at the specified coordinates

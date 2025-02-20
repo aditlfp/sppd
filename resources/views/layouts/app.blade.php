@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>SPPD Online - PT. Surya Amanah Cendikia</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -191,6 +191,36 @@
                 }
             };
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const scrollbarStyle = document.createElement("style");
+            document.head.appendChild(scrollbarStyle);
+
+            function updateScrollbar() {
+                if (window.scrollY === 0) {
+                    scrollbarStyle.innerHTML = `
+                        ::-webkit-scrollbar-thumb:vertical {
+                            border-radius: 0 0 10px 10px; /* Remove top radius only for vertical scrollbar */
+                        }
+                    `;
+                } else if (window.scrollY + window.innerHeight === document.documentElement.scrollHeight) {
+                    scrollbarStyle.innerHTML = `
+                        ::-webkit-scrollbar-thumb:vertical {
+                            border-radius: 10px 10px 0 0; /* Remove bottom radius only for vertical scrollbar */
+                        }
+                    `;
+                } else {
+                    scrollbarStyle.innerHTML = `
+                        ::-webkit-scrollbar-thumb:vertical {
+                            border-radius: 10px; /* Restore full radius for vertical scrollbar */
+                        }
+                    `;
+                }
+            }
+
+            window.addEventListener("scroll", updateScrollbar);
+            updateScrollbar(); // Run on page load
+        });
     </script>
 </body>
 

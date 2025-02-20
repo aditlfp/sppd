@@ -16,7 +16,7 @@
            x-model="searchQuery"
            @input="$dispatch('search-updated', searchQuery)" />
 
-    <span x-show="!searchQuery">
+    <span x-show="!searchQuery" class="hidden md:block">
         <kbd class="kbd kbd-xs">Ctrl</kbd>
         <kbd>+</kbd>
         <kbd class="kbd kbd-xs">k</kbd>

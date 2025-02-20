@@ -25,21 +25,20 @@ class VerifyController extends Controller
 
 
         $beforeLastValue = null;
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->whereNotNull('date_time_arrive')->get();
         if($bellow->count() > 1)
         {
-            foreach ($bellow as $key => $value) {
-                if ($key === count($bellow) - 2) {
-                    $beforeLastValue = $value;
-                }
+            // Get the second last value
+            $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
 
+            // Debugging - check if we got the correct value
+            // dd($bellow, $beforeLastValue);
 
-                if ($beforeLastValue->continue == 1) {
-                    $request->session()->put('key', $mainSppd->code_sppd);
-                     $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();;
-                }else{
-                    return redirect()->route('main_sppds.index');
-                }
+            if ($beforeLastValue && $beforeLastValue->continue == 1) {
+                $request->session()->put('key', $mainSppd->code_sppd);
+                $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
+            } else {
+                return redirect()->route('main_sppds.index');
             }
         }else{
             $bellow = $bellow->first();
