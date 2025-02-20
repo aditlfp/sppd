@@ -24,7 +24,7 @@
                     </div>
                     <!-- Foreground Swipe Text -->
                     <p id="swipeText" class="text-white font-semibold text-lg text-center flex-1 select-none transition-opacity duration-300">
-                        {{ $latestBellow && $sppds && $latestBellow[$sppds?->first()?->code_sppd]?->continue == 1 ? 'Lanjutkan SPPD' : 'Buat SPPD +' }}
+                        {{ ($latestBellow && $sppds && optional($latestBellow[$sppds->first()->code_sppd] ?? null)->continue == 1) ? 'Lanjutkan SPPD' : 'Buat SPPD +' }}
                     </p>
                     <p id="arrow"><i class="ri-arrow-right-double-line text-white text-3xl pr-3 animate-pulse duration-300"></i></p>
                 </div>
