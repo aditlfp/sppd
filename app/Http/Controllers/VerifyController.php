@@ -34,12 +34,12 @@ class VerifyController extends Controller
             // Debugging - check if we got the correct value
             // dd($bellow, $beforeLastValue);
 
-            if ($beforeLastValue && $beforeLastValue->continue == 1) {
+            // if ($beforeLastValue && $beforeLastValue->continue == 1) {
                 $request->session()->put('key', $mainSppd->code_sppd);
                 $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
-            } else {
-                return redirect()->route('main_sppds.index');
-            }
+            // } else {
+            //     return redirect()->route('main_sppds.index');
+            // }
         }else{
             $bellow = $bellow->first();
             $request->session()->put('key', $bellow->code_sppd);
