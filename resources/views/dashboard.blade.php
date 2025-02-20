@@ -24,7 +24,7 @@
                     </div>
                     <!-- Foreground Swipe Text -->
                     <p id="swipeText" class="text-white font-semibold text-lg text-center flex-1 select-none transition-opacity duration-300">
-                        {{ $latestBellow[$sppds->first()->code_sppd]->continue == 1 ? 'Lanjutkan SPPD' : 'Buat SPPD +' }}
+                        {{ $latestBellow[$sppds?->first()?->code_sppd]->continue == 1 ? 'Lanjutkan SPPD' : 'Buat SPPD +' }}
                     </p>
                     <p id="arrow"><i class="ri-arrow-right-double-line text-white text-3xl pr-3 animate-pulse duration-300"></i></p>
                 </div>
@@ -37,7 +37,7 @@
         var dataViews = @json($dataViews); // Viewable data per day
         var dataSppd = @json($dataSppd); // SPPD count per day
 
-        var sppds = @json($sppds->first()); // SPPD data
+        var sppds = @json($sppds?->first()); // SPPD data
         var latestB = @json($latestBellow); // Latest B data
         // console.log(sppds, latestB, latestB[sppds.code_sppd].continue, sppds.code_sppd);
         
@@ -134,7 +134,7 @@
             if (!isDragging) return;
             isDragging = false;
             if (currentX >= maxX * 0.9) {
-                if (latestB[sppds.code_sppd].continue == 1) {
+                if (latestB[sppds?.code_sppd]?.continue == 1) {
                     setTimeout(() => {
                         window.location.href = "{{ route('main_sppds.store-bottom', $sppds->first()->id) }}";
                     }, 500); // Small delay for UI feedback
