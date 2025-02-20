@@ -42,12 +42,8 @@ class VerifyController extends Controller
             }
         }else{
             $bellow = $bellow->first();
-            if ($bellow->continue == 1) {
-                $request->session()->put('key', $bellow->code_sppd);
-                 $nextSppd = view('partials.below_partials', compact('mainSppd', 'bellow'))->render();;
-            }else{
-                return redirect()->route('main_sppds.index');
-            }
+            $request->session()->put('key', $bellow->code_sppd);
+            $nextSppd = view('partials.below_partials', compact('mainSppd', 'bellow'))->render();;
         }
 
         // dd($mainSppd);
