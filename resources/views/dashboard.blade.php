@@ -138,11 +138,15 @@
             if (!isDragging) return;
             isDragging = false;
             if (currentX >= maxX * 0.9) {
-                if (latestB[sppds?.code_sppd]?.continue == 1) {
+                if (latestB?.[sppds?.[0]?.code_sppd]?.continue == 1) {
                     setTimeout(() => {
-                        window.location.href = "{{ route('main_sppds.store-bottom', $sppds->first()->id) }}";
+                        if (sppds?.[0]?.id) {
+                            window.location.href = "{{ route('main_sppds.store-bottom', '0') }}".replace('0', sppds[0].id);
+                        } else {
+                            window.location.href = "{{ route('main_sppds.create') }}";
+                        }
                     }, 500); // Small delay for UI feedback
-                }else{
+                } else {
                     setTimeout(() => {
                         window.location.href = "{{ route('main_sppds.create') }}";
                     }, 500); // Small delay for UI feedback
