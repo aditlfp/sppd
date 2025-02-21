@@ -135,7 +135,7 @@
             handleFilePreview2(event) {
                 const file = event.target.files[0];
                 // console.log(file);
-                
+
                 if (file) {
                     this.imageUrl2 = URL.createObjectURL(file);
                 } else {
@@ -169,7 +169,7 @@
             initializeMap('map1', 'maps_tiba', [lat1, lng1]);
             initializeMap('map2', 'maps_tujuan', [lat2, lng2]);
         });
-        
+
         function initializeMap(mapId, inputId, coords) {
             var map = L.map(mapId).setView(coords, 13);
             L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -178,7 +178,7 @@
             }).addTo(map);
             L.marker(coords).addTo(map)
             .bindPopup("You are here!").openPopup();
-            
+
             map.locate({setView: true, maxZoom: 16});
         }
     } else {

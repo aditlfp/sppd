@@ -62,19 +62,30 @@
                             <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eslon</label>
                             <select name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Eslon</option>
-                            @forelse ($eslon as $s)
-                                @if ($s->jabatan_id != null)
-                                    @foreach ($s->jabatan_id as $item)
+                                @forelse ($eslon as $s)
+                                @if (!is_null($s->jabatan_id))
+                                    @php
+                                        $jabatanIds = is_array($s->jabatan_id) ? $s->jabatan_id : explode(',', $s->jabatan_id);
+                                    @endphp
+
+                                    @foreach ($jabatanIds as $item)
                                         @php
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp
 
-                                        <option {{ $s->id == $mainSppd->eslon_id ? "selected" : "" }}  value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @if ($itemOK)
+                                            <option {{ $s->id == $mainSppd->eslon_id ? "selected" : "" }}
+                                                    value="{{ $s->id }}"
+                                                    data-jabatan-id="{{ $itemOK->id }}">
+                                                {{ $s->name }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 @endif
                             @empty
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
+
                             </select>
                         </div>
 
@@ -93,19 +104,32 @@
                             <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Jabatan Pengikut</label>
                             <select name="jabatan_pengikut" @readonly(true) disabled id="jabatan_pengikut" @readonly(true) class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Eslon</option>
-                            @forelse ($eslon as $s)
-                                @if ($s->jabatan_id != null)
-                                    @foreach ($s->jabatan_id as $item)
+                                @forelse ($eslon as $s)
+                                @if (!is_null($s->jabatan_id))
+                                    @php
+                                        // Ubah jabatan_id ke array jika masih dalam format string
+                                        $jabatanIds = is_array($s->jabatan_id) ? $s->jabatan_id : explode(',', $s->jabatan_id);
+                                    @endphp
+
+                                    @foreach ($jabatanIds as $item)
                                         @php
                                             $itemOK = App\Models\Jabatan::find($item);
                                         @endphp
 
-                                        <option {{ $s->id == $mainSppd->jabatan_pengikut ? "selected" : "" }} disabled value="{{ $s->id }}" data-jabatan-peng-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @if ($itemOK)
+                                            <option {{ $s->id == $mainSppd->jabatan_pengikut ? "selected" : "" }}
+                                                    disabled
+                                                    value="{{ $s->id }}"
+                                                    data-jabatan-peng-id="{{ $itemOK->id }}">
+                                                {{ $s->name }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 @endif
                             @empty
                                 <option selected disabled>- Kosong -</option>
                             @endforelse
+
                             </select>
                         </div>
 
@@ -217,8 +241,12 @@
                                 </button>
                             </div>
                         @elseif ($mainSppd->verify != "3")
-                           @if ($nextSppd)
+                           @if ($nextSppd && $nextSppd !== "Data Not Found")
                                {!! $nextSppd !!}
+                           @else
+                            <div class="w-full bg-gray-200 rounded-sm p-4 capitalize text-semibold text-gray-500">
+                                <span>data is currently not available</span>
+                            </div>
                            @endif
                         @endif
                     </form>

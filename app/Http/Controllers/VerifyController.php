@@ -25,30 +25,22 @@ class VerifyController extends Controller
 
 
         $beforeLastValue = null;
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->whereNotNull('date_time_arrive')->get();
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->latest()->get();
         if($bellow->count() > 1)
         {
-            // Get the second last value
-            $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
-
-            // Debugging - check if we got the correct value
-            // dd($bellow, $beforeLastValue);
-
-            // if ($beforeLastValue && $beforeLastValue->continue == 1) {
+                $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
                 $request->session()->put('key', $mainSppd->code_sppd);
                 $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
-            // } else {
-            //     return redirect()->route('main_sppds.index');
-            // }
-        }else{
+        }else if($bellow->count() == 1 && $bellow->first()->date_time_arrive != null){
             $bellow = $bellow->first();
             $request->session()->put('key', $bellow->code_sppd);
             $nextSppd = view('partials.below_partials', compact('mainSppd', 'bellow'))->render();;
+        }else {
+            $nextSppd = "Data Not Found";
         }
+        // dd($bellow->first()->date_time_arrive);
 
-        // dd($mainSppd);
-        // dd(Route::is('verify_page.*'));
-        return view('verify_page.show', compact('mainSppd', 'user', 'eslon', 'budget', 'transportations', 'regions', 'nextSppd'));
+        return view('verify_page.show', compact('mainSppd', 'bellow', 'user', 'eslon', 'budget', 'transportations', 'regions', 'nextSppd'));
     }
     // VERIFY SPPD
     public function verify(Request $request, MainSPPD $mainSppd)
