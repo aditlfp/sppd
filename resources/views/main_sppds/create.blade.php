@@ -77,14 +77,16 @@
                             <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eselon</label>
                             <select @readonly(true) name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Pilih Eselon</option>
-                            @forelse ($eslon as $s)
-                                @if ($s->jabatan_id != null)
+                                @forelse ($eslon as $s)
+                                @if (!is_null($s->jabatan_id))
                                     @foreach ($s->jabatan_id as $item)
                                         @php
-                                            $itemOK = App\Models\Jabatan::find($item);
+                                            $itemOK = $jabatanData[$item] ?? null;
                                         @endphp
 
-                                        <option value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @if ($itemOK)
+                                            <option value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @endif
                                     @endforeach
                                 @endif
                             @empty
@@ -409,7 +411,7 @@
                     if (data.address) {
                         let locationName = data.address.road || data.address.city || data.address.town || data.address.village || "Unknown Location";
                         console.log(locationName, data.address);
-                        
+
                         document.getElementById('tempat_berangkat').value = data.address.village + ', ' + data.address.county + ', ' + data.address.state;
                         // userMarker.bindPopup(locationName).openPopup();
                     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MainSppdRequest;
 use App\Models\Budget;
 use App\Models\Eslon;
+use App\Models\Jabatan;
 use App\Models\MainSPPD;
 use App\Models\PocketMoney;
 use App\Models\Transportation;
@@ -40,17 +41,8 @@ class MainSPPDController extends Controller
         $eslon = Eslon::get();
         $transportations = Transportation::all();
         $regions = Region::all();
-        // foreach ($eslon as $key => $value) {
-        //     $jabatanIds = json_decode($value->jabatan_id, true); // Decode JSON array
-        //     if (is_array($jabatanIds)) {
-        //         foreach ($jabatanIds as $jabatanId) {
-        //             // Process each jabatanId
-        //             // For example, you can log it or perform some action
-        //             dd($jabatanId); // Uncomment this line to debug
-        //         }
-        //     }
-        // }
-        return view('main_sppds.create', compact('user', 'budget', 'eslon', 'transportations', 'regions'));
+        $jabatanData = Jabatan::whereIn('id', $eslon->pluck('jabatan_id')->flatten())->get()->keyBy('id');
+        return view('main_sppds.create', compact('user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
     }
 
     public function store(MainSppdRequest $request)
