@@ -40,7 +40,7 @@
                                         <input type="text" readonly name="date_time_arrive" id="localDateTime" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_arrive }}">
                                     </div>
                                 </div>
-                                <div class="mb-4" x-data="filePreview('{{ asset($datas->foto_arrive ? 'storage/images/' . $datas->foto_arrive : 'img/no-image.jpg') }}')">
+                                <div class="mb-4" x-data="filePreview('{{ URL::asset($datas->foto_arrive ? 'storage/images/' . $datas->foto_arrive : 'img/no-image.jpg') }}')">
                                     <label for="foto_arrive" class="block text-sm font-medium text-gray-700 label-text required">Foto Kedatangan</label>
 
                                     <!-- Preview Section -->
@@ -76,7 +76,7 @@
                                     <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Pada Tanggal</label>
                                     <input type="datetime-local" name="date_time_destination" id="date_time_destination" value="{{ $datas->date_time_destination }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_destination }}">
                                 </div>
-                                <div class="mb-4" x-data="filePreview2('{{ asset($datas->foto_destination ? 'storage/images/' . $datas->foto_destination : 'img/no-image.jpg') }}')">
+                                <div class="mb-4" x-data="filePreview2('{{ URL::asset($datas->foto_destination ? 'storage/images/' . $datas->foto_destination : 'img/no-image.jpg') }}')">
                                     <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Tujuan</label>
                                     <!-- Preview Section -->
                                     <template x-if="imageUrl2">
