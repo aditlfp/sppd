@@ -24,7 +24,7 @@ class MainSPPDController extends Controller
     {
         $auth = auth()->user();
         $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
-        $latestBellow = $bellow->whereNotNull('arrive_at')->groupBy('code_sppd');
+        $latestBellow = $bellow->where('continue', 1)->groupBy('code_sppd');
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
             $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));

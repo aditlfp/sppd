@@ -28,9 +28,11 @@ class VerifyController extends Controller
         $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->latest()->get();
         if($bellow->count() > 1)
         {
-                $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
-                $request->session()->put('key', $mainSppd->code_sppd);
-                $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
+            // dd($bellow);
+            $bellow = $bellow->whereNotNull('date_time_arrive');
+            $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
+            $request->session()->put('key', $mainSppd->code_sppd);
+            $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
         }else if($bellow->count() == 1 && $bellow->first()->date_time_arrive != null){
             $bellow = $bellow->first();
             $request->session()->put('key', $bellow->code_sppd);

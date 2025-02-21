@@ -31,15 +31,16 @@
                             @forelse ($mainSppds as $index => $sppd)
                                 @php
                                     $latestB = $latestBellow[$sppd->code_sppd] ?? null;
+                                    // dd($latestB);
                                 @endphp
                                 <tr class="hover"
-                                    @if ($sppd->verify == '1' || $sppd->verify == '2') onclick="window.location='{{ $latestB[0]->continue == 1 ? route('main_sppds.store-bottom', $sppd->id) : 'javascript:void(0)' }}'"
+                                    @if ($sppd->verify == '1' || $sppd->verify == '2') onclick="window.location='{{  $latestB != null && $latestB[0]->continue == 1 ? route('main_sppds.store-bottom', $sppd->id) : 'javascript:void(0)' }}'"
                         @else
                         onclick="$.notify('SPPD Belum Diverifikasi!', {
                             autoHideDelay: 2000,
                             className: 'error',
                         })" @endif>
-                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $index + 1  }}</td>
                                     <td>{{ $sppd->user->nama_lengkap }}</td>
                                     <td>{{ $sppd->maksud_perjalanan }}</td>
                                     <td>{{ $sppd->lama_perjalanan . ' Hari' }}</td>
@@ -61,9 +62,6 @@
                                                         class="badge badge-success text-white font-semibold">Diverifikasi
                                                         & Dalam Perjalanan</span>
                                                 @endif
-                                            @else
-                                                <span class="badge badge-error text-white font-semibold">Dalam
-                                                    Perjalanan</span>
                                             @endif
                                         </td>
                                     @elseif($sppd->verify == '2')
@@ -79,8 +77,9 @@
                                                         & Dalam Perjalanan</span>
                                                 @endif
                                             @else
-                                                <span class="badge badge-error text-white font-semibold">Dalam
-                                                    Perjalanan</span>
+                                                 <span
+                                                    class="badge badge-success text-white font-semibold">Diverifikasi
+                                                    & Selesai</span>
                                             @endif
                                         </td>
                                     @else
@@ -89,7 +88,7 @@
                                         </td>
                                     @endif
                                 </tr>
-                                
+
                             @empty
                                 <tr class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                                     <td colspan="6">
