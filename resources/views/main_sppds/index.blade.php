@@ -31,7 +31,6 @@
                             @forelse ($mainSppds as $index => $sppd)
                                 @php
                                     $latestB = $latestBellow[$sppd->code_sppd] ?? null;
-                                    // dd($latestB);
                                 @endphp
                                 <tr class="hover"
                                     @if ($sppd->verify == '1' || $sppd->verify == '2') onclick="window.location='{{  $latestB != null && $latestB[0]->continue == 1 ? route('main_sppds.store-bottom', $sppd->id) : 'javascript:void(0)' }}'"
