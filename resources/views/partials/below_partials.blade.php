@@ -93,7 +93,7 @@
                                     <p class="font-semibold">Tambah Foto</p>
                                 </div>
                             </label>
-                            <input type="file" name="foto_destination" id="foto_destination" accept="image/*" class="hidden mt-1 w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview">
+                            <input type="file" name="foto_destination" id="foto_destination" accept="image/*" class="hidden mt-1 w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview2">
                         </div>
                         <div id="map2" class="map-container"></div>
                         <input type="text" name="maps_tujuan" id="maps_tujuan" value="{{ $bellow?->maps_tujuan }}" hidden readonly>
