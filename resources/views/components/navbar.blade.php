@@ -14,7 +14,7 @@
         </div>
     </div>
     <div id="fullscreen-menu"
-        class="hidden top-0 left-0 inset-0 bg-blue-500 transform translate-x-full transition-transform duration-500 ease-in-out z-[1001]">
+        class=" fixed top-0 left-0 inset-0 bg-blue-500 transform translate-x-full transition-transform duration-500 ease-in-out z-[1001]">
         <div id="divIsi"
             class="hidden flex-col gap-3 items-start mt-[40%] mx-[7%] h-full transition-all transform -translate-x-10 duration-1000 ease-in-out opacity-0">
             <a href="{{ route('dashboard') }}" class="text-white font-bold text-xl flex items-center justify-center gap-2 btn bg-sky-500 w-full rounded-sm p-2 px-[25svw] text-center"><svg
@@ -69,12 +69,7 @@
             $(this).toggleClass('open');
             $('#labelMenu').toggleClass('opacity-0', !$('#labelMenu').hasClass('opacity-0'))
                .toggleClass('opacity-100', !$('#labelMenu').hasClass('opacity-100'));
-            $('#fullscreen-menu')
-                .removeClass('hidden')
-                .hide()
-                .addClass('fixed')
-                .fadeIn(100);
-            $('#fullscreen-menu').toggleClass('translate-x-0 translate-x-full');
+            $('#fullscreen-menu').fadeIn(100).toggleClass('translate-x-0 translate-x-full');
             $('#divIsi').toggleClass('opacity-100 opacity-0 -translate-x-10');
             $('#divIsi').removeClass('hidden').addClass('flex');
             $('#userName').toggleClass('opacity-0 opacity-100');
