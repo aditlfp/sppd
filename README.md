@@ -1,8 +1,6 @@
 [![Deploy to FTP](https://github.com/aditlfp/sppd/actions/workflows/main.yml/badge.svg)](https://github.com/aditlfp/sppd/actions/workflows/main.yml)
 
 <p align="center"> 
-  <a href="https://github.com/aditlfp/sppd">
-  <p>This Project Build</p>
   <a href="https://skillicons.dev">
     <img src="https://skillicons.dev/icons?i=laravel,jquery,js,vite" />
   </a>
