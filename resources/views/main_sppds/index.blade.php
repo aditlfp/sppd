@@ -46,7 +46,9 @@
                                     <td>{{ $sppd->date_time_kembali }}</td>
                                     @if ($sppd->verify == '0' || $sppd->verify == null)
                                         <td>
-                                            <span class="badge badge-warning text-white font-semibold">Waiting</span>
+                                            <span class="badge badge-warning text-white font-semibold">Waiting
+                                            </span>
+                                            <button class="btn btn-sm btn-warning rounded-sm"><i class="ri-edit-2-fill text-lg"></i></button>
                                         </td>
                                     @elseif ($sppd->verify == '1')
                                         <td>
@@ -99,6 +101,7 @@
                                         <td colspan="8" class="bg-primary text-white hover:bg-primary-content transform-fill ease-linear duration-100 hover:text-gray-800 font-semibold hover:cursor-pointer active:bg-primary-content" onclick="window.location.href='{{ route('main_sppds.details', $sppd->id) }}'"><span>Detail</span></td>
                                     </tr>
                                 @endif
+
 
                             @empty
                                 <tr class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

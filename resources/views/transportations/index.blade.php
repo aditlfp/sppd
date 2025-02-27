@@ -5,9 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="pb-16 pt-3" x-data="{ 
-        searchQuery: '', 
-        hasResults: true, 
+    <div class="pb-16 pt-3" x-data="{
+        searchQuery: '',
+        hasResults: true,
         transport: {{ $transportations->toJson() ?: '[]' }} }" @search-updated.window="searchQuery = $event.detail; hasResults = transport.some(trans => trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase()));">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white mx-2 sm:mx-0 overflow-hidden shadow-sm rounded-sm">
@@ -21,6 +21,7 @@
                             <tr>
                                 <th>#</th>
                                 <th>Jenis Kendaraan</th>
+                                <th>Nama Kendaraan</th>
                                 <th>Anggaran</th>
                                 <th>Action</th>
                             </tr>
@@ -33,7 +34,7 @@
                                     <div class="max-h-[50svh] min-h-[50svh] overflow-y-auto">
                                         <table class="table table-sm table-zebra">
                                             <template x-for="(trans, i) in transport" :key="trans.id">
-                                                <tr 
+                                                <tr
                                                     x-cloak
                                                     x-show="searchQuery == '' || trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase())"
                                                     x-transition:enter="transition-opacity duration-200 ease-in-out"
@@ -45,6 +46,8 @@
     >
                                                     <td x-text="i+1"></td>
                                                     <td x-text="trans.jenis" class="text-sm"></td>
+                                                    <td x-text="trans.nama_kendaraan ? trans.nama_kendaraan : 'not available'" class="capitalize" :class="trans.nama_kendaraan ? 'text-sm' : 'text-sm text-red-500'"
+                                                    ></td>
                                                     <td x-text="toRupiah(trans.anggaran)"></td>
                                                     <td class="flex gap-2 justify-center">
                                                         {{-- EDIT --}}

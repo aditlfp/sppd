@@ -12,7 +12,7 @@ class Transportation extends Model
 
     protected $fillable = [
         'jenis',
-        'anggaran_driver',
+        'nama_kendaraan',
         'anggaran'
     ];
 }
