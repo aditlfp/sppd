@@ -24,7 +24,7 @@ class VerifyController extends Controller
         $regions = Region::all();
 
         $beforeLastValue = null;
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->latest()->get();
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
         if($bellow->count() > 1)
         {
             $bellow = $bellow->whereNotNull('date_time_arrive');

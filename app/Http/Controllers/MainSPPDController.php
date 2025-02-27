@@ -20,17 +20,28 @@ use Illuminate\Support\Str;
 class MainSPPDController extends Controller
 {
 
+    protected $beforeLastValue;
+    public function __construct()
+    {
+        $this->beforeLastValue = null;
+    }
+
     public function index()
     {
         $auth = auth()->user();
         $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
-        $latestBellow = $bellow->where('continue', 1)->groupBy('code_sppd');
+        $latestBellow = $bellow->groupBy('code_sppd');
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
             $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
         }else{
+            $counts = [];
+            foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
+                $counts[$code_sppd] = $collection->count();
+            }
+            // dd($latestBellow["E7O97sIznl"]->first());
             $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'desc')->paginate(15);
-            return view('main_sppds.index', compact('mainSppds', 'latestBellow'));
+            return view('main_sppds.index', compact('mainSppds', 'latestBellow', 'counts'));
         }
     }
 
@@ -65,6 +76,53 @@ class MainSPPDController extends Controller
 
             return redirect()->back();
         }
+    }
+
+    public function continueSection(Request $request, MainSPPD $mainSppd)
+    {
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->latest()->get();
+        $datas = $request->continue;
+
+        // Assign the latest entry to beforeLastValue
+        if ($bellow->count() > 1) {
+            $this->beforeLastValue = $bellow->first(); // Assign first/latest record
+        }
+
+        if ($datas == 'true') {
+            if ($bellow->count() > 1) {
+                if ($this->beforeLastValue && $this->beforeLastValue->continue == 1) {
+                    $request->session()->put('key', $mainSppd->code_sppd);
+                    $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
+                } else {
+                    return redirect()->back();
+                }
+            } else {
+                // Handle First Data
+                $bellow = $bellow->first();
+                if ($bellow->continue == 1) {
+                    $request->session()->put('key', $bellow->code_sppd);
+                    $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
+                }
+            }
+        } else if ($datas == 'false') {
+            if ($bellow->count() > 1) {
+                if ($this->beforeLastValue && $this->beforeLastValue->continue == 1) {
+                    $request->session()->put('key', $mainSppd->code_sppd);
+                    $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
+                } else {
+                    return redirect()->back();
+                }
+            } else {
+                // Handle First Data
+                $bellow = $bellow->first();
+                if ($bellow->continue == 1) {
+                    $request->session()->put('key', $bellow->code_sppd);
+                    $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
+                }
+            }
+        }
+
+        return view('sspd_bellow.sppd_bellow', compact('page_html', 'datas'));
     }
 
     public function storeBottom(Request $request, MainSPPD $mainSppd)
@@ -166,6 +224,17 @@ class MainSPPDController extends Controller
             flash()->error('Terjadi kesalahan saat mengubah data. Mohon coba lagi.');
             return redirect()->back();
         }
+    }
+
+    public function details(MainSPPD $mainSppd){
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
+        $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
+        $budget = PocketMoney::all();
+        $eslon = Eslon::get();
+        $transportations = Transportation::all();
+        $regions = Region::all();
+        $jabatanData = Jabatan::whereIn('id', $eslon->pluck('jabatan_id')->flatten())->get()->keyBy('id');
+        return view('sspd_bellow.show', compact('mainSppd', 'bellow', 'user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
     }
 
     public function destroy(MainSPPD $mainSppd)

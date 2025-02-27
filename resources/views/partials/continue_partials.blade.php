@@ -1,6 +1,6 @@
 @if (Route::is('verify_page.*'))
     <h2 class="font-semibold text-md sm:text-xl text-gray-800 leading-tight bg-gray-200 rounded-sm p-4">
-        Bukti {{ $bellow->continue == 1 ? "Kedatangan" : "Pulang Ke Kantor/Rumah" }}
+        Bukti Keberangkatan & Kedatangan {{ $mainSppd?->maksud_perjalanan }}
     </h2>
 @endif
 
@@ -33,11 +33,11 @@
                         <div class="flex w-full gap-x-2 sm:gap-x-4">
                             <div class="mb-4 w-full">
                                 <label for="arrive_at" class="block text-sm font-medium required text-gray-700 label-text">Tiba di</label>
-                                <input type="text" name="arrive_at" id="arrive_at" value="{{ $bellow?->arrive_at }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Lokasi sekarang..." required>
+                                <input type="text" name="arrive_at" id="arrive_at" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Lokasi sekarang..." required>
                             </div>
                             <div class="mb-4 w-full">
                                 <label for="date_time_arrive" class="block text-sm font-medium required text-gray-700 label-text">Pada Tanggal</label>
-                                <input type="text" readonly name="date_time_arrive" id="localDateTime" value="{{ $bellow?->date_time_arrive }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
+                                <input type="text" readonly name="date_time_arrive" id="localDateTime" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm">
                             </div>
                         </div>
                         <div class="mb-4" x-data="filePreview()">
@@ -57,29 +57,32 @@
                             <input type="file" required name="foto_arrive" id="foto_arrive" accept="image/*" class="hidden mt-1 w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview">
                         </div>
                         <div id="map1" class="map-container"></div>
-                        <input type="text" name="maps_tiba" id="maps_tiba" value="{{ $bellow?->maps_tiba }}" hidden readonly>
+                        <input type="text" name="maps_tiba" id="maps_tiba"  hidden readonly>
                     </div>
                     <div class="border border-gray-200 p-4 mt-4">
                         <div class="mb-4 flex flex-col gap-y-2">
                             <label for="continue" class="block text-sm font-medium text-gray-700 label-text required">Lanjut/Pulang</label>
                             <div class="flex items-center gap-x-2">
-                                <input type="radio" name="continue" value="1" {{ $bellow?->continue == 1 ? 'checked' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                <input type="radio" name="continue" value="1" {{ $datas == 'true' ? 'checked' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
                                 <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Lanjut</label>
                             </div>
                             <div class="flex items-center gap-x-2">
-                                <input type="radio" name="continue" value="0" {{ $bellow?->continue == 0 ? 'checked' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
-                                <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Kembali Ke Kantor</label>
+                                <input type="radio" name="continue" value="0" {{ $datas == 'false' ? 'checked' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Pulang</label>
                             </div>
                         </div>
+
+                    </div>
                     <div class="mb-4">
                         <label for="note" class="block text-sm font-medium text-gray-700 label-text">Note</label>
-                        <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $bellow?->note }}</textarea>
+                        <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
                     </div>
                         @if (!Route::is('verify_page.*'))
-                        <div class="flex items-center justify-end w-full mt-4">
+                        <div class="flex items-center justify-end w-full mt-4 gap-2">
                             <x-primary-button class="w-full">
                                 {{ __('Save') }}
                             </x-primary-button>
+                            <a href="{{ route('main_sppds.index')}}" class="btn btn-sm rounded-sm btn-error w-1/5 text-white">KEMBALI</a>
                         </div>
                         @endif
                 </form>
@@ -102,6 +105,22 @@
                 }
             },
         }));
+        Alpine.data('filePreview2', () => ({
+            imageUrl2: '',
+            handleFilePreview2(event) {
+                const file = event.target.files[0];
+                // console.log(file);
+
+                if (file) {
+                    this.imageUrl2 = URL.createObjectURL(file);
+                } else {
+                    this.imageUrl2 = null;
+                }
+            },
+        }));
+    });
+
+
 
     function updateDateTime() {
         const now = new Date();
@@ -116,25 +135,6 @@
     updateDateTime();
 </script>
 <script>
-    if(@json($bellow->arrive_at)) {
-     document.addEventListener('DOMContentLoaded', function () {
-            let coord1 = @json($bellow->maps_tiba);
-            let [lat1, lng1] = coord1.split(",").map(parseFloat);
-            initializeMap('map1', 'maps_tiba', [lat1, lng1]);
-        });
-
-        function initializeMap(mapId, inputId, coords) {
-            var map = L.map(mapId).setView(coords, 13);
-            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            L.marker(coords).addTo(map)
-            .bindPopup("You are here!").openPopup();
-
-            map.locate({setView: true, maxZoom: 16});
-        }
-    } else {
         var map = L.map('map1').setView([51.505, -0.09], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -190,5 +190,4 @@
 
         map.on('locationfound', updateLocation);
         trackLocation(); // Start real-time tracking
-    }
 </script>

@@ -1,7 +1,7 @@
 @forelse ($bellow as $index => $datas)
     @if ($datas->date_time_arrive != null)
-        <h2 class="font-semibold text-md sm:text-xl text-gray-800 leading-tight bg-gray-200 rounded-sm p-4">
-            Bukti Keberangkatan & Kedatangan {{ $mainSppd->maksud_perjalanan }}
+        <h2 class="mt-5 font-semibold text-md sm:text-xl text-gray-800 leading-tight bg-gray-200 rounded-sm p-4">
+            Bukti {{ $datas->continue == 1 ? "Kedatangan" : "Pulang Ke Kantor/Rumah" }}
         </h2>
 
         <div class="py-3">
@@ -11,7 +11,7 @@
                 ])>
                 <div
                 @class([
-                    ''.
+                    '',
                     'bg-white overflow-hidden shadow-sm sm:rounded-lg' => !Route::is('verify_page.*')
                     ])>
                 @if ($errors->any())
@@ -57,40 +57,19 @@
                                 <input type="text" name="maps_tiba_{{ $index }}" id="maps_tiba_{{ $index }}" hidden readonly>
                             </div>
                             <div class="border border-gray-200 p-4 mt-4">
-                                <div class="mb-4">
-                                    <label for="berangkat_dari" class="block text-sm font-medium text-gray-700 label-text">Berangkat Dari <span class="text-red-500">(Tujuan)</span></label>
-                                    <input type="text" name="berangkat_dari" id="berangkat_dari" value="{{ $datas->departed_at }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Berangkat dari..." value="{{ $datas->berangkat_dari }}">
-                                </div>
                                 <div class="mb-4 flex flex-col gap-y-2">
+                                    <label for="continue" class="block text-sm font-medium text-gray-700 label-text required">Lanjut/Pulang</label>
                                     <div class="flex items-center gap-x-2">
-                                        <input type="radio" {{ $datas->continue == 1 ? 'checked' : '' }} name="continue" value="1" class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
-                                        <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Lanjut</label>
+                                        <input type="radio" {{ $datas->continue == 1 ? 'checked' : 'disabled' }} name="continue" value="1" class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                        <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Melanjutkan Perjalanan</label>
                                     </div>
                                     <div class="flex items-center gap-x-2">
-                                        <input type="radio" {{ $datas->continue == 0 ? 'checked' : '' }} name="continue" value="0" class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
-                                        <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Kembali Ke Kantor</label>
+                                        <input type="radio" {{ $datas->continue == 0 ? 'checked' : 'disabled' }} name="continue" value="0" class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                        <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Pulang Ke Kantor</label>
                                     </div>
                                 </div>
 
-                                <div class="mb-4">
-                                    <label for="date_time_destination" class="block text-sm font-medium text-gray-700 label-text">Pada Tanggal</label>
-                                    <input type="datetime-local" name="date_time_destination" id="date_time_destination" value="{{ $datas->date_time_destination }}" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" value="{{ $datas->date_time_destination }}">
-                                </div>
-                                <div class="mb-4" x-data="filePreview2('{{ URL::asset($datas->foto_destination ? 'storage/images/' . $datas->foto_destination : 'img/no-image.jpg') }}')">
-                                    <label for="foto_destination" class="block text-sm font-medium text-gray-700 label-text">Foto Tujuan</label>
-                                    <!-- Preview Section -->
-                                    <template x-if="imageUrl2">
-                                        <div class="my-2 flex justify-center items-center">
-                                            <img :src="imageUrl2" alt="Image Preview" class="max-w-[275px] h-auto rounded-sm">
-                                        </div>
-                                    </template>
-                                    <input type="file" name="foto_destination" id="foto_destination" accept="image/*" class="hidden mt-1 w-full file-input file-input-bordered rounded-sm input-sm file-input-primary border-gray-300" @change="handleFilePreview2">
 
-                                </div>
-                                <div id="map2_{{ $index }}" class="map-container"></div>
-                                <input type="text" name="maps_tujuan_{{ $index }}" id="maps_tujuan_{{ $index }}" hidden readonly>
-
-                            </div>
                             <div class="mb-4">
                                 <label for="note" class="block text-sm font-medium text-gray-700 label-text">Note</label>
                                 <textarea name="note" id="note" placeholder="Note..." class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $datas->note }}</textarea>
@@ -124,19 +103,6 @@
                     }
                 },
             }));
-
-            Alpine.data('filePreview2', (initialImageUrl2) => ({
-                imageUrl2: initialImageUrl2,
-                handleFilePreview2(event) {
-                    const file = event.target.files[0];
-                    console.log(file, imageUrl);
-                    if (file) {
-                        this.imageUrl2 = URL.createObjectURL(file);
-                    } else {
-                        this.imageUrl2 = initialImageUrl2;
-                    }
-                },
-            }));
     });
 
     // Select all elements whose IDs contain the word 'map'
@@ -150,7 +116,6 @@
 
     @foreach ($bellow as $index => $dataItem)
         initializeMap('map1_{{ $index }}', 'maps_tiba_{{ $index }}', '{{ $dataItem->maps_tiba ?: '0,0'  }}');
-        initializeMap('map2_{{ $index }}', 'maps_tujuan_{{ $index }}', '{{ $dataItem->maps_tujuan ?: '0,0' }}');
     @endforeach
 
     function initializeMap(mapId, inputId, coordinates) {

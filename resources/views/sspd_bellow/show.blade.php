@@ -1,0 +1,428 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ 'Details SPPD ' . $mainSppd->maksud_perjalanan }}
+        </h2>
+    </x-slot>
+
+
+    <div class="py-3">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    <form action="{{ route('main_sppds.store') }}" method="POST" class="form-control"
+                        x-data="{
+                            uangSaku: 0,
+                            tol: 0,
+                            makan: 0,
+                            lainLain: 0,
+                            transport: 0,
+                            total: 0,
+                            dataT: {{$transportations->toJson()}},
+                            calculateTotal() {
+                                this.total = (this.uangSaku = parseFloat(document.getElementById('uang_saku').value) || 0) +
+                                            (parseFloat(this.tol) || 0) +
+                                            (parseFloat(this.makan) || 0) +
+                                            (parseFloat(this.lainLain) || 0) +
+                                            (parseFloat(this.transport) || 0);
+                            }
+                        }"
+                        @input="calculateTotal()"
+                        @change="calculateTotal()">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah</label>
+                            <select name="auth_official" id="auth_official" required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Yang Memberi Perintah</option>
+                                @forelse ($user as $s)
+                                    @if ($s->jabatan_id == 3 || $s->jabatan_id == 24)
+                                        <option {{ $mainSppd->auth_official == $s->nama_lengkap ? "selected" : "" }} value="{{ $s->nama_lengkap }}"> {{ $s->nama_lengkap }} </option>
+                                    @endif
+                                @empty
+                                    <option selected disabled>- Kosong -</option>
+                                @endforelse
+                            </select>
+                            <x-input-error :messages="$errors->get('auth_official')" class="mt-2" />
+
+
+                        </div>
+                        {{-- nama yang diperintah --}}
+                        <div class="mb-4">
+                            <label for="user_id" class="block text-sm font-medium text-gray-700 required label-text">Nama Yang Diperintah</label>
+                            <select name="user_id" id="user_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Yang Diperintah</option>
+                            @forelse ($user as $s)
+                                <option {{ $mainSppd->user_id == $s->id ? "selected" : "" }} value="{{ $s->id }}" data-jabatan-id="{{ $s->jabatan_id }}"> {{ $s->nama_lengkap }} </option>
+                            @empty
+                                <option selected disabled>- Kosong -</option>
+                            @endforelse
+                            </select>
+                            <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
+                        </div>
+                        {{-- jabatan --}}
+                        <div class="mb-4">
+                            <label for="jabatan" class="block text-sm font-medium text-gray-700 required label-text">Jabatan</label>
+                            <select @readonly(true) id="jabatan"  required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Jabatan</option>
+                            @forelse ($user as $s)
+                                <option disabled value="{{ $s->id }}" data-jabatan-real="{{ $s->jabatan_id }}"> {{ $s->jabatan?->name_jabatan }} </option>
+                            @empty
+                                <option selected disabled>- Kosong -</option>
+                            @endforelse
+                            </select>
+                            <x-input-error :messages="$errors->get('jabatan')" class="mt-2" />
+
+                        </div>
+                        {{-- eslon --}}
+                        <div class="mb-4">
+                            <label for="eslon_id" class="block text-sm font-medium text-gray-700 required label-text">Eselon</label>
+                            <select @readonly(true) name="eslon_id" id="eslon_id" required class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Eselon</option>
+                                @forelse ($eslon as $s)
+                                @if (!is_null($s->jabatan_id))
+                                    @foreach ($s->jabatan_id as $item)
+                                        @php
+                                            $itemOK = $jabatanData[$item] ?? null;
+                                        @endphp
+
+                                        @if ($itemOK)
+                                            <option value="{{ $s->id }}" data-jabatan-id="{{ $itemOK->id }}"> {{ $s->name }} </option>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            @empty
+                                <option selected disabled>- Kosong -</option>
+                            @endforelse
+                            </select>
+                            <x-input-error :messages="$errors->get('eslon_id')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="nama_pengikut" class="block text-sm font-medium text-gray-700 label-text">Nama Pengikut</label>
+                            <select name="nama_pengikut" id="nama_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Nama Pengikut</option>
+                                @forelse ($user as $s)
+                                    <option value="{{ $s->nama_lengkap }}" data-jb-peng-id="{{ $s->jabatan_id }}">
+                                        {{ $s->nama_lengkap }}
+                                    </option>
+                                @empty
+                                    <option selected disabled>- Kosong -</option>
+                                @endforelse
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="jabatan_pengikut" class="block text-sm font-medium text-gray-700 label-text">Eselon Pengikut</label>
+                            <select name="jabatan_pengikut" id="jabatan_pengikut" class="select select-bordered select-sm w-full text-xs rounded-sm">
+                                <option selected disabled>Pilih Eselon</option>
+                                @foreach ($eslon as $s)
+
+                                @if (!empty($s->jabatan_id))
+                                    @foreach ($s->jabatan_id as $item)
+                                        @php
+                                            $itemOK = App\Models\Jabatan::find($item);
+                                        @endphp
+
+                                        @if ($itemOK)
+                                            <option value="{{ $s->id }}" data-jabatan-peng-id="{{ $itemOK->id }}">
+                                                {{ $s->name }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                @endif
+                            @endforeach
+
+                            </select>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label for="maksud_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Maksud Perjalanan Dinas</label>
+                            <textarea name="maksud_perjalanan" id="maksud_perjalanan" rows="2" required placeholder="Maksud Perjalanan Dinas..." class="mt-1 block rounded-sm textarea textarea-bordered textarea-sm w-full"></textarea>
+                            <x-input-error :messages="$errors->get('maksud_perjalanan')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
+                            <template x-for="item in dataT">
+                                <div class="flex items-center w-full gap-x-3">
+                                    <input type="radio" name="alat_angkutan" x-model.number="transport"
+                                        :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <span class="capitalize mt-2" x-text="item.jenis + ' : ' + item.anggaran"></span>
+                                </div>
+                            </template>
+                            <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="tempat_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Tempat Berangkat</label>
+                            <input type="text" name="tempat_berangkat" id="tempat_berangkat" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" required placeholder="Tempat Berangkat">
+                            <x-input-error :messages="$errors->get('tempat_berangkat')" class="mt-2" />
+                        </div>
+                        <div id="map"></div>
+                        <div class="mb-4 hidden">
+                            <label for="maps_berangkat" class="block text-sm font-medium text-gray-700 ">Maps Berangkat</label>
+                            <input type="text" readonly name="maps_berangkat" id="maps_berangkat" class="mt-1 block w-full" required>
+                        </div>
+
+
+                        <div class="my-4">
+                            <label for="tempat_tujuan" class="block text-sm font-medium text-gray-700 required label-text">Tempat Tujuan</label>
+                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
+                                    <option selected disabled>-Pilih Wilayah-</option>
+                                @forelse($regions as $reg)
+                                    <option data-reg-id="{{ $reg->id }}" value="{{ $reg->nama_daerah }}">{{ $reg->name . " - " . $reg->nama_daerah }}</option>
+                                @empty
+
+                                @endforelse
+                            </select>
+                            <x-input-error :messages="$errors->get('tempat_tujuan')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="lama_perjalanan" class="block text-sm font-medium text-gray-700 required label-text">Lama Perjalanan</label>
+                            <div class="flex w-full items-center">
+                                <input type="number" name="lama_perjalanan" id="lama_perjalanan" class="mt-1 block input input-sm input-bordered text-xs rounded-sm rounded-r-none border-r-0 w-full" placeholder="10" required>
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs rounded-l-none rounded-sm w-12 border-l-0 disabled:border-[#D4D4D4]" required value="Hari">
+                                <x-input-error :messages="$errors->get('lama_perjalanan')" class="mt-2" />
+                            </div>
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label for="date_time_berangkat" class="block text-sm font-medium text-gray-700 required label-text">Tanggal Berangkat - Kembali</label>
+                            <div class="flex w-full items-center gap-x-1">
+                                <input type="date" name="date_time_berangkat" id="date_time_berangkat" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
+                                <span class="w-[5%] text-center">-</span>
+                                <input type="date" name="date_time_kembali" id="date_time_kembali" class="mt-1 block w-[47.5%] input input-sm input-bordered text-xs rounded-sm" required>
+                            </div>
+                            <x-input-error :messages="$errors->get('date_time_berangkat')" class="mt-2" />
+                            <x-input-error :messages="$errors->get('date_time_kembali')" class="mt-2" />
+                        </div>
+
+
+                        <div class="mb-4">
+                            <label for="budget_id" class="block text-sm font-medium text-gray-700 label-text required">Uang Saku</label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="uang_saku" id="uang_saku" x-model.lazy="uangSaku" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" readonly>
+                                <x-input-error :messages="$errors->get('uang_saku')" class="mt-2" />
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="e_toll" class="block text-sm font-medium text-gray-700 label-text">E-Toll <span class="text-red-500 italic">( opsional )</span></label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="e_toll" id="e_toll" x-model.lazy="tol" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" placeholder="1.000.000">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="makan" id="makan" x-model.lazy="makan" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
+                                <x-input-error :messages="$errors->get('makan')" class="mt-2" />
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
+                            <div class="flex">
+                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                <input type="text" name="lain_lain" id="lain_lain" x-model.lazy="lainLain" @input="calculateTotal()" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0">
+                            </div>
+
+                            <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
+                            <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
+                            <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+           $('#nama_pengikut').on('change', function() {
+            var selectPengikut = this.options[this.selectedIndex];
+            var selectedJabatanId = $(selectPengikut).data('jb-peng-id');
+            var jabatanPengikut = $('#jabatan_pengikut')[0]; // Get the DOM element
+
+            for (var i = 0; i < jabatanPengikut.options.length; i++) {
+                var option = jabatanPengikut.options[i];
+                if (option.getAttribute('data-jabatan-peng-id') == selectedJabatanId) {
+                    option.selected = true;
+                    break;
+                }
+            }
+        });
+
+        $('#tempat_tujuan').on('change', function() {
+            var selectTujuan = this.options[this.selectedIndex];
+            var selectedRegionId = $(selectTujuan).data('reg-id'); //Wilayah
+            // console.log(selectedRegionId);
+            var total = 0;
+            // FIND ESLON AND REGION ID YANG DIPERINTAH
+            // eslon diperintah == eslon budget && eslon pengikut == eslon budget && region sama
+            var eslonDipe = $('#eslon_id')[0].options;
+            var eslonPeng = $('#jabatan_pengikut')[0].options;
+
+            for(var i = 0; i < eslonPeng.length; i++)
+            {
+                if(eslonPeng[i].selected)
+                {
+                    // console.log(eslonPeng[i]);
+
+                    var selectedOption = eslonPeng[i];
+                    var isSelectedEslon = selectedOption.value;
+                    var budgetOptions = {!! json_encode($budget) !!};
+
+                    for(var j = 0; j < budgetOptions.length; j++)
+                    {
+                        var bud = budgetOptions[j];
+                        if(bud.eslon_id == isSelectedEslon && bud.region_id == selectedRegionId)
+                        {
+                            total += bud.anggaran;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            for (var i = 0; i < eslonDipe.length; i++) {
+                if (eslonDipe[i].selected) {
+                    var selectedOption = eslonDipe[i];
+                    var isSelectedEslon = selectedOption.value;
+                    var budgetOptions = {!! json_encode($budget) !!};
+
+                    for (var j = 0; j < budgetOptions.length; j++) {
+                        var bud = budgetOptions[j];
+                        if (bud.eslon_id == isSelectedEslon && bud.region_id == selectedRegionId) {
+                            total += bud.anggaran;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+
+            $('#uang_saku').val(total);
+        });
+
+        document.getElementById('user_id').addEventListener('change', function() {
+            var selectedUser = this.options[this.selectedIndex];
+            var selectedJabatanId = selectedUser.getAttribute('data-jabatan-id');
+            var eslonSelect = document.getElementById('eslon_id');
+            var eslonSelect1 = document.getElementById('jabatan');
+            var foundJabatan = false;
+            var foundEslon = false;
+
+            for (var i = 0; i < eslonSelect.options.length; i++) {
+                var option = eslonSelect.options[i];
+                if (option.getAttribute('data-jabatan-id') == selectedJabatanId) {
+                    option.selected = true;
+                    foundEslon = true;
+                    break;
+                }
+            }
+
+            // console.log(foundEslon, option.selectedIndex);
+
+
+            if(foundEslon == false)
+            {
+                option.value = 'Pilih Eslon'
+                eslonSelect.selectedIndex = 0;
+            }
+
+            for (var i = 0; i < eslonSelect1.options.length; i++) {
+                var option1 = eslonSelect1.options[i];
+                if (option1.getAttribute('data-jabatan-real') == selectedJabatanId) {
+                    option1.selected = true;
+                    break;
+                }else{
+                    option1.selected = false;
+                }
+            }
+        });
+
+
+
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        var userMarker = null;
+        var lastLatLng = null;
+        var minDistance = 5; // Minimum movement in meters before updating
+        var firstLocationUpdate = true; // Flag to prevent zoom resetting on updates
+
+        function updateLocation(e) {
+            var latlng = e.latlng;
+
+            // Ignore small movements to reduce unnecessary updates
+            if (lastLatLng) {
+                var distance = map.distance(lastLatLng, latlng);
+                if (distance < minDistance) {
+                    return;
+                }
+            }
+
+            lastLatLng = latlng; // Update last position
+
+            if (!userMarker) {
+                // Create marker if it doesn't exist
+                userMarker = L.marker(latlng, { draggable: false }).addTo(map)
+                    .bindPopup("You are here!").openPopup();
+            } else {
+                // Update marker position without changing map center
+                userMarker.setLatLng(latlng);
+            }
+
+            // Set the map view only on the first location update to avoid zoom bouncing
+            if (firstLocationUpdate) {
+                map.setView(latlng, 13); // Initial zoom when the location is first found
+                firstLocationUpdate = false;
+            } else {
+                map.panTo(latlng); // Smoothly move the map to the marker without resetting zoom
+            }
+
+            // Update the input field with the latest coordinates
+            document.getElementById('maps_berangkat').value = latlng.lat + ',' + latlng.lng;
+
+            // **Get location name using reverse geocoding**
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latlng.lat}&lon=${latlng.lng}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.address) {
+                        let locationName = data.address.road || data.address.city || data.address.town || data.address.village || "Unknown Location";
+                        console.log(locationName, data.address);
+
+                        document.getElementById('tempat_berangkat').value = data.address.village + ', ' + data.address.county + ', ' + data.address.state;
+                        // userMarker.bindPopup(locationName).openPopup();
+                    }
+                })
+                .catch(error => console.error("Error getting location name:", error));
+        }
+
+        function trackLocation() {
+            map.locate({
+                watch: true,
+                enableHighAccuracy: true
+            });
+        }
+
+        map.on('locationfound', updateLocation);
+        trackLocation(); // Start real-time tracking
+    </script>
+</x-app-layout>
