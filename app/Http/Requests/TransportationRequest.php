@@ -24,7 +24,7 @@ class TransportationRequest extends FormRequest
 
         return [
             'jenis' => 'required',
-            'anggaran_driver' => 'nullable',
+            'nama_kendaraan' => 'required',
             'anggaran' => 'required'
         ];
     }
