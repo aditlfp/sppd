@@ -16,7 +16,20 @@
                 </div>
             @endif
                 <div class="p-6 text-gray-900">
-                    <form id="sppdForm" action="{{ route('verifyUpdate', $mainSppd->id)}}" method="post">
+                    <form id="sppdForm" action="{{ route('verifyUpdate', $mainSppd->id)}}" method="post"
+                        x-data="{
+                            total: 0,
+                            dataT: {{$transportations->toJson()}},
+                            mainSppd: {{$mainSppd->toJson()}},
+                            calculateTotal() {
+                                this.total = (parseFloat(this.mainSppd.uang_saku) || 0) +
+                                            (parseFloat(this.mainSppd.tol) || 0) +
+                                            (parseFloat(this.mainSppd.makan) || 0) +
+                                            (parseFloat(this.mainSppd.lainLain) || 0) +
+                                            (parseFloat(this.mainSppd.alat_angkutan) || 0);
+                            }
+                        }"
+                        x-init="calculateTotal()">
                         @csrf
                         @method('PATCH')
                         <div class="mb-4">
@@ -222,6 +235,10 @@
 
                             <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
                             <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $mainSppd->lain_lain_desc}}</textarea>
+                        </div> 
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
+                            <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>
                         </div>
 
                         <input type="hidden" name="name_verify" id="name_verify" value="">
