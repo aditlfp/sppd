@@ -237,6 +237,24 @@ class MainSPPDController extends Controller
         return view('sspd_bellow.show', compact('mainSppd', 'bellow', 'user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
     }
 
+    public function change(MainSPPD $mainSppd)
+    {
+        $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
+        $budget = PocketMoney::all();
+        $eslon = Eslon::get();
+        $transportations = Transportation::all();
+        $regions = Region::all();
+        $jabatanData = Jabatan::whereIn('id', $eslon->pluck('jabatan_id')->flatten())->get()->keyBy('id');
+        return view('main_sppds.change', compact('mainSppd', 'user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
+    }
+
+    public function changeUpdate(Request $request, MainSPPD $mainSppd)
+    {
+        $mainSppd->update($request->all());
+        flash()->success('Data berhasil diubah.');
+        return redirect()->route('main_sppds.index');
+    }
+
     public function destroy(MainSPPD $mainSppd)
     {
         $mainSppd->delete();

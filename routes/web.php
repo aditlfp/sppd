@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('main_sppds/{main_sppd}/store-bottom', [MainSPPDController::class, 'storeBottom'])->name('main_sppds.store-bottom');
     Route::get('main_sppds/form-bottom/{main_sppd}', [MainSPPDController::class, 'continueSection'])->name('main_sppds.bottom');
     Route::get('main_sppds/{main_sppd}/details', [MainSPPDController::class, 'details'])->name('main_sppds.details');
+    Route::get('main_sppds/change/{main_sppd}', [MainSPPDController::class, 'change'])->name('main_sppds.change');
+    Route::patch('main_sppds/change/{main_sppd}', [MainSPPDController::class, 'changeUpdate'])->name('main_sppds.updateChange');
 });
 
 Route::middleware(['admin'])->group(function () {
