@@ -34,8 +34,12 @@
                                     $latestB = $latestBellow[$sppd->code_sppd]->first();
                                     // dd($latestB);
                                 @endphp
-                                <tr class="hover" @if ($latestB->continue == 0)
-                                    onclick="$('#btnOpen_{{ $index }}').stop(true, true).fadeToggle();"
+                                <tr 
+                                @if ($latestB->continue == 0)
+                                class="hover cursor-pointer" 
+                                onclick="$('#btnOpen_{{ $index }}').stop(true, true).fadeToggle();"
+                                @else
+                                class="hover" 
                                 @endif>
                                     <td>{{ $index + 1  }}</td>
                                     <td>{{ $sppd->auth_official  }}</td>
@@ -96,7 +100,7 @@
                                 </tr>
                                 @if ($latestB->continue == 0)
                                     <tr id="btnOpen_{{ $index }}" class="hidden">
-                                        <td colspan="8" class="bg-primary text-white hover:bg-primary-content transform-fill ease-linear duration-100 hover:text-gray-800 font-semibold hover:cursor-pointer active:bg-primary-content" onclick="window.location.href='{{ route('main_sppds.details', $sppd->id) }}'"><span>Detail</span></td>
+                                        <td colspan="8" class="bg-primary text-white py-2 px-4 rounded-sm hover:bg-primary-content transform-fill ease-linear duration-100 hover:text-gray-800 font-semibold hover:cursor-pointer active:bg-primary-content" onclick="window.location.href='{{ route('main_sppds.details', $sppd->id) }}'"><span>Detail</span></td>
                                     </tr>
                                 @endif
 
