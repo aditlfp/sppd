@@ -50,9 +50,9 @@
                                     <td>{{ $sppd->date_time_kembali }}</td>
                                     @if ($sppd->verify == '0' || $sppd->verify == null)
                                         <td>
-                                            <span class="badge badge-warning text-white font-semibold">Waiting
+                                            <span class="badge badge-warning rounded-r-none text-white font-semibold w-2/4">Waiting
                                             </span>
-                                            <button class="btn btn-sm btn-warning rounded-sm"><i class="ri-edit-2-fill text-lg"></i></button>
+                                            <button class="btn btn-xs btn-warning rounded-sm rounded-l-none w-1/4"><i class="ri-edit-2-fill text-lg"></i></button>
                                         </td>
                                     @elseif ($sppd->verify == '1')
                                         <td>
