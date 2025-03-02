@@ -28,47 +28,39 @@
                         </thead>
                         {{-- body --}}
                         <tbody>
-                            <tr>
-                                <td colspan="4">
-                                    <!-- Wrap the tbody content in a scrollable div -->
-                                    <div class="max-h-[50svh] min-h-[50svh] overflow-y-auto">
-                                        <table class="table table-sm table-zebra">
-                                            <template x-for="(trans, i) in transport" :key="trans.id">
-                                                <tr
-                                                    x-cloak
-                                                    x-show="searchQuery == '' || trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase())"
-                                                    x-transition:enter="transition-opacity duration-200 ease-in-out"
-                                                    x-transition:enter-start="opacity-0"
-                                                    x-transition:enter-end="opacity-100"
-                                                    x-transition:leave="transition-opacity duration-200 ease-in-out"
-                                                    x-transition:leave-start="opacity-100"
-                                                    x-transition:leave-end="opacity-0"
-    >
-                                                    <td x-text="i+1"></td>
-                                                    <td x-text="trans.jenis" class="text-sm"></td>
-                                                    <td x-text="trans.nama_kendaraan ? trans.nama_kendaraan : 'not available'" class="capitalize" :class="trans.nama_kendaraan ? 'text-sm' : 'text-sm text-red-500'"
-                                                    ></td>
-                                                    <td x-text="toRupiah(trans.anggaran)"></td>
-                                                    <td class="flex gap-2 justify-center">
-                                                        {{-- EDIT --}}
-                                                        <x-btn-edit x-bind:href="'/transportations/' + trans.id + '/edit'" />
-                                                        {{-- DELETE --}}
-                                                        <x-btn-delete x-bind:action="'/transportations/' + trans.id" />
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                                <tr x-show="transport.length === 0">
-                                                    <td colspan="4" class="text-center">No data available</td>
-                                                </tr>
-                                        </table>
-                                        <!-- No Results Message -->
-                                        <div x-cloak x-show="!hasResults && searchQuery !== ''"
-                                            class="min-h-[50svh] inset-0 flex items-center justify-center bg-white text-gray-500 text-lg font-semibold">
-                                            No results found
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Wrap the tbody content in a scrollable div -->
+                                <template x-for="(trans, i) in transport" :key="trans.id">
+                                    <tr
+                                        x-cloak
+                                        x-show="searchQuery == '' || trans.jenis.toLowerCase().includes(searchQuery.toLowerCase()) || trans.anggaran.toLowerCase().includes(searchQuery.toLowerCase())"
+                                        x-transition:enter="transition-opacity duration-200 ease-in-out"
+                                        x-transition:enter-start="opacity-0"
+                                        x-transition:enter-end="opacity-100"
+                                        x-transition:leave="transition-opacity duration-200 ease-in-out"
+                                        x-transition:leave-start="opacity-100"
+                                        x-transition:leave-end="opacity-0"
+>
+                                        <td x-text="i+1"></td>
+                                        <td x-text="trans.jenis" class="text-sm"></td>
+                                        <td x-text="trans.nama_kendaraan ? trans.nama_kendaraan : 'not available'" class="capitalize" :class="trans.nama_kendaraan ? 'text-sm' : 'text-sm text-red-500'"
+                                        ></td>
+                                        <td x-text="toRupiah(trans.anggaran)"></td>
+                                        <td class="flex gap-2 items-center justify-center">
+                                            {{-- EDIT --}}
+                                            <x-btn-edit x-bind:href="'/transportations/' + trans.id + '/edit'" />
+                                            {{-- DELETE --}}
+                                            <x-btn-delete x-bind:action="'/transportations/' + trans.id" />
+                                        </td>
+                                    </tr>
+                                </template>
+                                    <tr x-show="transport.length === 0">
+                                        <td colspan="4" class="text-center">No data available</td>
+                                    </tr>
+                            <!-- No Results Message -->
+                            <div x-cloak x-show="!hasResults && searchQuery !== ''"
+                                class="min-h-[50svh] inset-0 flex items-center justify-center bg-white text-gray-500 text-lg font-semibold">
+                                No results found
+                            </div>
                         </tbody>
                     </table>
                 </div>
