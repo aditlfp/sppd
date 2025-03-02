@@ -63,11 +63,11 @@
                         <div class="mb-4 flex flex-col gap-y-2">
                             <label for="continue" class="block text-sm font-medium text-gray-700 label-text required">Lanjut/Pulang</label>
                             <div class="flex items-center gap-x-2">
-                                <input type="radio" name="continue" value="1" {{ $datas == 'true' ? 'checked' : $datas == 'VERIFIKASI' ? '' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                <input type="radio" name="continue" value="1" {{ $datas === 'true' ? 'checked' : ($datas === 'VERIFIKASI' ? '' : 'disabled') }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
                                 <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Lanjut</label>
                             </div>
                             <div class="flex items-center gap-x-2">
-                                <input type="radio" name="continue" value="0" {{ $datas == 'false' ? 'checked' : $datas == 'VERIFIKASI' ? '' : 'disabled' }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
+                                <input type="radio" name="continue" value="0" {{ $datas === 'false' ? 'checked' : ($datas === 'VERIFIKASI' ? '' : 'disabled') }} class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600">
                                 <label for="continue" class="block text-sm font-medium text-gray-700 label-text">Pulang</label>
                             </div>
                         </div>

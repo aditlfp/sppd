@@ -88,6 +88,11 @@ class MainSPPDController extends Controller
             $this->beforeLastValue = $bellow->first(); // Assign first/latest record
         }
 
+        if($datas == 'VERIFIKASI'){
+            $request->session()->put('key', $mainSppd->code_sppd);
+            $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
+        } else
+
         if ($datas == 'true') {
             if ($bellow->count() > 1) {
                 if ($this->beforeLastValue && $this->beforeLastValue->continue == 1) {
