@@ -191,7 +191,11 @@ class MainSPPDController extends Controller
                 'maps_tujuan' => $request->maps_tujuan
             ];
             if ($request->hasFile('foto_arrive')) {
-                $mainSppddata['foto_arrive'] = UploadImage($request, 'foto_arrive');
+                try {
+                    $mainSppddata['foto_arrive'] = UploadImage($request, 'foto_arrive');
+                } catch (\Throwable $th) {
+                    dd($th);
+                }
             }
 
             if ($request->hasFile('foto_destination')) {
