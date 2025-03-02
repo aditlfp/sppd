@@ -34,12 +34,12 @@
                                     $latestB = $latestBellow[$sppd->code_sppd]->first();
                                     // dd($latestB);
                                 @endphp
-                                <tr 
+                                <tr
                                 @if ($latestB->continue == 0)
-                                class="hover cursor-pointer" 
+                                class="hover cursor-pointer"
                                 onclick="$('#btnOpen_{{ $index }}').stop(true, true).fadeToggle();"
                                 @else
-                                class="hover" 
+                                class="hover"
                                 @endif>
                                     <td>{{ $index + 1  }}</td>
                                     <td>{{ $sppd->auth_official  }}</td>
@@ -80,7 +80,7 @@
                                                         <form id="continueForm" method="GET" action="{{ route('main_sppds.bottom', $sppd->id) }}">
                                                             <input type="text" name="continue" id="continueInput" value="" hidden>
                                                             @if ($counts[$sppd->code_sppd] == 1)
-                                                                <button type="button" class="btn btn-info text-white rounded-sm btn-sm" onclick="submitForm(true)">VERIFIKASI KEDATANGAN</button>
+                                                                <button type="button" class="btn btn-info text-white rounded-sm btn-sm" onclick="submitForm('VERIFIKASI')">VERIFIKASI KEDATANGAN</button>
                                                             @else
                                                                 <button type="button" class="btn btn-primary rounded-sm btn-sm" onclick="submitForm(true)">LANJUT</button>
                                                                 <button  type="button" class="btn btn-error rounded-sm btn-sm text-white" onclick="submitForm(false)">PULANG</button>
