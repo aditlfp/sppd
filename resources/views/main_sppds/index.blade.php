@@ -77,10 +77,11 @@
                                                         & Selesai</span>
                                                 @elseif ($latestB->continue == 1)
                                                     <div>
-                                                        <form id="continueForm" method="GET" action="{{ route('main_sppds.bottom', $sppd->id) }}">
+                                                        <form id="continueForm" method="GET" action="{{ route('main_sppds.bottom', $sppd->code_sppd) }}">
+
                                                             <input type="text" name="continue" id="continueInput" value="" hidden>
                                                             @if ($counts[$sppd->code_sppd] == 1)
-                                                                <button type="button" class="btn btn-info text-white rounded-sm btn-sm" onclick="submitForm('VERIFIKASI')">VERIFIKASI KEDATANGAN</button>
+                                                                <button type="button" class="btn btn-info text-white rounded-sm btn-sm" {{ $sppd->is_disabled == true ? 'disabled' : '' }}  onclick="submitForm('VERIFIKASI')">VERIFIKASI KEDATANGAN</button>
                                                             @else
                                                                 <button type="button" class="btn btn-primary rounded-sm btn-sm" onclick="submitForm(true)">LANJUT</button>
                                                                 <button  type="button" class="btn btn-error rounded-sm btn-sm text-white" onclick="submitForm(false)">PULANG</button>

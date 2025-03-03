@@ -32,6 +32,7 @@
                     <div class="border border-gray-200 p-4">
                         <div class="flex w-full gap-x-2 sm:gap-x-4">
                             <div class="mb-4 w-full">
+                                <input type="text" hidden value="{{ $mainSppd->code_sppd }}" name="code_sppd">
                                 <label for="arrive_at" class="block text-sm font-medium required text-gray-700 label-text">Tiba di</label>
                                 <input type="text" name="arrive_at" id="arrive_at" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm" placeholder="Lokasi sekarang..." required>
                             </div>

@@ -36,12 +36,40 @@ class MainSPPDController extends Controller
             return view('verify_page.index', compact('mainSppds', 'latestBellow'));
         }else{
             $counts = [];
+            $count_null = [];
             foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
                 $counts[$code_sppd] = $collection->count();
+                $count_null[$code_sppd] = $collection->filter(function ($item) {
+                    return empty($item->date_time_arrive); // Cek apakah kosong atau null
+                })->count();
             }
-            // dd($latestBellow["E7O97sIznl"]->first());
-            $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'desc')->paginate(15);
-            return view('main_sppds.index', compact('mainSppds', 'latestBellow', 'counts'));
+            $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'asc')->paginate(15);
+
+           // Cek apakah ada SPPD yang belum selesai
+            $foundUnfinished = false;
+
+            $mainSppds->transform(function ($sppd) use ($count_null, &$foundUnfinished) {
+                $code_sppd = $sppd->code_sppd;
+
+                // Cek apakah SPPD ini belum selesai (count_null > 0)
+                $isUnfinished = ($count_null[$code_sppd] ?? 0) > 0;
+
+                // Jika sudah menemukan SPPD yang belum selesai, semua berikutnya harus disabled
+                if ($foundUnfinished) {
+                    $sppd->is_disabled = true;
+                } else {
+                    $sppd->is_disabled = !$isUnfinished; // Hanya aktifkan yang pertama yang belum selesai
+                }
+
+                // Tandai bahwa kita sudah menemukan satu SPPD yang belum selesai
+                if ($isUnfinished) {
+                    $foundUnfinished = true;
+                }
+
+                return $sppd;
+            });
+            // dd($mainSppds, $foundUnfinished);
+            return view('main_sppds.index', compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
         }
     }
 
@@ -78,9 +106,10 @@ class MainSPPDController extends Controller
         }
     }
 
-    public function continueSection(Request $request, MainSPPD $mainSppd)
+    public function continueSection(Request $request, $code_sppd)
     {
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->latest()->get();
+        $bellow = SPPDBellow::where('code_sppd', $code_sppd)->latest()->get();
+        $mainSppd = MainSPPD::where('code_sppd', $code_sppd)->first();
         $datas = $request->continue;
 
         // Assign the latest entry to beforeLastValue
@@ -89,14 +118,14 @@ class MainSPPDController extends Controller
         }
 
         if($datas == 'VERIFIKASI'){
-            $request->session()->put('key', $mainSppd->code_sppd);
+            $request->session()->put('key', $code_sppd);
             $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
         } else
 
         if ($datas == 'true') {
             if ($bellow->count() > 1) {
                 if ($this->beforeLastValue && $this->beforeLastValue->continue == 1) {
-                    $request->session()->put('key', $mainSppd->code_sppd);
+                    $request->session()->put('key', $code_sppd);
                     $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
                 } else {
                     return redirect()->back();
@@ -112,7 +141,7 @@ class MainSPPDController extends Controller
         } else if ($datas == 'false') {
             if ($bellow->count() > 1) {
                 if ($this->beforeLastValue && $this->beforeLastValue->continue == 1) {
-                    $request->session()->put('key', $mainSppd->code_sppd);
+                    $request->session()->put('key', $code_sppd);
                     $page_html = view('partials.continue_partials', compact('mainSppd', 'bellow', 'datas'))->render();
                 } else {
                     return redirect()->back();
@@ -179,7 +208,8 @@ class MainSPPDController extends Controller
 
     public function update(Request $request)
     {
-        $code_sppd = $request->session()->get('key', 'Default Value');
+        $code_sppd = $request->code_sppd;
+        // dd($request->all());
         try {
             $mainSppddata = [
                 'date_time_arrive' => $request->date_time_arrive,
@@ -213,6 +243,7 @@ class MainSPPDController extends Controller
                 $sPPDBellow->latest()->update($mainSppddata);
                 SPPDBellow::create(['code_sppd' => $code_sppd]);
                 // Redirect ke halaman sukses dengan notifikasi
+                dd($sPPDBellow);
                 flash()->success('Data berhasil diubah.');
                 return redirect()->route('main_sppds.index');
             } else if ($sPPDBellow->count() > 1 && $request->continue == 1) {
