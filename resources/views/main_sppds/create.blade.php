@@ -147,7 +147,7 @@
                                 <div class="flex items-center w-full gap-x-3">
                                     <input type="radio" name="alat_angkutan" x-model.number="transport"
                                         :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
-                                    <span class="capitalize mt-2" x-text="item.jenis + ' : ' + item.anggaran"></span>
+                                    <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan ' : ' + item.anggaran"></span>
                                 </div>
                             </template>
                             <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />

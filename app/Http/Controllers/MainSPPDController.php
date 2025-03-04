@@ -243,7 +243,7 @@ class MainSPPDController extends Controller
                 $sPPDBellow->latest()->update($mainSppddata);
                 SPPDBellow::create(['code_sppd' => $code_sppd]);
                 // Redirect ke halaman sukses dengan notifikasi
-                dd($sPPDBellow);
+                // dd($sPPDBellow);
                 flash()->success('Data berhasil diubah.');
                 return redirect()->route('main_sppds.index');
             } else if ($sPPDBellow->count() > 1 && $request->continue == 1) {
