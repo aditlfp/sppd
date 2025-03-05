@@ -235,7 +235,7 @@
 
                             <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
                             <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $mainSppd->lain_lain_desc}}</textarea>
-                        </div> 
+                        </div>
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
                             <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>
@@ -243,8 +243,8 @@
 
                         <input type="hidden" name="name_verify" id="name_verify" value="">
 
+                        <div class="flex flex-col justify-end mt-4 gap-x-4">
                         @if ($mainSppd->verify == "0" || $mainSppd->verify == null)
-                            <div class="flex items-center justify-end mt-4 gap-x-4">
                                 <button type="button" onclick="submitForm('verify_departure')" class="btn btn-sm btn-primary rounded-sm sm:px-10">
                                     <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22ZM17.4571 9.45711L11 15.9142L6.79289 11.7071L8.20711 10.2929L11 13.0858L16.0429 8.04289L17.4571 9.45711Z"></path>
@@ -256,7 +256,6 @@
                                 <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 10.5858L9.17157 7.75736L7.75736 9.17157L10.5858 12L7.75736 14.8284L9.17157 16.2426L12 13.4142L14.8284 16.2426L16.2426 14.8284L13.4142 12L16.2426 9.17157L14.8284 7.75736L12 10.5858Z"></path></svg>
                                     Reject SPPD
                                 </button>
-                            </div>
                         @elseif ($mainSppd->verify != "3")
                            @if ($nextSppd && $nextSppd !== "Data Not Found")
                                {!! $nextSppd !!}
@@ -266,6 +265,10 @@
                             </div>
                            @endif
                         @endif
+                        <a href="{{ route('main_sppds.index') }}" class="btn btn-sm rounded-sm btn-error my-2 text-white hover:text-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5"  viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM12 11V8L8 12L12 16V13H16V11H12Z"></path></svg>
+                            BACK</a>
+                    </div>
                     </form>
                 </div>
             </div>

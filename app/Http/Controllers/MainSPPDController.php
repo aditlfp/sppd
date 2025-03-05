@@ -31,44 +31,52 @@ class MainSPPDController extends Controller
         $auth = auth()->user();
         $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
         $latestBellow = $bellow->groupBy('code_sppd');
+        // dd($latestBellow['YlF7jaovL3'][0]->continue);
+        $counts = [];
+        $count_null = [];
+        foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
+            $counts[$code_sppd] = $collection->count();
+            $count_null[$code_sppd] = $collection->filter(function ($item) {
+                return empty($item->date_time_arrive); // Cek apakah kosong atau null
+            })->count();
+        }
+        // dd($latestBellow['YlF7jaovL3'][0]->code_sppd, $count_null);
+
+        //Codition for admin or not admin when geting data Mainsppd
         if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
-            return view('verify_page.index', compact('mainSppds', 'latestBellow'));
+            $mainSppds = MainSPPD::where('auth_official', $auth->nama_lengkap)->orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
         }else{
-            $counts = [];
-            $count_null = [];
-            foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
-                $counts[$code_sppd] = $collection->count();
-                $count_null[$code_sppd] = $collection->filter(function ($item) {
-                    return empty($item->date_time_arrive); // Cek apakah kosong atau null
-                })->count();
-            }
             $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'asc')->paginate(15);
+        }
 
-           // Cek apakah ada SPPD yang belum selesai
-            $foundUnfinished = false;
+        // Cek apakah ada SPPD yang belum selesai
+        $foundUnfinished = false;
 
-            $mainSppds->transform(function ($sppd) use ($count_null, &$foundUnfinished) {
-                $code_sppd = $sppd->code_sppd;
+        $mainSppds->transform(function ($sppd) use ($count_null, &$foundUnfinished) {
+            $code_sppd = $sppd->code_sppd;
 
-                // Cek apakah SPPD ini belum selesai (count_null > 0)
-                $isUnfinished = ($count_null[$code_sppd] ?? 0) > 0;
+            // Cek apakah SPPD ini belum selesai (count_null > 0)
+            $isUnfinished = ($count_null[$code_sppd] ?? 0) > 0;
 
-                // Jika sudah menemukan SPPD yang belum selesai, semua berikutnya harus disabled
-                if ($foundUnfinished) {
-                    $sppd->is_disabled = true;
-                } else {
-                    $sppd->is_disabled = !$isUnfinished; // Hanya aktifkan yang pertama yang belum selesai
-                }
+            // Jika sudah menemukan SPPD yang belum selesai, semua berikutnya harus disabled
+            if ($foundUnfinished) {
+                $sppd->is_disabled = true;
+            } else {
+                $sppd->is_disabled = !$isUnfinished; // Hanya aktifkan yang pertama yang belum selesai
+            }
 
-                // Tandai bahwa kita sudah menemukan satu SPPD yang belum selesai
-                if ($isUnfinished) {
-                    $foundUnfinished = true;
-                }
+            // Tandai bahwa kita sudah menemukan satu SPPD yang belum selesai
+            if ($isUnfinished) {
+                $foundUnfinished = true;
+            }
 
-                return $sppd;
-            });
-            // dd($mainSppds, $foundUnfinished);
+            return $sppd;
+        });
+
+
+        if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
+            return view('verify_page.index', compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
+        }else{
             return view('main_sppds.index', compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
         }
     }
@@ -111,7 +119,7 @@ class MainSPPDController extends Controller
         $bellow = SPPDBellow::where('code_sppd', $code_sppd)->latest()->get();
         $mainSppd = MainSPPD::where('code_sppd', $code_sppd)->first();
         $datas = $request->continue;
-
+        // dd("!");
         // Assign the latest entry to beforeLastValue
         if ($bellow->count() > 1) {
             $this->beforeLastValue = $bellow->first(); // Assign first/latest record

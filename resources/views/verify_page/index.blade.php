@@ -11,6 +11,8 @@
             searchQuery: '',
             hasResults: true,
             latestBelow: {{ $latestBellow->toJson() ?: '[]' }},
+            count_null: {{ json_encode($count_null) }},
+            count: {{ json_encode($counts) }},
             sppds: {{ json_encode($mainSppds->items()) }},
             pagination: {
                 current_page: {{ $mainSppds->currentPage() }},
@@ -34,9 +36,7 @@
             getStatusText(sppd) {
                 if (sppd.verify == '0' || sppd.verify == null) return 'Waiting';
                 if (sppd.verify == '1' || sppd.verify == '2') {
-                    return this.latestBelow[sppd.code_sppd] && this.latestBelow[sppd.code_sppd].continue == 0
-                        ? 'Diverifikasi' + ' & ' + 'Selesai'
-                        : 'Diverifikasi' + ' & ' + 'Dalam Perjalanan';
+                    return this.count_null[sppd.code_sppd] == 0 && this.latestBelow[this.sppd.code_sppd][0].continue == 0 ? 'Diverifikasi & Selesai' : 'Lanjut Perjalanan';
                 }
                 if (sppd.verify == '3') return 'Ditolak';
                 return '';
@@ -92,7 +92,8 @@
                                         <span :class="{
                                             'badge badge-warning text-white font-semibold': sppd.verify == '0' || sppd.verify == null,
                                             'badge badge-success text-white w-full h-full font-semibold': sppd.verify == '1',
-                                            'badge badge-info w-full h-full text-white font-semibold': sppd.verify == '2',
+                                            'badge badge-info w-full h-full text-white font-semibold': sppd.verify == '2' && count_null[sppd.code_sppd] == 0 && latestB[0].continue == 0,
+                                            'badge badge-success w-full h-full text-white font-semibold': sppd.verify == '2' && count_null[sppd.code_sppd] > 0,
                                             'badge badge-error text-white font-semibold': sppd.verify == '3'
                                         }" x-text="getStatusText(sppd)"></span>
                                     </td>

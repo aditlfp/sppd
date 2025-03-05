@@ -31,7 +31,9 @@ class VerifyController extends Controller
             $beforeLastValue = $bellow[$bellow->count() - 2] ?? null;
             $request->session()->put('key', $mainSppd->code_sppd);
             $nextSppd = view('partials.bellow_part_2_partials', compact('mainSppd', 'bellow'))->render();
+
         }else if($bellow->count() == 1 && $bellow->first()->date_time_arrive != null){
+
             $bellow = $bellow->first();
             $request->session()->put('key', $bellow->code_sppd);
             $nextSppd = view('partials.below_partials', compact('mainSppd', 'bellow'))->render();;
