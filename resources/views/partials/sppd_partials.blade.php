@@ -28,7 +28,7 @@
         getStatusText(sppd) {
             if (sppd.verify == '0' || sppd.verify == null) return 'Waiting';
             if (sppd.verify == '1' || sppd.verify == '2') {
-                return this.latestBelow[sppd.code_sppd] && this.latestBelow[sppd.code_sppd].continue == 0
+                return this.latestBelow[sppd.code_sppd] && this.latestBelow[sppd.code_sppd][0].continue == 0
                     ? 'Diverifikasi' + (window.innerWidth <= 768 ? '' : ' & Selesai')
                     : 'Perjalanan' + (window.innerWidth <= 768 ? '' : '');
             };
