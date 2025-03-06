@@ -92,7 +92,7 @@
                                 <td x-text="sppd.user.nama_lengkap" class="w-auto text-xs"></td>
                                 <td x-text="sppd.maksud_perjalanan" class="w-auto text-xs"></td>
                                 <td x-text="sppd.lama_perjalanan" x-show="window.innerWidth >= 768" class="w-[9%] text-xs text-center"></td>
-                                <td x-text="sppd.date_time_berangkat" class="w-[26%] md:w-[20%] text-xs text-center"></td>
+                                <td x-text="sppd.date_time_berangkat" class="min-w-[100px] md:min-w-[100px] text-xs text-center"></td>
                                 <td class="text-center text-xs">
                                     <span :class="{
                                         'badge badge-warning text-white font-semibold badge-sm': sppd.verify == '0' || sppd.verify == null,

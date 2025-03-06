@@ -42,9 +42,11 @@ class DashboardController extends Controller
         // Get latest SPPDBellow data (only necessary fields)
         $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at', 'continue')
             ->orderByDesc('updated_at')
+            ->latest()
             ->get()
-            ->groupBy('code_sppd')
-            ->map(fn($items) => $items->first());
+            ->groupBy('code_sppd');
+            // ->map(fn($items) => $items->first());
+            // dd($latestBellow);
 
         // Prepare data for the chart
         $dates = []; // X-axis labels (dates of the current month)
