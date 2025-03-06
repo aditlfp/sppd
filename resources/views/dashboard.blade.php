@@ -151,9 +151,9 @@
             // console.log(swipeArea.offsetWidth, swipeArea.offsetWidth - (slider.offsetWidth - slider.offsetLeft), slider.getBoundingClientRect());
             if (sppds?.verify == 0) {
                 swipeText.innerHTML = "Edit Spdd";
-            } else if (lbLength == 1) {
+            } else if (lbLength == 1 && latestB?.[sppds?.code_sppd][0]?.continue == 1) {
                 swipeText.innerHTML = "Verifikasi Kedatangan";
-            } else if (lbLength > 1) {
+            } else if (lbLength > 1 && latestB?.[sppds?.code_sppd][0]?.continue == 1) {
                 maxX = mainSlider.offsetWidth - slider.offsetWidth;
                 slider.style.transform = `translateX(${(mainSlider.offsetWidth - slider.offsetWidth) / 2}px)`;
                 // console.log(startX);
