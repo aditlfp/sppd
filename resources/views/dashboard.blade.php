@@ -11,8 +11,10 @@
     </div>
     @if (Auth::user()->role_id == 1)
         @php
-            $lbc = $latestBellow[$sppds?->first()->code_sppd]->count();
+            $sppdCode = optional($sppds->first())->code_sppd;
+            $lbc = $counts[$sppdCode] ?? 0;
         @endphp
+
         <div id="mainSlide"
             class="fixed left-0 bottom-[4%] bg-blue-500 rounded-r-full drop-shadow-md md:hidden overflow-hidden {{ $lbc == 1 ? 'w-[80svw]' : ($lbc > 1 ? 'w-[100svw] rounded-full' : '') }} h-12">
             <!-- Background "Wait..." Text -->

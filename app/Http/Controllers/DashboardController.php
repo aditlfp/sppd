@@ -37,10 +37,10 @@ class DashboardController extends Controller
         $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at', 'continue')
             ->orderByDesc('updated_at')
             ->latest()
-            ->get()
-            ->groupBy('code_sppd');
+            ->get();
+            // ->groupBy('code_sppd');
             // ->map(fn($items) => $items->first());
-            // dd($latestBellow);
+            // dd(Auth::id());
         $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
             ->when(!$isAdmin, function ($query) {
                 return $query->where('user_id', Auth::id());
@@ -48,7 +48,6 @@ class DashboardController extends Controller
             ->orderByDesc('created_at', 'desc')
             ->whereMonth('created_at', $currentMonth)
             ->paginate(5);
-
         // Prepare data for the chart
         $dates = []; // X-axis labels (dates of the current month)
         $dataViews = []; // Viewable counts per day
@@ -69,7 +68,17 @@ class DashboardController extends Controller
         // Render partial HTML for Blade
         $htmlContent = view('partials.sppd_partials', compact('dates', 'dataViews', 'dataSppd', 'sppds', 'latestBellow'))->render();
         // dd($latestBellow, $sppds);
+        $counts = [];
 
-        return view('dashboard', compact('dates', 'dataViews', 'sppds', 'dataSppd', 'htmlContent', 'latestBellow'));
+        foreach ($latestBellow->groupBy('code_sppd') as $code_sppd => $collection) {
+            $counts[$code_sppd] = $collection->count();
+            // $count_null[$code_sppd] = $collection->filter(function ($item) {
+            //     return empty($item->date_time_arrive); // Cek apakah kosong atau null
+            // })->count();
+        }
+
+        // dd($counts);
+
+        return view('dashboard', compact('dates', 'counts', 'dataViews', 'sppds', 'dataSppd', 'htmlContent', 'latestBellow'));
     }
 }
