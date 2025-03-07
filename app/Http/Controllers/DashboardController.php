@@ -31,13 +31,7 @@ class DashboardController extends Controller
         $isAdmin = Auth::user()->role_id == 2 || in_array(Auth::user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']);
 
         // Fetch only necessary SPPD details
-        $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
-            ->when(!$isAdmin, function ($query) {
-                return $query->where('user_id', Auth::id());
-            })
-            ->orderByDesc('created_at', 'desc')
-            ->whereMonth('created_at', $currentMonth)
-            ->paginate(5);
+
         // dd($sppds);
         // Get latest SPPDBellow data (only necessary fields)
         $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at', 'continue')
@@ -47,6 +41,13 @@ class DashboardController extends Controller
             ->groupBy('code_sppd');
             // ->map(fn($items) => $items->first());
             // dd($latestBellow);
+        $sppds = MainSPPD::with('user')->select('id', 'user_id', 'code_sppd', 'maksud_perjalanan', 'lama_perjalanan','date_time_berangkat', 'date_time_kembali', 'verify')
+            ->when(!$isAdmin, function ($query) {
+                return $query->where('user_id', Auth::id());
+            })
+            ->orderByDesc('created_at', 'desc')
+            ->whereMonth('created_at', $currentMonth)
+            ->paginate(5);
 
         // Prepare data for the chart
         $dates = []; // X-axis labels (dates of the current month)
