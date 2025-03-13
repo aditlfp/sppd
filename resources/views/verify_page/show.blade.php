@@ -243,7 +243,7 @@
 
                         <input type="hidden" name="name_verify" id="name_verify" value="">
 
-                        <div class="flex flex-col justify-end mt-4 gap-x-4">
+                        <div class="flex flex-col justify-end mt-4 gap-x-4 gap-y-2">
                         @if ($mainSppd->verify == "0" || $mainSppd->verify == null)
                                 <button type="button" onclick="submitForm('verify_departure')" class="btn btn-sm btn-primary rounded-sm sm:px-10">
                                     <svg class="w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

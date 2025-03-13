@@ -57,7 +57,7 @@ class VerifyController extends Controller
                 flash()->success('Data berhasil direject.');
 
             }
-            return to_route('main_sppds.index');
+            return to_route('page-verify-sppd');
         } catch (\Throwable $th) {
             dd($th);
             // abort(403);

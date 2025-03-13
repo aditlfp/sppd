@@ -21,51 +21,60 @@ class MainSPPDController extends Controller
 {
 
     protected $beforeLastValue;
+
     public function __construct()
     {
         $this->beforeLastValue = null;
     }
 
-    public function index()
+    public function index($isVerifyPage = false)
     {
         $auth = auth()->user();
-        $bellow = SPPDBellow::orderByDesc('updated_at')->get(); // Ambil semua data yang sudah terurut dari database
+        $bellow = SPPDBellow::orderByDesc('updated_at')->get();
         $latestBellow = $bellow->groupBy('code_sppd');
-        // dd($latestBellow['YlF7jaovL3'][0]->continue);
+
+        // Calculate counts and null counts for all bellows
         $counts = [];
         $count_null = [];
         foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
             $counts[$code_sppd] = $collection->count();
             $count_null[$code_sppd] = $collection->filter(function ($item) {
-                return empty($item->date_time_arrive); // Cek apakah kosong atau null
+                return empty($item->date_time_arrive);
             })->count();
         }
-        // dd($latestBellow['YlF7jaovL3'][0]->code_sppd, $count_null);
 
-        //Codition for admin or not admin when geting data Mainsppd
-        if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            $mainSppds = MainSPPD::where('auth_official', $auth->nama_lengkap)->orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
-        }else{
-            $mainSppds = MainSPPD::where('user_id', $auth->id)->orderBy('created_at', 'asc')->paginate(15);
+        // Check if user is admin or has special role
+        $isAdmin = $auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']);
+
+        // Get appropriate SPPDs based on user role
+        if ($isAdmin & $isVerifyPage) {
+            $mainSppds = MainSPPD::where('auth_official', $auth->nama_lengkap)
+                                ->orderBy('created_at', 'desc')
+                                ->with(['User', 'transportation'])
+                                ->paginate(10);
+        } else {
+            // Only proceed if not on verify page (regular users can't access verify page)
+            if ($isVerifyPage) {
+                return redirect()->back(); // Or appropriate redirection
+            }
+
+            $mainSppds = MainSPPD::where('user_id', $auth->id)
+                                ->orderBy('created_at', 'asc')
+                                ->paginate(15);
         }
 
-        // Cek apakah ada SPPD yang belum selesai
+        // Process SPPD data to determine which ones should be disabled
         $foundUnfinished = false;
-
         $mainSppds->transform(function ($sppd) use ($count_null, &$foundUnfinished) {
             $code_sppd = $sppd->code_sppd;
-
-            // Cek apakah SPPD ini belum selesai (count_null > 0)
             $isUnfinished = ($count_null[$code_sppd] ?? 0) > 0;
 
-            // Jika sudah menemukan SPPD yang belum selesai, semua berikutnya harus disabled
             if ($foundUnfinished) {
                 $sppd->is_disabled = true;
             } else {
-                $sppd->is_disabled = !$isUnfinished; // Hanya aktifkan yang pertama yang belum selesai
+                $sppd->is_disabled = !$isUnfinished;
             }
 
-            // Tandai bahwa kita sudah menemukan satu SPPD yang belum selesai
             if ($isUnfinished) {
                 $foundUnfinished = true;
             }
@@ -73,12 +82,14 @@ class MainSPPDController extends Controller
             return $sppd;
         });
 
+        // Determine which view to render based on user role
+        $viewName = $isAdmin & $isVerifyPage ? 'verify_page.index' : 'main_sppds.index';
+        return view($viewName, compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
+    }
 
-        if($auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin'])){
-            return view('verify_page.index', compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
-        }else{
-            return view('main_sppds.index', compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
-        }
+    public function indexVerify()
+    {
+        return $this->index(true);
     }
 
     public function create()

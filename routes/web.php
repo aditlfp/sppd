@@ -37,6 +37,7 @@ Route::middleware(['admin'])->group(function () {
 });
 
 Route::middleware(['grant_verify'])->group(function () {
+    Route::get('/page-verify-sppd', [MainSPPDController::class, 'indexVerify'])->name('page-verify-sppd');
     Route::get('/verify/{main_sppd}', [VerifyController::class, 'viewVerify'])->name('verify_page.index');
     Route::patch('/verify/{main_sppd}', [VerifyController::class, 'verify'])->name('verifyUpdate');
 });

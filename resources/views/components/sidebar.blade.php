@@ -14,7 +14,7 @@
                     </svg> Dashboard</a>
             </li>
             <li>
-                <details {{ Route::is('main_sppds.*') ? 'open' : '' }}>
+                <details {{ Route::is('main_sppds.*') || Route::is('page-verify-sppd') ? 'open' : '' }}>
                     <summary
                         class="font-medium rounded-sm flex items-center justify-between gap-2 {{ Route::is('main_sppds.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                         <span class="flex items-center gap-2">
@@ -31,6 +31,9 @@
                         <li>
                             <a href="{{ route('main_sppds.index') }}"
                                 class=" font-medium rounded-sm {{ Route::is('main_sppds.index') ? 'link' : '' }}">Data
+                                SPPD</a>
+                            <a href="{{ route('page-verify-sppd') }}"
+                                class=" font-medium rounded-sm {{ Route::is('page-verify-sppd') ? 'link' : '' }}">Verifikasi
                                 SPPD</a>
                             <a href="{{ route('main_sppds.create') }}"
                                 class=" font-medium rounded-sm {{ Route::is('main_sppds.create') ? 'link' : '' }}">Tambah
