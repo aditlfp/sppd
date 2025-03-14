@@ -32,9 +32,11 @@
                             <a href="{{ route('main_sppds.index') }}"
                                 class=" font-medium rounded-sm {{ Route::is('main_sppds.index') ? 'link' : '' }}">Data
                                 SPPD</a>
-                            <a href="{{ route('page-verify-sppd') }}"
-                                class=" font-medium rounded-sm {{ Route::is('page-verify-sppd') ? 'link' : '' }}">Verifikasi
-                                SPPD</a>
+                            @if (in_array( auth()->user()->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']))
+                                <a href="{{ route('page-verify-sppd') }}"
+                                    class=" font-medium rounded-sm {{ Route::is('page-verify-sppd') ? 'link' : '' }}">Verifikasi
+                                    SPPD</a>
+                            @endif
                             <a href="{{ route('main_sppds.create') }}"
                                 class=" font-medium rounded-sm {{ Route::is('main_sppds.create') ? 'link' : '' }}">Tambah
                                 SPPD</a>

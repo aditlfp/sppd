@@ -20,12 +20,19 @@
                         x-data="{
                             total: 0,
                             dataT: {{$transportations->toJson()}},
-                            mainSppd: {{$mainSppd->toJson()}},
+                            mainSppd: {!! $mainSppd->toJson() !!},
+                            lainLainValues: {!! json_encode($mainSppd->lain_lain ?? []) !!},
+                            total: 0,
                             calculateTotal() {
+                                // Sum up all lain_lain values
+                                const lainLainTotal = this.lainLainValues.reduce((sum, value) => {
+                                    return sum + (parseFloat(value) || 0);
+                                }, 0);
+
                                 this.total = (parseFloat(this.mainSppd.uang_saku) || 0) +
                                             (parseFloat(this.mainSppd.tol) || 0) +
                                             (parseFloat(this.mainSppd.makan) || 0) +
-                                            (parseFloat(this.mainSppd.lainLain) || 0) +
+                                            lainLainTotal +
                                             (parseFloat(this.mainSppd.alat_angkutan) || 0);
                             }
                         }"
@@ -226,16 +233,59 @@
                                 <input type="text" name="makan" id="makan" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required value={{ $mainSppd->makan }} placeholder="1.000.000">
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
-                            <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="lain_lain" id="lain_lain" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" value="{{ $mainSppd->lain_lain}}">
-                            </div>
+                        {{-- $mainSppd->lain_lain  --}}
 
-                            <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
-                            <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm">{{ $mainSppd->lain_lain_desc}}</textarea>
-                        </div>
+                        <div x-data="{
+                            lainLainInputs: [],
+                            initLainLain() {
+                                const values = {{ json_encode($mainSppd->lain_lain ?? []) }};
+                                const descriptions = {{ json_encode($mainSppd->lain_lain_desc ?? []) }};
+
+                                if (values.length > 0) {
+                                    for (let i = 0; i < values.length; i++) {
+                                        this.lainLainInputs.push({
+                                            id: Date.now() + i,
+                                            value: values[i],
+                                            description: descriptions[i] || ''
+                                        });
+                                    }
+                                }
+                            }
+                        }"
+                        x-init="initLainLain()"
+                        class="mb-4">
+                        <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain - Lain <span class="text-red-500 italic">( opsional )</span></label>
+
+                        <template x-for="(input, index) in lainLainInputs" :key="input.id">
+                            <div class="mt-2">
+                                <div class="flex flex-col">
+                                    <input
+                                        name="lain_lain_desc[]"
+                                        x-model="lainLainInputs[index].description"
+                                        class="mt-1 block w-full input input-bordered input-sm rounded-sm"
+                                        placeholder="Lain Lain"
+                                    />
+
+                                    <div class="flex">
+                                        <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                        <input
+                                            type="text"
+                                            name="lain_lain[]"
+                                            x-model.lazy="lainLainInputs[index].value"
+                                            @input="calculateTotal()"
+                                            class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0"
+                                            placeholder="0"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <button type="button" disabled class="btn btn-sm w-full bg-blue-500 hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 text-white text-xs my-2 rounded-sm hover:cursor-not-allowed" @click="lainLainInputs.push({ id: Date.now(), value: '', description: '' })">
+                            + Tambah Lain Lain
+                        </button>
+                    </div>
+
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
                             <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>

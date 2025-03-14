@@ -38,8 +38,12 @@ class MainSppdRequest extends FormRequest
             'uang_saku' => 'required',
             'e_toll' => 'nullable',
             'makan' => 'nullable',
-            'lain_lain_desc' => 'nullable',
-            'lain_lain' => 'nullable',
+
+            'lain_lain' => 'nullable|array',
+            'lain_lain.*' => 'nullable|string', // Validate each input inside the array
+            'lain_lain_desc' => 'nullable|array',
+            'lain_lain_desc.*' => 'nullable|string',
+
             'date_time_arrive' => 'nullable',
             'arrive_at'  => 'nullable',
             'foto_arrive'  => 'nullable',

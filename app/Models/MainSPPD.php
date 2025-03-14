@@ -27,10 +27,15 @@ class MainSPPD extends Model
         'uang_saku',
         'e_toll',
         'makan',
-        'lain_lain_desc',
-        'lain_lain',
         'verify',
         'note',
+        'lain_lain_desc',
+        'lain_lain'
+    ];
+
+    protected $casts = [
+        'lain_lain_desc' => 'array',
+        'lain_lain' => 'array',
     ];
 
     public function user()

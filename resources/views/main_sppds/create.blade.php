@@ -223,16 +223,30 @@
                                 <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
-                        <div class="mb-4">
-                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain-lain <span class="text-red-500 italic">( opsional )</span> </label>
-                            <div class="flex">
-                                <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="lain_lain" id="lain_lain" x-model.lazy="lainLain" @input="calculateTotal()" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0">
-                            </div>
+                        <div x-data="{ lainLainInputs: [] }" class="mb-4">
+                            <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain - Lain <span class="text-red-500 italic">( opsional )</span></label>
 
-                            <label for="lain_lain_desc" class="block text-sm font-medium text-gray-700 label-text">Deskripsi Lain Lain <span class="text-red-500 italic">( opsional )</span></label>
-                            <textarea name="lain_lain_desc" id="lain_lain_desc" class="mt-1 block w-full textarea textarea-bordered textarea-sm rounded-sm"></textarea>
+
+
+                            <template x-for="(input, index) in lainLainInputs" :key="input.id">
+                                <div class="mt-2">
+                                    <div class="flex flex-col">
+                                        <input name="lain_lain_desc[]" class="mt-1 block w-full input input-bordered input-sm rounded-sm" placeholder="Lain Lain" />
+
+                                        <div class="flex">
+                                            <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                            <input type="text" name="lain_lain[]" x-model.lazy="lainLainInputs[index].value" @input="calculateTotal()" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0" placeholder="0">
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-error text-white text-sm mt-1 w-full sm:w-auto rounded-sm" @click="lainLainInputs.splice(index, 1)">Hapus</button>
+                                </div>
+                            </template>
+
+                            <button type="button" class="btn btn-sm w-full bg-blue-500 hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 text-white text-xs my-2 rounded-sm" @click="lainLainInputs.push({ id: Date.now() })">
+                                + Tambah Lain Lain
+                            </button>
                         </div>
+
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 label-text">Total Anggaran</label>
                             <p class="font-semibold text-lg text-blue-600" x-text="new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(total)"></p>

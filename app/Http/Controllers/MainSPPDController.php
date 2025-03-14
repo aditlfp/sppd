@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\Region;
 use App\Models\SPPDBellow;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Mailer\Transport;
 use Illuminate\Support\Str;
 
@@ -106,22 +107,40 @@ class MainSPPDController extends Controller
     public function store(MainSppdRequest $request)
     {
         $randomString = Str::random(10);
-        // dd($request->all(), $randomString, $randomString);
+
         try {
+            DB::beginTransaction(); // Start transaction
+
             $validatedData = $request->validated();
+            // dd($validatedData);
+
+
+            // Add `code_sppd`
             $validatedData['code_sppd'] = $randomString;
+
+            // Save to `SPPDBellow`
             SPPDBellow::create(['code_sppd' => $randomString]);
+
+            // Save to `MainSPPD`
             MainSPPD::create($validatedData);
 
-            // Redirect ke halaman sukses dengan notifikasi
+            DB::commit(); // Commit transaction
+
             flash()->success('Data berhasil disimpan.');
             return redirect()->route('main_sppds.index');
-        } catch (\Exception $e) {
-            // Redirect ke halaman sebelumnya jika terjadi kesalahan lain
-            dd($e);
-            flash()->error('Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
 
-            return redirect()->back();
+        } catch (\Exception $e) {
+            DB::rollBack(); // Rollback transaction on error
+
+            // Debugging: Check what data is being received
+            dd([
+                'error' => $e->getMessage(),
+                'lain_lain' => $request->input('lain_lain'),
+                'lain_lain_desc' => $request->input('lain_lain_desc'),
+            ]);
+
+            flash()->error('Terjadi kesalahan saat menyimpan data. Mohon coba lagi.');
+            return redirect()->back()->withInput();
         }
     }
 
