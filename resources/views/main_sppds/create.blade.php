@@ -15,6 +15,7 @@
                             tol: 0,
                             makan: 0,
                             lainLain: 0,
+                            lainLainInputs: [],
                             transport: 0,
                             total: 0,
                             dataT: {{$transportations->toJson()}},
@@ -23,7 +24,8 @@
                                             (parseFloat(this.tol) || 0) +
                                             (parseFloat(this.makan) || 0) +
                                             (parseFloat(this.lainLain) || 0) +
-                                            (parseFloat(this.transport) || 0);
+                                            (parseFloat(this.transport) || 0) + 
+                                            (this.lainLainInputs.filter(item => item.value).reduce((sum, item) => sum + parseFloat(item.value), 0) || 0);
                             }
                         }"
                         @input="calculateTotal()"
@@ -223,11 +225,8 @@
                                 <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
-                        <div x-data="{ lainLainInputs: [] }" class="mb-4">
+                        <div class="mb-4">
                             <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain - Lain <span class="text-red-500 italic">( opsional )</span></label>
-
-
-
                             <template x-for="(input, index) in lainLainInputs" :key="input.id">
                                 <div class="mt-2">
                                     <div class="flex flex-col">
@@ -424,7 +423,7 @@
                 .then(data => {
                     if (data.address) {
                         let locationName = data.address.road || data.address.city || data.address.town || data.address.village || "Unknown Location";
-                        console.log(locationName, data.address);
+                        // console.log(locationName, data.address);
 
                         document.getElementById('tempat_berangkat').value = data.address.village + ', ' + data.address.county + ', ' + data.address.state;
                         // userMarker.bindPopup(locationName).openPopup();

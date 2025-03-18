@@ -19,9 +19,9 @@
                     <form id="sppdForm" action="{{ route('verifyUpdate', $mainSppd->id)}}" method="post"
                         x-data="{
                             total: 0,
-                            dataT: {{$transportations->toJson()}},
-                            mainSppd: {!! $mainSppd->toJson() !!},
-                            lainLainValues: {!! json_encode($mainSppd->lain_lain ?? []) !!},
+                            dataT: {{ $transportations->toJson() }},
+                            mainSppd: {{ $mainSppd->toJson() }},
+                            lainLainValues: {{ json_encode($mainSppd->lain_lain ?? []) }},
                             total: 0,
                             calculateTotal() {
                                 // Sum up all lain_lain values

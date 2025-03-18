@@ -18,16 +18,31 @@
                             makan: {{ $mainSppd->makan }},
                             lainLain: {{ json_encode($mainSppd->lain_lain) }},
                             transport: {{ $mainSppd->alat_angkutan }},
+                            lainLainInputs: [],
                             total: 0,
+                            initLainLain() {
+                                const values = {{ json_encode($mainSppd->lain_lain ?? []) }};
+                                const descriptions = {{ json_encode($mainSppd->lain_lain_desc ?? []) }};
+
+                                if (values.length > 0) {
+                                    for (let i = 0; i < values.length; i++) {
+                                        this.lainLainInputs.push({
+                                            id: Date.now() + i,
+                                            value: values[i],
+                                            description: descriptions[i] || ''
+                                        });
+                                    }
+                                }
+                            },
                             calculateTotal() {
                                 this.total = (this.uangSaku = parseFloat(document.getElementById('uang_saku').value) || 0) +
-                                            (parseFloat(this.tol) || 0) +
-                                            (parseFloat(this.makan) || 0) +
-                                            (parseFloat(this.lainLain) || 0) +
-                                            (parseFloat(this.transport) || 0);
+                                (parseFloat(this.tol) || 0) +
+                                (parseFloat(this.makan) || 0) +
+                                (parseFloat(this.transport) || 0) +
+                                (this.lainLainInputs.filter(item => item.value).reduce((sum, item) => sum + parseFloat(item.value), 0) || 0);
                             }
                         }"
-                        x-init="calculateTotal()"
+                        x-init="initLainLain(); calculateTotal();"
                         @input="calculateTotal()"
                         @change="calculateTotal()">
                         @method('PATCH')
@@ -154,7 +169,7 @@
                         <div class="mb-4">
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             <template x-for="item in dataT" :key="item.anggaran">
-                                <div class="flex items-center w-full gap-x-3" x-init="console.log(item.anggaran, mainSppd.alat_angkutan, item.anggaran == mainSppd.alat_angkutan)">
+                                <div class="flex items-center w-full gap-x-3">
                                     <input type="radio" name="alat_angkutan" x-model.number="transport"
                                         :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
                                     <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
@@ -233,24 +248,8 @@
                                 <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
-                        <div x-data="{
-                            lainLainInputs: [],
-                            initLainLain() {
-                                const values = {{ json_encode($mainSppd->lain_lain ?? []) }};
-                                const descriptions = {{ json_encode($mainSppd->lain_lain_desc ?? []) }};
-
-                                if (values.length > 0) {
-                                    for (let i = 0; i < values.length; i++) {
-                                        this.lainLainInputs.push({
-                                            id: Date.now() + i,
-                                            value: values[i],
-                                            description: descriptions[i] || ''
-                                        });
-                                    }
-                                }
-                            }
-                        }"
-                        x-init="initLainLain()"
+                        <div
+                        
                         class="mb-4">
                         <label for="lain_lain" class="block text-sm font-medium text-gray-700 label-text">Lain - Lain <span class="text-red-500 italic">( opsional )</span></label>
 

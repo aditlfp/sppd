@@ -11,12 +11,17 @@
     </div>
     @if (Auth::user()->role_id == 1)
         @php
-            $sppdCode = optional($sppds->first())->code_sppd;
+            $ifInit = $sppds->isEmpty() || Auth::user()->id == $sppds?->first()?->user_id || (optional($sppds->first())->verify == 0);
+            $ifVerif = $sppds || Auth::user()->id == $sppds?->first()?->user_id || (optional($sppds->first())->verify == 2);
+            $ifNext = $sppds && Auth::user()->id == $sppds?->first()?->user_id && (optional($sppds->first())->verify == 2) && $latestBellow->first()->continue == 1 && count($latestBellow) > 1;
+            $sppdCode = optional($sppds?->first())->code_sppd;
+            $sppdVerif = optional($sppds?->first())->verify;
+            $sppdCont = optional($latestBellow?->first())->continue;
             $lbc = $counts[$sppdCode] ?? 0;
         @endphp
 
         <div id="mainSlide"
-            class="fixed left-0 bottom-[4%] bg-blue-500 rounded-r-full drop-shadow-md md:hidden overflow-hidden {{ $lbc == 1 ? 'w-[80svw]' : ($lbc > 1 ? 'w-[100svw] rounded-full' : '') }} h-12">
+            class="fixed left-0 bottom-[4%] bg-blue-500 rounded-r-full drop-shadow-md md:hidden overflow-hidden h-12">
             <!-- Background "Wait..." Text -->
             <p id="waitText"
                 class="absolute inset-0 flex items-center justify-center text-white font-semibold text-center text-lg opacity-0 transition-opacity duration-300">
@@ -28,7 +33,7 @@
                 <!-- Draggable Slider -->
                 <div id="slider"
                     class="absolute z-10 left-0 w-12 h-12 bg-white rounded-full flex items-center justify-center cursor-pointer touch-none transition-transform shadow-md">
-                    @if ($lbc > 1)
+                    @if ($ifNext)
                         <p>
                             <i class="ri-arrow-left-double-line font-extrabold text-2xl text-blue-500"></i>
                         </p>
@@ -37,7 +42,7 @@
                         <i class="ri-arrow-right-double-line font-extrabold text-2xl text-blue-500"></i>
                     </p>
                 </div>
-                @if ($lbc > 1)
+                @if ($ifNext)
                     <p id="arrow"><i
                             class="ri-arrow-left-double-line text-white text-3xl pl-3 animate-pulse duration-300"></i>
                     </p>
@@ -53,11 +58,11 @@
                     <!-- Foreground Swipe Text -->
                     <p id="swipeText"
                         class="text-white font-semibold text-lg text-center flex-1 select-none transition-opacity duration-300 ml-10">
-                        @if ($latestBellow && $sppds->first())
+                        {{-- @if ($latestBellow && $sppds->first())
                             {{ optional($latestBellow[$sppds->first()->code_sppd][0] ?? null)->continue == 1 ? 'Lanjutkan SPPD' : 'Buat SPPD +' }}
                         @else
                             Buat SPPD +
-                        @endif
+                        @endif --}}
                     </p>
                 @endif
                 <p id="arrow2"><i
@@ -66,9 +71,10 @@
         </div>
     @endif
     </div>
-    <script defer>
+    <script>
         $(document).ready(function() {
             var auth = @json(Auth::user()->role_id);
+            var authId = @json(Auth::user()->id);
             var labelsDaily = @json($dates); // X-axis labels (dates in current month)
             var dataViews = @json($dataViews); // Viewable data per day
             var dataSppd = @json($dataSppd); // SPPD count per day
@@ -144,29 +150,36 @@
             const waitText = document.getElementById("waitText");
             const arrow = document.getElementById("arrow");
             const arrow2 = document.getElementById("arrow2");
-            const lbLength = latestB?.[sppds?.code_sppd].length;
+            const lbLength = latestB?.length;
             let isDragging = false,
                 startX = 0,
                 currentX = 0,
                 maxX = swipeArea.offsetWidth - slider.offsetWidth;
-
+            // console.log(latestB, arrow, latestB[0], lbLength);
             // console.log(swipeArea.offsetWidth, swipeArea.offsetWidth - (slider.offsetWidth - slider.offsetLeft), slider.getBoundingClientRect());
-            if (sppds?.verify == 0) {
+            if (sppds?.user_id == authId && sppds?.verify == 0) {
+                mainSlider.classList.add("w-[80svw]");
+                maxX = swipeArea.offsetWidth - slider.offsetWidth;
                 swipeText.innerHTML = "Edit Spdd";
-            } else if (lbLength == 1 && latestB?.[sppds?.code_sppd][0]?.continue == 1) {
+            } else if (sppds?.user_id == authId && lbLength == 1 && latestB[0]?.continue == 1) {
+                mainSlider.classList.add("w-[80svw]");
+                maxX = swipeArea.offsetWidth - slider.offsetWidth;
                 swipeText.innerHTML = "Verifikasi Kedatangan";
-            } else if (lbLength > 1 && latestB?.[sppds?.code_sppd][0]?.continue == 1) {
+            } else if (sppds?.user_id == authId && lbLength > 1 && latestB[0]?.continue == 1) {
+                mainSlider.classList.add("w-[100svw]", "rounded-full");
                 maxX = mainSlider.offsetWidth - slider.offsetWidth;
                 slider.style.transform = `translateX(${(mainSlider.offsetWidth - slider.offsetWidth) / 2}px)`;
                 // console.log(startX);
             } else {
+                mainSlider.classList.add("w-[80svw]");
+                maxX = swipeArea.offsetWidth - slider.offsetWidth;
                 swipeText.innerHTML = "Buat SPPD +";
             }
 
             const startDrag = (e) => {
                 isDragging = true;
                 startX = (e.touches ? e.touches[0].clientX : e.clientX) - slider.getBoundingClientRect().left;
-                if (lbLength > 1) {
+                if (lbLength > 1 && latestB[0]?.continue == 1) {
                     slider.style.transform =
                         `translateX(${(mainSlider.offsetWidth - slider.offsetWidth) / 2}px)`;
                 }
@@ -190,66 +203,62 @@
                 slider.style.transform = `translateX(${currentX}px)`;
 
                 // Show "Wait..." text when close to the end
-                if (Math.abs(currentX) >= maxX * 0.9 || Math.abs(currentX) <= maxX * 0.1) {
-                    swipeText.classList.add("opacity-0");
-                    arrow.classList.add("opacity-0");
-                    arrow2.classList.add("opacity-0");
-                    waitText.classList.remove("opacity-0");
-                    waitText.classList.add("animate-pulse");
+                const isAtEdge = Math.abs(currentX) >= maxX * 0.9 || (lbLength > 1 && Math.abs(currentX) <= maxX * 0.1);
+
+                swipeText.classList.toggle("opacity-0", isAtEdge);
+                arrow?.classList.toggle("opacity-0", isAtEdge);
+                arrow2.classList.toggle("opacity-0", isAtEdge);
+                waitText.classList.toggle("opacity-0", !isAtEdge);
+                waitText.classList.toggle("animate-pulse", isAtEdge);
+            };
+
+            const stopDrag = () => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                const absX = Math.abs(currentX);
+                const hasContinue = latestB.length > 0 && latestB[0]?.continue == 1;
+                let targetUrl = "{{ route('main_sppds.create') }}"; // Default case when lbLength == 0
+
+                if ((lbLength === 0 || latestB[0].continue == 0 ) && absX >= maxX * 0.9) {
+                    // Directly go to create route if lbLength is 0
+                    setTimeout(() => { window.location.href = targetUrl; }, 500);
+                    return;
+                }
+                
+                if (sppds?.user_id == authId && sppds?.verify == 0 && latestB[0].continue == 1 && absX >= maxX * 0.9) {
+                    targetUrl = "{{ route('main_sppds.change', 'null') }}".replace('null', sppds?.id);
+                } else if (sppds?.user_id == authId && lbLength >= 1 && latestB[0].continue == 1 && (absX >= maxX * 0.9 || absX <= maxX * 0.1)) {
+                    if (lbLength === 1) {
+                        targetUrl = "{{ route('main_sppds.bottom', 'null') }}?continue=VERIFIKASI"
+                        .replace('null', sppds?.code_sppd);
+                    } else {
+                        const continueParam = currentX > (maxX * 0.9) ? "true" : "false";
+                        targetUrl = "{{ route('main_sppds.bottom', 'null') }}"
+                        .replace('null', sppds?.code_sppd) + "?continue=" + continueParam;
+                    }
+                }
+
+                // console.log(sppds, lbLength, targetUrl);
+
+                if (sppds?.user_id == authId && (sppds?.verify == 0 && absX >= maxX * 0.9) || (lbLength >= 1 && hasContinue)) {
+                    setTimeout(() => { window.location.href = targetUrl; }, 500);
                 } else {
+                    // Reset the slider
+                    slider.style.transition = "transform 0.3s ease-out";
+                    slider.style.transform = (lbLength > 1 && hasContinue)
+                        ? `translateX(${(mainSlider.offsetWidth - slider.offsetWidth) / 2}px)`
+                        : "translateX(0)";
+
+                    // UI updates
                     swipeText.classList.remove("opacity-0");
-                    arrow.classList.remove("opacity-0");
+                    if (arrow) arrow.classList.remove("opacity-0");
                     arrow2.classList.remove("opacity-0");
                     waitText.classList.add("opacity-0");
                     waitText.classList.remove("animate-pulse");
                 }
             };
 
-            const stopDrag = () => {
-                if (!isDragging) return;
-                isDragging = false;
-                if (Math.abs(currentX) >= maxX * 0.9 || Math.abs(currentX) <= maxX * 0.1) {
-                    if (latestB?.[sppds?.code_sppd][0]?.continue == 1) {
-                        setTimeout(() => {
-                            if (sppds?.verify == 0) {
-                                window.location.href = "{{ route('main_sppds.change', 'null') }}"
-                                    .replace('null', sppds?.id);
-                            } else if (lbLength == 1) {
-                                window.location.href =
-                                    "{{ route('main_sppds.bottom', 'null') }}?continue=VERIFIKASI"
-                                    .replace('null', sppds?.code_sppd);
-                            } else if (lbLength > 1 && currentX > (maxX * 0.9)) {
-                                window.location.href =
-                                    "{{ route('main_sppds.bottom', 'null') }}?continue=true".replace(
-                                        'null', sppds?.code_sppd);
-                            } else if (lbLength > 1 && currentX < (maxX * 0.1)) {
-                                window.location.href =
-                                    "{{ route('main_sppds.bottom', 'null') }}?continue=false".replace(
-                                        'null', sppds?.code_sppd);
-                            } else {
-                                window.location.href = "{{ route('main_sppds.create') }}";
-                            }
-                        }, 500); // Small delay for UI feedback
-                    } else {
-                        setTimeout(() => {
-                            window.location.href = "{{ route('main_sppds.create') }}";
-                        }, 500); // Small delay for UI feedback
-                    }
-                } else {
-                    slider.style.transition = "transform 0.3s ease-out";
-                    if (lbLength > 1) {
-                        slider.style.transform =
-                            `translateX(${(mainSlider.offsetWidth - slider.offsetWidth) / 2}px)`;
-                    } else {
-                        slider.style.transform = "translateX(0)";
-                    }
-                    swipeText.classList.remove("opacity-0");
-                    arrow.classList.remove("opacity-0");
-                    arrow2.classList.remove("opacity-0");
-                    waitText.classList.add("opacity-0");
-                    waitText.classList.remove("animate-pulse");
-                }
-            };
 
             slider.addEventListener("mousedown", startDrag);
             slider.addEventListener("touchstart", startDrag);
