@@ -305,45 +305,13 @@ class MainSPPDController extends Controller
     }
 
     public function details(MainSPPD $mainSppd){
-        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->whereNotNull('date_time_arrive')->get();
         $user = User::with('jabatan')->where('kerjasama_id', 1)->get();
         $budget = PocketMoney::all();
         $eslon = Eslon::get();
         $transportations = Transportation::all();
         $regions = Region::all();
         $jabatanData = Jabatan::whereIn('id', $eslon->pluck('jabatan_id')->flatten())->get()->keyBy('id');
-        $beforeLastValue = null;
-
-        // dd($bellow);
-
-        if($bellow->count() > 1)
-        {
-            foreach ($bellow as $key => $value) {
-                // if ($key === count($bellow) - 2) {
-                    $beforeLastValue = $value;
-                //     echo $beforeLastValue;
-                // }
-
-                // dd($beforeLastValue, $key, count($bellow));
-                if ($beforeLastValue->continue == 1) {
-                    // $request->session()->put('key', $mainSppd->code_sppd);
-                    $sppd_bellow = view('partials.bellow_part_2_partials', compact('mainSppd','bellow'))->render();
-                    return view('main_sppds.next_page', compact('sppd_bellow'));
-                }else{
-                    return redirect()->route('main_sppds.index');
-                }
-            }
-        }else{
-            $bellow = $bellow->first();
-            if ($bellow->continue == 1) {
-                // $request->session()->put('key', $bellow->code_sppd);
-                $sppd_bellow = view('partials.below_partials', compact('mainSppd','bellow'))->render();
-                return view('main_sppds.next_page', compact('sppd_bellow'));
-            }else{
-                return redirect()->route('main_sppds.index');
-            }
-        }
-        return view('sspd_bellow.show', compact('mainSppd', 'bellow', 'user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
+        return view('sspd_bellow.show', compact('mainSppd', 'user', 'budget', 'eslon', 'transportations', 'regions', 'jabatanData'));
     }
 
     public function change(MainSPPD $mainSppd)

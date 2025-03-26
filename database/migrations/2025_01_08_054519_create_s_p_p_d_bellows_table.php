@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('code_sppd');
             $table->string("date_time_arrive")->nullable();
             $table->string("arrive_at")->nullable();
-            $table->string("departed_at")->nullable();
             $table->string("foto_arrive")->nullable();
             $table->string('maps_tiba')->nullable();
 

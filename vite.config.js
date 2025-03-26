@@ -10,4 +10,9 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    server: {
+        host: 'localhost', // or 'laravel_sppd.test' if using Laravel Herd's domain
+        port: 5173, // Change the port if needed
+        https: false, // Ensure Vite runs with HTTPS if using a `.test` domain
+    },
 });

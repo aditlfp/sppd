@@ -22,6 +22,8 @@
                             dataT: {{ $transportations->toJson() }},
                             mainSppd: {{ $mainSppd->toJson() }},
                             lainLainValues: {{ json_encode($mainSppd->lain_lain ?? []) }},
+                            transport: {{ $mainSppd->nama_kendaraan_lain ? 0 : $mainSppd->alat_angkutan }},
+                            alatAngkutan1: {{ $mainSppd->nama_kendaraan_lain ? $mainSppd->alat_angkutan : 0 }},
                             total: 0,
                             calculateTotal() {
                                 // Sum up all lain_lain values
@@ -33,7 +35,8 @@
                                             (parseFloat(this.mainSppd.tol) || 0) +
                                             (parseFloat(this.mainSppd.makan) || 0) +
                                             lainLainTotal +
-                                            (parseFloat(this.mainSppd.alat_angkutan) || 0);
+                                            (parseFloat(this.transport) || 0) +
+                                            (parseFloat(this.alatAngkutan1) || 0);
                             }
                         }"
                         x-init="calculateTotal()">
@@ -162,12 +165,24 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             @forelse ($transportations as $item)
                             <div class="flex items-center w-full gap-x-3">
-                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" {{ $item->anggaran == $mainSppd->alat_angkutan ? "checked" : "" }} value="{{ $item->id }}">
+                                <input type="radio" name="alat_angkutan" id="alat_angkutan" required class="mt-2 radio bg-blue-100 border-blue-300 checked:bg-blue-200 checked:text-blue-600 checked:border-blue-600" {{ $mainSppd->nama_kendaraan_lain ? ($item->anggaran == $mainSppd->alat_angkutan ? "checked" : "") : "" }}
+                                value="{{ $item->id }}">
                                 <span class="capitalize">{{ $item->jenis }} :  {{ toRupiah($item->anggaran)}}</span>
                             </div>
                             @empty
 
                             @endforelse
+
+                            <div>
+                                <div class="flex items-center gap-x-3">
+                                    <input type="radio" {{ $mainSppd->nama_kendaraan_lain ? 'checked' : ''}} name="alat_angkutan" id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <div class="flex w-full">
+                                        <input type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan" value="{{ $mainSppd->nama_kendaraan_lain ? $mainSppd->nama_kendaraan_lain : ''}} ">
+
+                                        <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                        <input type="text" name="alat_angkutan" id="alat_angkutan_1" x-model="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" >
+                                    </div>
+                                </div>
                         </div>
 
                         <div class="mb-4">

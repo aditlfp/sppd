@@ -17,6 +17,7 @@
                             lainLain: 0,
                             lainLainInputs: [],
                             transport: 0,
+                            alatAngkutan1: 0,
                             total: 0,
                             dataT: {{$transportations->toJson()}},
                             calculateTotal() {
@@ -24,14 +25,15 @@
                                             (parseFloat(this.tol) || 0) +
                                             (parseFloat(this.makan) || 0) +
                                             (parseFloat(this.lainLain) || 0) +
-                                            (parseFloat(this.transport) || 0) + 
+                                            (parseFloat(this.transport) || 0) +
+                                            (parseFloat(this.alatAngkutan1) || 0) +
                                             (this.lainLainInputs.filter(item => item.value).reduce((sum, item) => sum + parseFloat(item.value), 0) || 0);
                             }
                         }"
                         @input="calculateTotal()"
                         @change="calculateTotal()">
                         @csrf
-                        <div class="mb-4">
+                        <div x-init="console.log(alatAngkutan1)" class="mb-4">
                             <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah</label>
                             <select name="auth_official" id="auth_official" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Yang Memberi Perintah</option>
@@ -147,11 +149,26 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             <template x-for="item in dataT">
                                 <div class="flex items-center w-full gap-x-3">
-                                    <input type="radio" name="alat_angkutan" x-model.number="transport"
-                                        :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
-                                    <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
+                                        <input type="radio" name="alat_angkutan" x-model.number="transport"
+                                            :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                        <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
                                 </div>
                             </template>
+                            <div>
+                                <div class="flex items-center gap-x-3">
+                                    <input type="radio" name="alat_angkutan" id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <div class="flex w-full">
+                                        <input type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan">
+
+                                        <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
+                                        <input type="text" name="alat_angkutan" id="alat_angkutan_1" x-model="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" >
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
                             <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />
                         </div>
 

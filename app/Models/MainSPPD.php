@@ -16,6 +16,7 @@ class MainSPPD extends Model
         'eslon_id',
         'maksud_perjalanan',
         'alat_angkutan',
+        'nama_kendaraan_lain',
         'tempat_berangkat',
         'maps_berangkat',
         'tempat_tujuan',

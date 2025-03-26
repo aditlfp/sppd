@@ -27,6 +27,7 @@ class MainSppdRequest extends FormRequest
             'eslon_id' => 'required',
             'maksud_perjalanan' => 'required',
             'alat_angkutan' => 'required',
+            'nama_kendaraan_lain' => 'nullable',
             'tempat_berangkat' => 'required',
             'maps_berangkat' => 'required',
             'tempat_tujuan' => 'required',

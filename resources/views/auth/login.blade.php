@@ -35,7 +35,7 @@
         </div>
 
         <div x-data="{ loading: false }" class="flex items-center justify-center mt-4">
-            <x-primary-button 
+            <x-primary-button
                 x-on:click="if (!loading) { loading = true; $refs.btn.innerText = 'Tunggu...'; $el.form.submit(); }"
                 x-bind:disabled="loading"
                 x-ref="btn"
