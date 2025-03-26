@@ -45,10 +45,14 @@ class MainSPPDController extends Controller
         }
 
         // Check if user is admin or has special role
-        $isAdmin = $auth->role_id == 2 || in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA', 'admin']);
+        $isAuthorize = in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA']);
+        $isAdmin = $auth->role_id == 2 || in_array($auth->name, ['admin']);
 
         // Get appropriate SPPDs based on user role
-        if ($isAdmin & $isVerifyPage) {
+        if($isAdmin){
+            $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
+        }
+        else if ($isAuthorize & $isVerifyPage) {
             $mainSppds = MainSPPD::where('auth_official', $auth->nama_lengkap)
                                 ->orderBy('created_at', 'desc')
                                 ->with(['User', 'transportation'])
@@ -84,7 +88,7 @@ class MainSPPDController extends Controller
         });
 
         // Determine which view to render based on user role
-        $viewName = $isAdmin & $isVerifyPage ? 'verify_page.index' : 'main_sppds.index';
+        $viewName = $isAuthorize || $isAdmin & $isVerifyPage ? 'verify_page.index' : 'main_sppds.index';
         return view($viewName, compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
     }
 
