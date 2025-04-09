@@ -111,7 +111,6 @@ class MainSPPDController extends Controller
     public function store(MainSppdRequest $request)
     {
         $randomString = Str::random(10);
-
         try {
             DB::beginTransaction(); // Start transaction
 
@@ -341,5 +340,77 @@ class MainSPPDController extends Controller
         $mainSppd->delete();
         flash()->warning('Data berhasil dihapus.');
         return redirect()->route('main_sppds.index');
+    }
+
+    public function print($isVerifyPage = false)
+    {
+
+        $auth = auth()->user();
+        $bellow = SPPDBellow::orderByDesc('updated_at')->get();
+        $latestBellow = $bellow->groupBy('code_sppd');
+
+        // Calculate counts and null counts for all bellows
+        $counts = [];
+        $count_null = [];
+        foreach ($bellow->groupBy('code_sppd') as $code_sppd => $collection) {
+            $counts[$code_sppd] = $collection->count();
+            $count_null[$code_sppd] = $collection->filter(function ($item) {
+                return empty($item->date_time_arrive);
+            })->count();
+        }
+
+        // Check if user is admin or has special role
+        $isAuthorize = in_array($auth->name, ['SULASNI', 'PARNO', 'DIREKTUR', 'DIREKTUR UTAMA']);
+        $isAdmin = $auth->role_id == 2 || in_array($auth->name, ['admin']);
+
+        // Get appropriate SPPDs based on user role
+        if($isAdmin){
+            $mainSppds = MainSPPD::orderBy('created_at', 'desc')->with(['User', 'transportation'])->paginate(10);
+        }
+        else if ($isAuthorize & $isVerifyPage) {
+            $mainSppds = MainSPPD::where('auth_official', $auth->nama_lengkap)
+                                ->orderBy('created_at', 'desc')
+                                ->with(['User', 'transportation'])
+                                ->paginate(10);
+        } else {
+            // Only proceed if not on verify page (regular users can't access verify page)
+            if ($isVerifyPage) {
+                return redirect()->back(); // Or appropriate redirection
+            }
+
+            $mainSppds = MainSPPD::where('user_id', $auth->id)
+                                ->orderBy('created_at', 'asc')
+                                ->paginate(15);
+        }
+
+        // Process SPPD data to determine which ones should be disabled
+        $foundUnfinished = false;
+        $mainSppds->transform(function ($sppd) use ($count_null, &$foundUnfinished) {
+            $code_sppd = $sppd->code_sppd;
+            $isUnfinished = ($count_null[$code_sppd] ?? 0) > 0;
+
+            if ($foundUnfinished) {
+                $sppd->is_disabled = true;
+            } else {
+                $sppd->is_disabled = !$isUnfinished;
+            }
+
+            if ($isUnfinished) {
+                $foundUnfinished = true;
+            }
+
+            return $sppd;
+        });
+
+        // Determine which view to render based on user role
+        $viewName = $isAuthorize || $isAdmin & $isVerifyPage ? 'page_print.index' : 'page_print.index';
+        return view($viewName, compact('mainSppds', 'latestBellow', 'counts', 'count_null'));
+    }
+
+    public function printSppd(MainSPPD $mainSppd)
+    {
+        $bellow = SPPDBellow::where('code_sppd', $mainSppd->code_sppd)->get();
+        $mainSppd = MainSPPD::where('code_sppd', $mainSppd->code_sppd)->first();
+        return view('page_print.print', compact('bellow', 'mainSppd'));
     }
 }

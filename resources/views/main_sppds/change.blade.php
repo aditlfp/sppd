@@ -11,6 +11,8 @@
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('main_sppds.change', $mainSppd->id) }}" method="POST" class="form-control"
                         x-data="{
+                            transportType: null,
+                            useManual: false,
                             dataT: {{$transportations->toJson()}},
                             mainSppd: {{$mainSppd->toJson()}},
                             uangSaku: 0,
@@ -172,23 +174,26 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             <template x-for="item in dataT" >
                                 <div class="flex items-center w-full gap-x-3">
-                                    <input type="radio" name="alat_angkutan" x-model.number="transport"
-                                        :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <input type="radio" name="alat_angkutan" x-model="transportType"  @change="useManual = false" :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
                                     <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
                                 </div>
                             </template>
 
                             <div>
                                 <div class="flex items-center gap-x-3">
-                                    <input type="radio" {{ $mainSppd->nama_kendaraan_lain ? 'checked' : ''}} name="alat_angkutan" id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <input type="radio" {{ $mainSppd->nama_kendaraan_lain ? 'checked' : ''}}   x-model="transportType"
+                                    value="manual"
+                                    @change="useManual = true" id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
                                     <div class="flex w-full">
-                                        <input type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan" value="{{ $mainSppd->nama_kendaraan_lain ? $mainSppd->nama_kendaraan_lain : ''}} ">
+                                        <input type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan" :disabled="!useManual" value="{{ $mainSppd->nama_kendaraan_lain ? $mainSppd->nama_kendaraan_lain : ''}} ">
 
                                         <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                        <input type="text" name="alat_angkutan" id="alat_angkutan_1" x-model="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" >
+                                        <input type="text" id="alat_angkutan_1" x-model="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000"  :disabled="!useManual">
                                     </div>
                                 </div>
-
+                                <!-- HIDDEN INPUT yang akan dikirim -->
+                                <input type="hidden" name="alat_angkutan" :value="useManual ? alatAngkutan1 : transportType">
+                            </div>
 
 
                             </div>

@@ -26,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::get('main_sppds/{main_sppd}/details', [MainSPPDController::class, 'details'])->name('main_sppds.details');
     Route::get('main_sppds/change/{main_sppd}', [MainSPPDController::class, 'change'])->name('main_sppds.change');
     Route::patch('main_sppds/change/{main_sppd}', [MainSPPDController::class, 'changeUpdate'])->name('main_sppds.updateChange');
+    Route::get('sppds/print', [MainSPPDController::class, 'print'])->name('main_sppds.print');
+    Route::get('sppds/print-sppd/{main_sppd}', [MainSPPDController::class, 'printSppd'])->name('main_sppds.print-sppd');
 });
 
 Route::middleware(['admin'])->group(function () {
