@@ -11,17 +11,17 @@
                 <div class="p-6 text-gray-900">
                     <form action="{{ route('main_sppds.change', $mainSppd->id) }}" method="POST" class="form-control"
                         x-data="{
-                            transportType: null,
-                            useManual: false,
+                            transportType: {{ $mainSppd->alat_angkutan }},
+                            useManual: {{ $mainSppd->nama_kendaraan_lain ? 'true' : 'false' }},
                             dataT: {{$transportations->toJson()}},
                             mainSppd: {{$mainSppd->toJson()}},
                             uangSaku: 0,
                             tol: {{ $mainSppd->e_toll }},
                             makan: {{ $mainSppd->makan }},
                             lainLain: {{ json_encode($mainSppd->lain_lain) }},
-                            transport: {{ $mainSppd->nama_kendaraan_lain ? 0 : $mainSppd->alat_angkutan }},
-                            alatAngkutan1: {{ $mainSppd->nama_kendaraan_lain ? $mainSppd->alat_angkutan : 0 }},
                             lainLainInputs: [],
+                            alatAngkutan1: {{ $mainSppd->nama_kendaraan_lain ? $mainSppd->alat_angkutan : 0 }},
+                            transport: this.useManual ? this.transportType : this.alatAngkutan1,
                             total: 0,
                             initLainLain() {
                                 const values = {{ json_encode($mainSppd->lain_lain ?? []) }};
@@ -42,13 +42,10 @@
                                 (parseFloat(this.tol) || 0) +
                                 (parseFloat(this.makan) || 0) +
                                 (parseFloat(this.transport) || 0) +
-                                (parseFloat(this.alatAngkutan1) || 0) +
                                 (this.lainLainInputs.filter(item => item.value).reduce((sum, item) => sum + parseFloat(item.value), 0) || 0);
                             }
                         }"
-                        x-init="initLainLain(); calculateTotal();"
-                        @input="calculateTotal()"
-                        @change="calculateTotal()">
+                        x-init="transport = useManual ? transportType : alatAngkutan1; initLainLain(); calculateTotal();">
                         @method('PATCH')
                         @csrf
                         <div class="mb-4">
@@ -174,28 +171,26 @@
                             <label for="alat_angkutan" class="block text-sm font-medium text-gray-700 required label-text">Alat Angkutan</label>
                             <template x-for="item in dataT" >
                                 <div class="flex items-center w-full gap-x-3">
-                                    <input type="radio" name="alat_angkutan" x-model="transportType"  @change="useManual = false" :value="item.anggaran" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <input type="radio" name="alat_angkutan" x-model="transportType" @change="transport = transportType; useManual = false; calculateTotal();" :value="item.anggaran" :required="!useManual" class="mt-2 radio bg-blue-100 border-blue-300">
                                     <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
                                 </div>
                             </template>
 
                             <div>
                                 <div class="flex items-center gap-x-3">
-                                    <input type="radio" {{ $mainSppd->nama_kendaraan_lain ? 'checked' : ''}}   x-model="transportType"
-                                    value="manual"
-                                    @change="useManual = true" id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
+                                    <input type="radio" x-model="transportType"
+                                    :value="transportType"
+                                    @change="useManual = true; transport = alatAngkutan1; calculateTotal();" 
+                                    id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
                                     <div class="flex w-full">
                                         <input type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan" :disabled="!useManual" value="{{ $mainSppd->nama_kendaraan_lain ? $mainSppd->nama_kendaraan_lain : ''}} ">
 
                                         <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                        <input type="text" id="alat_angkutan_1" x-model="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000"  :disabled="!useManual">
+                                        <input type="text" id="alat_angkutan_1" x-model="alatAngkutan1" @input="transport = alatAngkutan1; calculateTotal();" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" :required="useManual" placeholder="Rp. 1.000.000"  :disabled="!useManual">
                                     </div>
                                 </div>
                                 <!-- HIDDEN INPUT yang akan dikirim -->
                                 <input type="hidden" name="alat_angkutan" :value="useManual ? alatAngkutan1 : transportType">
-                            </div>
-
-
                             </div>
                             <x-input-error :messages="$errors->get('alat_angkutan')" class="mt-2" />
                         </div>
@@ -211,10 +206,9 @@
                             <input type="text" readonly name="maps_berangkat" id="maps_berangkat" class="mt-1 block w-full" required>
                         </div>
 
-
                         <div class="my-4">
                             <label for="tempat_tujuan" class="block text-sm font-medium text-gray-700 required label-text">Tempat Tujuan</label>
-                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
+                            <select name="tempat_tujuan" id="tempat_tujuan" @change="calculateTotal();" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
                                     <option selected disabled>-Pilih Wilayah-</option>
                                 @forelse($regions as $reg)
                                     <option {{ normalizeString($reg->nama_daerah) === normalizeString($mainSppd->tempat_tujuan) ? "selected" : ""}} data-reg-id="{{ $reg->id }}" value="{{ $reg->nama_daerah }}">{{ $reg->name . " - " . $reg->nama_daerah }}</option>
@@ -290,7 +284,7 @@
                                         <input
                                             type="text"
                                             name="lain_lain[]"
-                                            x-model.lazy="lainLainInputs[index].value"
+                                            x-model="lainLainInputs[index].value"
                                             @input="calculateTotal()"
                                             class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0"
                                             placeholder="0"

@@ -18,8 +18,8 @@
                             makan: 0,
                             lainLain: 0,
                             lainLainInputs: [],
-                            transport: 0,
                             alatAngkutan1: 0,
+                            transport: 0,
                             total: 0,
                             dataT: {{$transportations->toJson()}},
                             calculateTotal() {
@@ -28,14 +28,11 @@
                                             (parseFloat(this.makan) || 0) +
                                             (parseFloat(this.lainLain) || 0) +
                                             (parseFloat(this.transport) || 0) +
-                                            (parseFloat(this.alatAngkutan1) || 0) +
                                             (this.lainLainInputs.filter(item => item.value).reduce((sum, item) => sum + parseFloat(item.value), 0) || 0);
                             }
-                        }"
-                        @input="calculateTotal()"
-                        @change="calculateTotal()">
+                        }">
                         @csrf
-                        <div x-init="console.log(transport)" class="mb-4">
+                        <div class="mb-4">
                             <label for="auth_official" class="block text-sm font-medium text-gray-700 required label-text">Yang Memberi Perintah</label>
                             <select name="auth_official" id="auth_official" required class="select select-bordered select-sm w-full text-xs rounded-sm">
                                 <option selected disabled>Yang Memberi Perintah</option>
@@ -152,21 +149,21 @@
                             <template x-for="item in dataT">
                                 <div class="flex items-center w-full gap-x-3">
                                         <input type="radio" x-model="transportType"
-                                            :value="item.anggaran" @change="useManual = false" required class="mt-2 radio bg-blue-100 border-blue-300">
+                                            :value="item.anggaran" @change="transport = transportType; useManual = false; calculateTotal();" :required="!useManual" class="mt-2 radio bg-blue-100 border-blue-300">
                                         <span class="capitalize mt-2" x-text="item.jenis + ' - ' + item.nama_kendaraan + ' : ' + item.anggaran"></span>
                                 </div>
                             </template>
                             <div>
                                 <div class="flex items-center gap-x-3">
                                     <input type="radio" x-model="transportType"
-                                    value="manual"
-                                    @change="useManual = true"
+                                    value=""
+                                    @change="useManual = true; transport = alatAngkutan1; calculateTotal();"
                                     id="transportOther" class="mt-2 radio bg-blue-100 border-blue-300">
                                     <div class="flex w-full">
                                         <input :disabled="!useManual" type="text" name="nama_kendaraan_lain"  class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm mr-3" placeholder="Nama Kendaraan Yang Digunakan">
 
                                         <input type="text"  disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm rounded-r-none border-r-0" value="Rp.">
-                                        <input :disabled="!useManual" type="text" id="alat_angkutan_1" x-model.number="alatAngkutan1" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="Rp. 1.000.000" >
+                                        <input :disabled="!useManual" type="text" id="alat_angkutan_1" x-model.number="alatAngkutan1" @input="transport = alatAngkutan1; calculateTotal();" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" :required="useManual" placeholder="Rp. 1.000.000" >
                                     </div>
                                 </div>
 
@@ -192,7 +189,7 @@
 
                         <div class="my-4">
                             <label for="tempat_tujuan" class="block text-sm font-medium text-gray-700 required label-text">Tempat Tujuan</label>
-                            <select name="tempat_tujuan" id="tempat_tujuan" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
+                            <select name="tempat_tujuan" id="tempat_tujuan" @change="calculateTotal();" class="select select-bordered select-sm w-full text-xs rounded-sm mt-1">
                                     <option selected disabled>-Pilih Wilayah-</option>
                                 @forelse($regions as $reg)
                                     <option data-reg-id="{{ $reg->id }}" value="{{ $reg->nama_daerah }}">{{ $reg->name . " - " . $reg->nama_daerah }}</option>
@@ -244,7 +241,7 @@
                             <label for="makan" class="block text-sm font-medium text-gray-700 label-text required">Makan</label>
                             <div class="flex">
                                 <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                <input type="text" name="makan" id="makan" x-model.lazy="makan" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
+                                <input type="text" name="makan" id="makan" x-model="makan" @input="calculateTotal()" class="mt-1 block w-full input input-sm input-bordered text-xs rounded-sm rounded-l-none border-l-0" required placeholder="1.000.000">
                                 <x-input-error :messages="$errors->get('makan')" class="mt-2" />
                             </div>
                         </div>
@@ -257,7 +254,7 @@
 
                                         <div class="flex">
                                             <input type="text" disabled class="mt-1 block input input-sm input-bordered text-xs w-12 rounded-sm disabled:border-[#D4D4D4] rounded-r-none border-r-0" value="Rp.">
-                                            <input type="text" name="lain_lain[]" x-model.lazy="lainLainInputs[index].value" @input="calculateTotal()" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0" placeholder="0">
+                                            <input type="text" name="lain_lain[]" x-model="lainLainInputs[index].value" @input="calculateTotal();" class="mt-1 block input-sm w-full input input-bordered rounded-sm rounded-l-none border-l-0" placeholder="0">
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-sm btn-error text-white text-sm mt-1 w-full sm:w-auto rounded-sm" @click="lainLainInputs.splice(index, 1)">Hapus</button>
