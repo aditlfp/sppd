@@ -14,9 +14,15 @@
                     </svg> Dashboard</a>
             </li>
             <li>
-                <details {{ Route::is('main_sppds.*') || Route::is('page-verify-sppd') ? 'open' : '' }}>
+                <details {{
+                    (Route::is('main_sppds.*') || Route::is('page-verify-sppd'))
+                    && !Route::is('main_sppds.print*')
+                    ? 'open' : ''
+                }}>
+
                     <summary
-                        class="font-medium rounded-sm flex items-center justify-between gap-2 {{ Route::is('main_sppds.*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
+                        class="font-medium rounded-sm flex items-center justify-between gap-2 {{ (Route::is('main_sppds.*') || Route::is('page-verify-sppd'))
+                    && !Route::is('main_sppds.print*') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                         <span class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24"
                                 fill="currentColor">
@@ -47,12 +53,7 @@
                     <summary
                         class="font-medium rounded-sm flex items-center justify-between gap-2 {{ Route::is('main_sppds.print') || Route::is('main_sppds.print-sppd') ? 'bg-blue-500 hover:bg-blue-600 text-white' : '' }}">
                         <span class="flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24"
-                                fill="currentColor">
-                                <path
-                                    d="M7 5V2C7 1.44772 7.44772 1 8 1H16C16.5523 1 17 1.44772 17 2V5H21C21.5523 5 22 5.44772 22 6V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V6C2 5.44772 2.44772 5 3 5H7ZM9 13H4V19H20V13H15V16H9V13ZM20 7H4V11H9V9H15V11H20V7ZM11 11V14H13V11H11ZM9 3V5H15V3H9Z">
-                                </path>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5.33409 4.54491C6.3494 3.63637 7.55145 2.9322 8.87555 2.49707C9.60856 3.4128 10.7358 3.99928 12 3.99928C13.2642 3.99928 14.3914 3.4128 15.1245 2.49707C16.4486 2.9322 17.6506 3.63637 18.6659 4.54491C18.2405 5.637 18.2966 6.90531 18.9282 7.99928C19.5602 9.09388 20.6314 9.77679 21.7906 9.95392C21.9279 10.6142 22 11.2983 22 11.9993C22 12.7002 21.9279 13.3844 21.7906 14.0446C20.6314 14.2218 19.5602 14.9047 18.9282 15.9993C18.2966 17.0932 18.2405 18.3616 18.6659 19.4536C17.6506 20.3622 16.4486 21.0664 15.1245 21.5015C14.3914 20.5858 13.2642 19.9993 12 19.9993C10.7358 19.9993 9.60856 20.5858 8.87555 21.5015C7.55145 21.0664 6.3494 20.3622 5.33409 19.4536C5.75952 18.3616 5.7034 17.0932 5.0718 15.9993C4.43983 14.9047 3.36862 14.2218 2.20935 14.0446C2.07212 13.3844 2 12.7002 2 11.9993C2 11.2983 2.07212 10.6142 2.20935 9.95392C3.36862 9.77679 4.43983 9.09388 5.0718 7.99928C5.7034 6.90531 5.75952 5.637 5.33409 4.54491ZM13.5 14.5974C14.9349 13.7689 15.4265 11.9342 14.5981 10.4993C13.7696 9.0644 11.9349 8.57277 10.5 9.4012C9.06512 10.2296 8.5735 12.0644 9.40192 13.4993C10.2304 14.9342 12.0651 15.4258 13.5 14.5974Z"></path></svg>
                             <p>Utils</p>
                         </span>
                     </summary>

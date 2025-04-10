@@ -1,4 +1,3 @@
-index
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -26,6 +25,7 @@ index
                                 <th>Tgl Berangkat</th>
                                 <th>Tgl Kembali</th>
                                 <th>Status</th>
+                                <th>Cetak</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -49,7 +49,21 @@ index
                                     <td>{{ $sppd->lama_perjalanan . ' Hari' }}</td>
                                     <td>{{ $sppd->date_time_berangkat }}</td>
                                     <td>{{ $sppd->date_time_kembali }}</td>
+                                    <td>
+                                        <div class="flex items-center justify-center">
+                                            {!! $sppd->verify == '0' || $sppd->verify == null
+                                            ? '<i class="ri-time-fill text-amber-500 sm:text-md text-xl"></i>'
+                                            : '<i class="ri-checkbox-circle-fill text-green-500 sm:text-md text-xl"></i>' !!}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="flex items-center justify-center">
+                                            {!! $sppd->verify == '0' || $sppd->verify == null
+                                            ? '<button class="btn btn-primary btn-sm rounded-sm uppercase" disabled>pdf</button>'
+                                            : '<a href="' . route("main_sppds.print-sppd", $sppd->id) . '" class="btn btn-primary btn-sm rounded-sm uppercase">pdf</a>' !!}
 
+                                         </div>
+                                    </td>
                                 </tr>
 
 
