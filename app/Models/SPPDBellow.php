@@ -26,4 +26,9 @@ class SPPDBellow extends Model
         'verify',
         'note'
     ];
+
+    public function mainSppd()
+    {
+        return $this->belongsTo(MainSPPD::class, 'code_sppd', 'code_sppd');
+    }
 }

@@ -35,8 +35,9 @@ class DashboardController extends Controller
         // dd($sppds);
         // Get latest SPPDBellow data (only necessary fields)
         $latestBellow = SPPDBellow::select('id', 'code_sppd', 'date_time_arrive', 'arrive_at', 'continue')
-            ->orderByDesc('updated_at')
+            ->with('mainSppd')
             ->latest()
+            ->orderByDesc('code_sppd')
             ->get();
             // ->groupBy('code_sppd');
             // ->map(fn($items) => $items->first());

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>SPPD Online - PT. Surya Amanah Cendikia</title>
@@ -29,7 +29,7 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100 relative">
         @include('components.navbar')
-        <div class="pt-14 gap-4 lg:flex w-auto">
+        <div class="pt-14 pb-10 gap-4 lg:flex w-auto">
             <x-sidebar/>
             <div id="right-side" class="lg:w-5/6 w-auto lg:ml-[16.666667svw]">
                 <!-- Page Heading -->
@@ -55,6 +55,7 @@
                 </main>
             </div>
         </div>
+        <x-mobile-nav/>
     </div>
     <script>
         function clock() {
